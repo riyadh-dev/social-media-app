@@ -1,4 +1,7 @@
 import { Router } from 'express';
+import { validateInput } from '../common/middlewares';
+import { createUser } from './controllers';
+import { signupValidationSchema } from './validation';
 
 const router = Router();
 
@@ -10,9 +13,7 @@ router.get('/:id', (req, res) => {
 	res.send('add user with id: ' + req.params.id);
 });
 
-router.post('/', (req, res) => {
-	res.send('adding a user:\n' + req.body);
-});
+router.post('/', validateInput(signupValidationSchema), createUser);
 
 router.put('/:id', (req, res) => {
 	res.send('update user with id: ' + req.params.id);
