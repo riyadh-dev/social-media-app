@@ -2,7 +2,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
-import userRouter from './USER/router';
+import router from './USER/router';
 
 const app = express();
 
@@ -14,7 +14,7 @@ app.get('/api', (req, res) => {
 	res.send('Hello World!');
 });
 
-app.use('/api/user', userRouter);
+app.use('/api/users', router);
 
 app.use(express.static(path.join(__dirname, '../../client/build')));
 app.get('/', function (req, res) {
