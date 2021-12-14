@@ -1,8 +1,8 @@
 import bcrypt from 'bcryptjs';
 import { model, Schema } from 'mongoose';
-import IUser from './interface';
+import { IUserDB } from './interface';
 
-const UserSchema = new Schema<IUser>(
+const UserSchema = new Schema<IUserDB>(
 	{
 		username: { type: String, unique: true },
 		password: String,
@@ -14,7 +14,7 @@ const UserSchema = new Schema<IUser>(
 	{ timestamps: true }
 );
 
-UserSchema.pre<IUser>('save', function (next) {
+UserSchema.pre<IUserDB>('save', function (next) {
 	const salt = bcrypt.genSaltSync(10);
 	this.password = bcrypt.hashSync(this.password, salt);
 	next();
