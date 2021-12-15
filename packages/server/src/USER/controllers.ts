@@ -75,3 +75,9 @@ export const logout: IMiddleware = (req, res) => {
 	res.clearCookie('cookieToken');
 	res.status(200).json({ success: 'logout successful' });
 };
+
+const updateUserUnsafe: IAsyncMiddleware = async (req, res) => {
+	console.log('update user');
+};
+
+export const updateUser = catchAsyncMiddlewareError(updateUserUnsafe);

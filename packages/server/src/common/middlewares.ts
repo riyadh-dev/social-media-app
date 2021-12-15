@@ -1,9 +1,15 @@
 import csurf from 'csurf';
+import { ErrorRequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import { IUserDB } from 'src/USER/interface';
+import { TJwtUser } from 'src/USER/interface';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
-import { IAsyncMiddleware, IErrorHandler, IMiddleware } from './interfaces';
+import {
+	IAsyncMiddleware,
+	IErrorHandler,
+	IMiddleware,
+	isErrorWithCode,
+} from './interfaces';
 
 export const validateInput =
 	(validationSchema: Joi.ObjectSchema): IMiddleware =>
@@ -58,16 +64,39 @@ export const authenticate =
 	(authAdmin?: boolean): IMiddleware =>
 	(req, res, next) => {
 		try {
-			//jwt user object doesn't contain all props in the interface.
-			//this casting is only to check the isAdmin prop.
-			res.locals.currentUser = jwt.verify(
-				req.signedCookies.token,
+			const currentUser = jwt.verify(
+				req.signedCookies.cookieToken,
 				JWT_SECRET
-			) as IUserDB;
-			console.log(res.locals.currentUser);
+			) as unknown as TJwtUser;
+
+			if (authAdmin && !currentUser.isAdmin) {
+				res.status(403).json({ error: 'not authorized' });
+				return;
+			}
+
+			res.locals = { currentUser };
 			next();
 		} catch (_error) {
 			res.clearCookie('token');
 			res.status(403).json({ error: 'invalid token' });
 		}
 	};
+export const handleCsurfError: ErrorRequestHandler = (err, req, res, next) => {
+	if (isErrorWithCode(err)) {
+		if (err.code === 'EBADCSRFTOKEN') {
+			res.clearCookie('token');
+			res.status(403).json({ error: 'form tampered with' });
+			next(err.message);
+		}
+	}
+};
+
+export const handlePassedError: ErrorRequestHandler = (err, req, res, next) => {
+	if (err instanceof Error) {
+		res.status(500).json({
+			error: 'internal server error',
+		});
+		next(err.message);
+		return;
+	}
+};
