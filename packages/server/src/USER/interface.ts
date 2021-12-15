@@ -4,7 +4,7 @@ interface IUserBase {
 	password: string;
 	profilePicture: string;
 	followers: string[];
-	followees: string[];
+	following: string[];
 	isAdmin: boolean;
 	createdAt: Date;
 	updatedAt: Date;
