@@ -3,11 +3,7 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
-import {
-	csrfProtection,
-	handleCsurfError,
-	handlePassedError,
-} from './common/middlewares';
+import { csrfProtection, handlePassedError } from './common/middlewares';
 import { COOKIE_SECRET } from './config/secrets';
 import router from './USER/router';
 
@@ -30,7 +26,6 @@ app.get('/', function (req, res) {
 	res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
 });
 
-app.use(handleCsurfError);
 app.use(handlePassedError);
 
 export default app;

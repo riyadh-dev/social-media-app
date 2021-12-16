@@ -1,19 +1,15 @@
 import bcrypt from 'bcryptjs';
+import { ErrorRequestHandler, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
-import {
-	IAsyncMiddleware,
-	IErrorHandler,
-	IMiddleware,
-	isErrorWithCode,
-} from '../common/interfaces';
-import { catchAsyncMiddlewareError } from '../common/middlewares';
+import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
+import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { TLoginInput } from './interface';
 import UserModel from './model';
 
-const createUserErrorHandler: IErrorHandler = (error, res) => {
-	if (isErrorWithCode(error)) {
-		if (error.code === 11000) {
+const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+	if (isErrorWithCode(err)) {
+		if (err.code === 11000) {
 			res.status(500).json({
 				error: 'username already used',
 			});
@@ -21,25 +17,22 @@ const createUserErrorHandler: IErrorHandler = (error, res) => {
 		}
 	}
 
-	res.status(500).json({
-		error: 'internal server error',
-	});
-	console.error(error.message);
+	next(err);
 };
 
-const createUserUnsafe: IAsyncMiddleware = async (req, res) => {
+const createUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await UserModel.create(res.locals.validatedBody);
 	res.status(200).json({
 		success: 'user created successfully',
 	});
 };
 
-export const createUser = catchAsyncMiddlewareError(
+export const createUser = catchAsyncRequestHandlerError(
 	createUserUnsafe,
 	createUserErrorHandler
 );
 
-const loginUnsafe: IAsyncMiddleware = async (req, res) => {
+const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const loginInput: TLoginInput = res.locals.validatedBody;
 	const userDoc = await UserModel.findOne({ username: loginInput.username });
 	if (!userDoc) {
@@ -69,15 +62,15 @@ const loginUnsafe: IAsyncMiddleware = async (req, res) => {
 	});
 };
 
-export const login = catchAsyncMiddlewareError(loginUnsafe);
+export const login = catchAsyncRequestHandlerError(loginUnsafe);
 
-export const logout: IMiddleware = (req, res) => {
+export const logout: RequestHandler = (req, res) => {
 	res.clearCookie('cookieToken');
 	res.status(200).json({ success: 'logout successful' });
 };
 
-const updateUserUnsafe: IAsyncMiddleware = async (req, res) => {
+const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	console.log('update user');
 };
 
-export const updateUser = catchAsyncMiddlewareError(updateUserUnsafe);
+export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);

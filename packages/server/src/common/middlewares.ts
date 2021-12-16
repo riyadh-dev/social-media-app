@@ -1,25 +1,19 @@
 import csurf from 'csurf';
-import { ErrorRequestHandler } from 'express';
+import { ErrorRequestHandler, RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { TJwtUser } from 'src/USER/interface';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
-import {
-	IAsyncMiddleware,
-	IErrorHandler,
-	IMiddleware,
-	isErrorWithCode,
-} from './interfaces';
+import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
 
 export const validateInput =
-	(validationSchema: Joi.ObjectSchema): IMiddleware =>
+	(validationSchema: Joi.ObjectSchema): RequestHandler =>
 	(req, res, next) => {
 		const { error, value } = validationSchema.validate(req.body);
 		if (error) {
 			res.status(400).json({
 				error: 'validation error',
 			});
-			console.error(error.message);
 			return;
 		}
 
@@ -27,18 +21,14 @@ export const validateInput =
 		next();
 	};
 
-const genericErrorHandler: IErrorHandler = (error, res) => {
-	res.status(500).json({
-		error: 'internal server error',
-	});
-	console.error(error.message);
-};
-
-export const catchAsyncMiddlewareError =
-	(fn: IAsyncMiddleware, errorHandler?: IErrorHandler): IAsyncMiddleware =>
+export const catchAsyncRequestHandlerError =
+	(
+		handler: IAsyncRequestHandler,
+		errorHandler?: ErrorRequestHandler
+	): IAsyncRequestHandler =>
 	(req, res, next) =>
-		fn(req, res, next).catch((error) =>
-			errorHandler ? errorHandler(error, res) : genericErrorHandler(error, res)
+		handler(req, res, next).catch((err) =>
+			errorHandler ? errorHandler(err, req, res, next) : next(err)
 		);
 
 export const csrfLogin = csurf({
@@ -61,7 +51,7 @@ export const csrfProtection = csurf({
 });
 
 export const authenticate =
-	(authAdmin?: boolean): IMiddleware =>
+	(authAdmin?: boolean): RequestHandler =>
 	(req, res, next) => {
 		try {
 			const currentUser = jwt.verify(
@@ -81,22 +71,19 @@ export const authenticate =
 			res.status(403).json({ error: 'invalid token' });
 		}
 	};
-export const handleCsurfError: ErrorRequestHandler = (err, req, res, next) => {
+export const handlePassedError: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
 		if (err.code === 'EBADCSRFTOKEN') {
 			res.clearCookie('token');
 			res.status(403).json({ error: 'form tampered with' });
-			next(err.message);
+			return;
 		}
 	}
-};
 
-export const handlePassedError: ErrorRequestHandler = (err, req, res, next) => {
 	if (err instanceof Error) {
 		res.status(500).json({
 			error: 'internal server error',
 		});
-		next(err.message);
-		return;
+		next(err);
 	}
 };
