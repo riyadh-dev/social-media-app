@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { TLoginInput, TSignUpInput, TUserDB } from './interface';
+import { TLoginInput, TSignUpInput, TUpdateUser } from './interface';
 
 export const signupValidationSchema = Joi.object<TSignUpInput>({
 	username: Joi.string(),
@@ -12,10 +12,9 @@ export const loginValidationSchema = Joi.object<TLoginInput>({
 	password: Joi.string().min(8),
 });
 
-export const updateValidationSchema = Joi.object<TUserDB>({
+export const updateValidationSchema = Joi.object<TUpdateUser>({
 	following: Joi.array().items(Joi.string()),
 	followers: Joi.array().items(Joi.string()),
-	isAdmin: Joi.boolean(),
 	password: Joi.string().min(8),
 	username: Joi.string(),
 	profilePicture: Joi.string().uri(),

@@ -70,7 +70,9 @@ export const logout: RequestHandler = (req, res) => {
 };
 
 const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	console.log('update user');
+	const id = req.params.id ? req.params.id : res.locals.currentUser._id;
+	await UserModel.findByIdAndUpdate(id, res.locals.validatedBody);
+	res.status(200).json({ success: 'user updated' });
 };
 
 export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);

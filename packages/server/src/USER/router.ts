@@ -14,6 +14,7 @@ import {
 
 const router = Router();
 
+router.post('/', validateInput(signupValidationSchema), createUser);
 router.post('/login', validateInput(loginValidationSchema), csrfLogin, login);
 router.post('/logout', logout);
 
@@ -23,11 +24,16 @@ router.get('/:id', (req, res) => {
 	res.send('add user with id: ' + req.params.id);
 });
 
-router.post('/', validateInput(signupValidationSchema), createUser);
-
 router.put(
 	'/:id',
-	authenticate,
+	authenticate(true),
+	validateInput(updateValidationSchema),
+	updateUser
+);
+
+router.put(
+	'/',
+	authenticate(),
 	validateInput(updateValidationSchema),
 	updateUser
 );
