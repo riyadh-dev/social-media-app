@@ -5,7 +5,13 @@ import {
 	csrfProtection,
 	validateInput,
 } from '../common/middlewares';
-import { createUser, login, logout, updateUser } from './controllers';
+import {
+	createUser,
+	deleteUser,
+	login,
+	logout,
+	updateUser,
+} from './controllers';
 import {
 	loginValidationSchema,
 	signupValidationSchema,
@@ -38,8 +44,7 @@ router.put(
 	updateUser
 );
 
-router.delete('/:id', (req, res) => {
-	res.send('delete user with id: ' + req.params.id);
-});
+router.delete('', authenticate(true), deleteUser);
+router.delete('/:id', authenticate(), deleteUser);
 
 export default router;

@@ -76,3 +76,24 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
+
+const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const id = req.params.id ? req.params.id : res.locals.currentUser._id;
+	const user = await UserModel.findByIdAndUpdate(id);
+	if (!user) {
+		res.status(400).json({
+			error: 'no user with such id',
+		});
+		return;
+	}
+	if (user?.isAdmin) {
+		res.status(400).json({
+			error: 'can not delete an admin account',
+		});
+		return;
+	}
+	await user?.delete();
+	res.status(200).json({ success: 'user deleted' });
+};
+
+export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
