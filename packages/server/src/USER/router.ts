@@ -8,6 +8,7 @@ import {
 import {
 	createUser,
 	deleteUser,
+	getUser,
 	login,
 	logout,
 	updateUser,
@@ -26,10 +27,6 @@ router.post('/logout', logout);
 
 router.use(csrfProtection);
 
-router.get('/:id', (req, res) => {
-	res.send('add user with id: ' + req.params.id);
-});
-
 router.put(
 	'/:id',
 	authenticate(true),
@@ -46,5 +43,6 @@ router.put(
 
 router.delete('', authenticate(true), deleteUser);
 router.delete('/:id', authenticate(), deleteUser);
+router.get('/:id', getUser);
 
 export default router;

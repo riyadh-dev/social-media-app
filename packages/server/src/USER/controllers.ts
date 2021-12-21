@@ -16,7 +16,6 @@ const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 			return;
 		}
 	}
-
 	next(err);
 };
 
@@ -26,11 +25,6 @@ const createUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 		success: 'user created successfully',
 	});
 };
-
-export const createUser = catchAsyncRequestHandlerError(
-	createUserUnsafe,
-	createUserErrorHandler
-);
 
 const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const loginInput: TLoginInput = res.locals.validatedBody;
@@ -62,8 +56,6 @@ const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 	});
 };
 
-export const login = catchAsyncRequestHandlerError(loginUnsafe);
-
 export const logout: RequestHandler = (req, res) => {
 	res.clearCookie('cookieToken');
 	res.status(200).json({ success: 'logout successful' });
@@ -74,8 +66,6 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await UserModel.findByIdAndUpdate(id, res.locals.validatedBody);
 	res.status(200).json({ success: 'user updated' });
 };
-
-export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const id = req.params.id ? req.params.id : res.locals.currentUser._id;
@@ -96,4 +86,21 @@ const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json({ success: 'user deleted' });
 };
 
+const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const userDoc = await UserModel.findById(req.params.id);
+	if (!userDoc) {
+		res.status(400).json({ error: 'no such user' });
+		return;
+	}
+	const user = userDoc.toObject({ versionKey: false });
+	res.status(200).json(user);
+};
+
+export const createUser = catchAsyncRequestHandlerError(
+	createUserUnsafe,
+	createUserErrorHandler
+);
+export const login = catchAsyncRequestHandlerError(loginUnsafe);
+export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
 export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
+export const getUser = catchAsyncRequestHandlerError(getUserUnsafe);
