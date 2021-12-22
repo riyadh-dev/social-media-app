@@ -13,7 +13,7 @@ export const loginValidationSchema = Joi.object<TLoginInput>({
 });
 
 export const updateValidationSchema = Joi.object<TUpdateUser>({
-	following: Joi.array().items(Joi.string()),
+	followings: Joi.array().items(Joi.string()),
 	followers: Joi.array().items(Joi.string()),
 	password: Joi.string().min(8),
 	username: Joi.string(),

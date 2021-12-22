@@ -96,6 +96,79 @@ const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(user);
 };
 
+const followUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const followedUserId = req.params.id;
+	const followerUserId = res.locals.currentUser._id;
+
+	if (followedUserId === followerUserId) {
+		res.status(400).json({ error: 'a user can not follow himself' });
+		return;
+	}
+
+	const followedUserDoc = await UserModel.findById(followedUserId);
+	const followerUserDoc = await UserModel.findById(followerUserId);
+
+	if (!followedUserDoc || !followerUserDoc) {
+		res
+			.status(400)
+			.send({ error: 'wrong user id for the follower or followed' });
+		return;
+	}
+
+	if (followerUserDoc.followings.includes(followedUserId)) {
+		res.status(400).json({ error: 'user already followed' });
+		return;
+	}
+
+	followedUserDoc.followers.push(followerUserId);
+	followerUserDoc.followings.push(followedUserId);
+
+	await followerUserDoc.save();
+	await followedUserDoc.save();
+
+	res.status(200).json({
+		success: 'user followed',
+	});
+};
+
+const unfollowUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const followedUserId = req.params.id;
+	const followerUserId = res.locals.currentUser._id;
+
+	if (followedUserId === followerUserId) {
+		res.status(400).json({ error: 'a user can not unfollow himself' });
+		return;
+	}
+
+	const followedUserDoc = await UserModel.findById(followedUserId);
+	const followerUserDoc = await UserModel.findById(followerUserId);
+
+	if (!followedUserDoc || !followerUserDoc) {
+		res
+			.status(400)
+			.send({ error: 'wrong user id for the follower or followed' });
+		return;
+	}
+
+	const followedUserIdIndex = followerUserDoc.followers.indexOf(followedUserId);
+	const followerUserIdIndex = followedUserDoc.followers.indexOf(followerUserId);
+
+	if (followedUserIdIndex === -1 && followerUserIdIndex === -1) {
+		res.status(400).json({ error: 'user not followed' });
+		return;
+	}
+
+	followedUserDoc.followers.splice(followerUserIdIndex, 1);
+	followerUserDoc.followings.splice(followedUserIdIndex, 1);
+
+	await followerUserDoc.save();
+	await followedUserDoc.save();
+
+	res.status(200).json({
+		success: 'user unfollowed',
+	});
+};
+
 export const createUser = catchAsyncRequestHandlerError(
 	createUserUnsafe,
 	createUserErrorHandler
@@ -104,3 +177,5 @@ export const login = catchAsyncRequestHandlerError(loginUnsafe);
 export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
 export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
 export const getUser = catchAsyncRequestHandlerError(getUserUnsafe);
+export const follow = catchAsyncRequestHandlerError(followUnsafe);
+export const unfollow = catchAsyncRequestHandlerError(unfollowUnsafe);

@@ -8,9 +8,11 @@ import {
 import {
 	createUser,
 	deleteUser,
+	follow,
 	getUser,
 	login,
 	logout,
+	unfollow,
 	updateUser,
 } from './controllers';
 import {
@@ -29,11 +31,10 @@ router.use(csrfProtection);
 
 router.put(
 	'/:id',
-	authenticate(true),
+	authenticate({ isAdmin: true }),
 	validateInput(updateValidationSchema),
 	updateUser
 );
-
 router.put(
 	'/',
 	authenticate(),
@@ -41,8 +42,11 @@ router.put(
 	updateUser
 );
 
-router.delete('', authenticate(true), deleteUser);
+router.delete('', authenticate({ isAdmin: true }), deleteUser);
 router.delete('/:id', authenticate(), deleteUser);
+
 router.get('/:id', getUser);
+router.put('/:id/follow', authenticate(), follow);
+router.put('/:id/unfollow', authenticate(), unfollow);
 
 export default router;

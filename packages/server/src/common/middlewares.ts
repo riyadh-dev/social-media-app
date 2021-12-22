@@ -51,7 +51,7 @@ export const csrfProtection = csurf({
 });
 
 export const authenticate =
-	(authAdmin?: boolean): RequestHandler =>
+	(options?: { isAdmin?: boolean }): RequestHandler =>
 	(req, res, next) => {
 		try {
 			const currentUser = jwt.verify(
@@ -59,7 +59,7 @@ export const authenticate =
 				JWT_SECRET
 			) as unknown as TJwtUser;
 
-			if (authAdmin && !currentUser.isAdmin) {
+			if (options?.isAdmin && !currentUser.isAdmin) {
 				res.status(403).json({ error: 'not authorized' });
 				return;
 			}

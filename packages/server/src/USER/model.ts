@@ -8,7 +8,7 @@ const UserSchema = new Schema<TUserDB>(
 		password: String,
 		profilePicture: String,
 		followers: Array,
-		following: Array,
+		followings: Array,
 		isAdmin: { type: Boolean, default: false },
 	},
 	{ timestamps: true }
