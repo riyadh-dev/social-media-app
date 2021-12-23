@@ -42,10 +42,10 @@ router.put(
 	updateUser
 );
 
-router.delete('', authenticate({ isAdmin: true }), deleteUser);
 router.delete('/:id', authenticate(), deleteUser);
 
 router.get('/:id', getUser);
+
 router.put('/:id/follow', authenticate(), follow);
 router.put('/:id/unfollow', authenticate(), unfollow);
 

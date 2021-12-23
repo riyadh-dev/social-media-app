@@ -68,21 +68,33 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const id = req.params.id ? req.params.id : res.locals.currentUser._id;
-	const user = await UserModel.findByIdAndUpdate(id);
-	if (!user) {
+	const deletingUserId: string = res.locals.currentUser._id;
+	const deletedUserId = req.params.id;
+
+	if (!res.locals.currentUser.isAdmin && deletedUserId !== deletingUserId) {
+		res.status(400).json({
+			error: 'can not delete an account that is not yours',
+		});
+		return;
+	}
+
+	const deletedUser = await UserModel.findByIdAndUpdate(deletedUserId);
+
+	if (!deletedUser) {
 		res.status(400).json({
 			error: 'no user with such id',
 		});
 		return;
 	}
-	if (user?.isAdmin) {
+
+	if (deletedUser.isAdmin) {
 		res.status(400).json({
 			error: 'can not delete an admin account',
 		});
 		return;
 	}
-	await user?.delete();
+
+	await deletedUser.delete();
 	res.status(200).json({ success: 'user deleted' });
 };
 
