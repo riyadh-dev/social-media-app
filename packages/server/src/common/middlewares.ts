@@ -2,7 +2,7 @@ import csurf from 'csurf';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import { TJwtUser } from 'src/USER/interface';
+import { TJwtUser } from 'src/USER/types';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
 

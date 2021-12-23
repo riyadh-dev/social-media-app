@@ -4,7 +4,7 @@ import jwt from 'jsonwebtoken';
 import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
-import { TLoginInput } from './interface';
+import { TLoginInput } from './types';
 import UserModel from './model';
 
 const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {

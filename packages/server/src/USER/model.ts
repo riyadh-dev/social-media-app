@@ -1,6 +1,6 @@
 import bcrypt from 'bcryptjs';
 import { model, Schema } from 'mongoose';
-import { TUserDB } from './interface';
+import { TUserDB } from './types';
 
 const UserSchema = new Schema<TUserDB>(
 	{

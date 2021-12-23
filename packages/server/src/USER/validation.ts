@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { TLoginInput, TSignUpInput, TUpdateUser } from './interface';
+import { TLoginInput, TSignUpInput, TUpdateUser } from './types';
 
 export const signupValidationSchema = Joi.object<TSignUpInput>({
 	username: Joi.string(),
