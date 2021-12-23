@@ -31,12 +31,6 @@ router.use(csrfProtection);
 
 router.put(
 	'/:id',
-	authenticate({ isAdmin: true }),
-	validateInput(updateValidationSchema),
-	updateUser
-);
-router.put(
-	'/',
 	authenticate(),
 	validateInput(updateValidationSchema),
 	updateUser

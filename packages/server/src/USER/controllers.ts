@@ -1,11 +1,12 @@
 import bcrypt from 'bcryptjs';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
+import { isValidObjectId } from 'mongoose';
 import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
-import { TLoginInput } from './types';
 import UserModel from './model';
+import { TCurrentUser, TLoginInput } from './types';
 
 const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
@@ -62,8 +63,29 @@ export const logout: RequestHandler = (req, res) => {
 };
 
 const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const id = req.params.id ? req.params.id : res.locals.currentUser._id;
-	await UserModel.findByIdAndUpdate(id, res.locals.validatedBody);
+	const updatedUserId = req.params.id;
+	const currentUser: TCurrentUser = res.locals.currentUser;
+
+	if (!isValidObjectId(updatedUserId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+
+	if (updatedUserId !== currentUser._id && !currentUser.isAdmin) {
+		res.status(400).json({ error: 'you can only update your account' });
+		return;
+	}
+
+	const updateUser = await UserModel.findByIdAndUpdate(
+		updatedUserId,
+		res.locals.validatedBody
+	);
+
+	if (!updateUser) {
+		res.status(400).json({ error: 'no such user' });
+		return;
+	}
+
 	res.status(200).json({ success: 'user updated' });
 };
 
