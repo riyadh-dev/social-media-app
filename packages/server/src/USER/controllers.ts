@@ -93,6 +93,11 @@ const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const deletingUserId: string = res.locals.currentUser._id;
 	const deletedUserId = req.params.id;
 
+	if (!isValidObjectId(deletedUserId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+
 	if (!res.locals.currentUser.isAdmin && deletedUserId !== deletingUserId) {
 		res.status(400).json({
 			error: 'can not delete an account that is not yours',
@@ -121,7 +126,14 @@ const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const userDoc = await UserModel.findById(req.params.id);
+	const userId = req.params.id;
+
+	if (!isValidObjectId(userId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+
+	const userDoc = await UserModel.findById(userId);
 	if (!userDoc) {
 		res.status(400).json({ error: 'no such user' });
 		return;
@@ -133,6 +145,11 @@ const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 const followUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const followedUserId = req.params.id;
 	const followerUserId = res.locals.currentUser._id;
+
+	if (!isValidObjectId(followedUserId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
 
 	if (followedUserId === followerUserId) {
 		res.status(400).json({ error: 'a user can not follow himself' });
@@ -168,6 +185,11 @@ const followUnsafe: IAsyncRequestHandler = async (req, res) => {
 const unfollowUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const followedUserId = req.params.id;
 	const followerUserId = res.locals.currentUser._id;
+
+	if (!isValidObjectId(followedUserId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
 
 	if (followedUserId === followerUserId) {
 		res.status(400).json({ error: 'a user can not unfollow himself' });
