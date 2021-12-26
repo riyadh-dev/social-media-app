@@ -14,7 +14,8 @@ const UserSchema = new Schema<TUserDB>(
 	{ timestamps: true }
 );
 
-UserSchema.pre<TUserDB>('save', function (next) {
+UserSchema.pre('save', function (next) {
+	if (!this.isModified('password')) return next();
 	const salt = bcrypt.genSaltSync(10);
 	this.password = bcrypt.hashSync(this.password, salt);
 	next();
