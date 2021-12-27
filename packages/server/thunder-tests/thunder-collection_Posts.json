@@ -1,0 +1,191 @@
+{
+	"client": "Thunder Client",
+	"collectionName": "Posts",
+	"dateExported": "2021-12-27T14:14:17.527Z",
+	"version": "1.1",
+	"folders": [],
+	"requests": [
+		{
+			"containerId": "",
+			"sortNum": 5000,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				}
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "sign up",
+			"url": "http://localhost:4000/api/users",
+			"method": "POST",
+			"modified": "2021-12-27T14:03:22.914Z",
+			"created": "2021-12-27T13:40:40.385Z",
+			"_id": "04247d0b-356d-4d94-8e6f-a13018e5d34d",
+			"params": [],
+			"body": {
+				"type": "json",
+				"raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+				"form": []
+			},
+			"tests": [
+				{
+					"type": "set-env-var",
+					"custom": "json.error",
+					"action": "setto",
+					"value": "{{error}}"
+				},
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		},
+		{
+			"containerId": "",
+			"sortNum": 7500,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				}
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "login",
+			"url": "http://localhost:4000/api/users/login",
+			"method": "POST",
+			"modified": "2021-12-27T14:03:42.352Z",
+			"created": "2021-12-27T13:41:16.392Z",
+			"_id": "e5056deb-5355-41a6-86f1-b136af822939",
+			"params": [],
+			"body": {
+				"type": "json",
+				"raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+				"form": []
+			},
+			"tests": [
+				{
+					"type": "set-env-var",
+					"custom": "json._id",
+					"action": "setto",
+					"value": "{{USER_ID}}"
+				},
+				{
+					"type": "set-env-var",
+					"custom": "json.csrfToken",
+					"action": "setto",
+					"value": "{{CSRF_TOKEN}}"
+				},
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		},
+		{
+			"containerId": "",
+			"sortNum": 10000,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				},
+				{
+					"name": "csrf-token",
+					"value": "JjF18bfX-84Z8r--tgm-DGGVIdHJ49STa144"
+				}
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "add Post",
+			"url": "http://localhost:4000/api/posts",
+			"method": "POST",
+			"modified": "2021-12-27T14:03:52.509Z",
+			"created": "2021-12-27T13:11:32.555Z",
+			"_id": "fafd92a9-11bb-4d1a-80b1-201f5fa8a2c1",
+			"params": [],
+			"body": {
+				"type": "json",
+				"raw": "{\n    \"description\":\"test post\"\n}",
+				"form": []
+			},
+			"tests": [
+				{
+					"type": "set-env-var",
+					"custom": "json.post._id",
+					"action": "setto",
+					"value": "{{POST_ID}}"
+				},
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		},
+		{
+			"containerId": "",
+			"sortNum": 20000,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				}
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "Get Post",
+			"url": "http://localhost:4000/api/posts/{{POST_ID}}",
+			"method": "GET",
+			"modified": "2021-12-27T14:04:02.064Z",
+			"created": "2021-12-27T13:24:30.232Z",
+			"_id": "45a09650-64f4-46d5-a8ba-0f03cdb27dc0",
+			"params": [],
+			"tests": [
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		},
+		{
+			"containerId": "",
+			"sortNum": 25000,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				},
+				{ "name": "csrf-token", "value": "{{CSRF_TOKEN}}" }
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "Update Post",
+			"url": "http://localhost:4000/api/posts/{{POST_ID}}",
+			"method": "PUT",
+			"modified": "2021-12-27T14:04:09.436Z",
+			"created": "2021-12-27T13:23:01.051Z",
+			"_id": "86ee8660-47ec-4922-ac70-361d0c33ccc3",
+			"params": [],
+			"body": {
+				"type": "json",
+				"raw": "{\n    \"description\":\"updated test post\"\n}",
+				"form": []
+			},
+			"tests": [
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		},
+		{
+			"containerId": "",
+			"sortNum": 30000,
+			"headers": [
+				{ "name": "Accept", "value": "*/*" },
+				{
+					"name": "User-Agent",
+					"value": "Thunder Client (https://www.thunderclient.io)"
+				},
+				{ "name": "csrf-token", "value": "{{CSRF_TOKEN}}" }
+			],
+			"colId": "cc7ab8db-8fa7-4b15-9cb9-f344a12c12da",
+			"name": "Delete Post",
+			"url": "http://localhost:4000/api/posts/{{POST_ID}}",
+			"method": "DELETE",
+			"modified": "2021-12-27T14:04:17.950Z",
+			"created": "2021-12-27T13:23:46.608Z",
+			"_id": "f2ab5971-cbab-49ea-b34c-4e57d68d4b3b",
+			"params": [],
+			"tests": [
+				{ "type": "res-code", "custom": "", "action": "equal", "value": "200" }
+			]
+		}
+	]
+}
