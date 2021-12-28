@@ -1,6 +1,13 @@
 import { Router } from 'express';
 import { authenticate, validateInput } from '../common/middlewares';
-import { createPost, deletePost, getPost, updatePost } from './controllers';
+import {
+	createPost,
+	deletePost,
+	dislikePost,
+	getPost,
+	likePost,
+	updatePost,
+} from './controllers';
 import {
 	createPostValidationSchema,
 	updatePostValidationSchema,
@@ -29,6 +36,12 @@ router.put(
 
 //delete post
 router.delete('/:id', authenticate(), deletePost);
+
+//like post
+router.put('/:id/like', authenticate(), likePost);
+
+//dislike post
+router.put('/:id/dislike', authenticate(), dislikePost);
 
 //get timeline post
 

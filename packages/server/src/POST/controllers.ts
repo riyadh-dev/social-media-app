@@ -2,16 +2,19 @@ import { isValidObjectId } from 'mongoose';
 import { TCurrentUser } from 'src/USER/types';
 import { IAsyncRequestHandler } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
+import UserModel from '../USER/model';
 import PostModel from './model';
 import { TPostInput } from './types';
 
 const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const currentUser: TCurrentUser = res.locals.currentUser;
 	const createPostInput: TPostInput = res.locals.validatedBody;
+
 	const postDoc = await PostModel.create({
-		userId: currentUser._id,
+		author: currentUser._id,
 		...createPostInput,
 	});
+
 	res.status(200).json({
 		post: postDoc.toObject({ versionKey: false }),
 	});
@@ -34,11 +37,12 @@ const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
-	if (!isValidObjectId(postId)) {
+	if (!isValidObjectId(req.params.id)) {
 		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
+
+	const postId = req.params.id;
 
 	const postDoc = await PostModel.findById(postId);
 	if (!postDoc) {
@@ -47,7 +51,11 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const currentUser: TCurrentUser = res.locals.currentUser;
-	if (postDoc.userId !== currentUser._id && !currentUser.isAdmin) {
+	if (
+		postDoc.author.toString() !== currentUser._id.toString() &&
+		!currentUser.isAdmin
+	) {
+		console.log(postDoc.author);
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -74,7 +82,7 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const currentUser: TCurrentUser = res.locals.currentUser;
-	if (postDoc.userId !== currentUser._id && !currentUser.isAdmin) {
+	if (postDoc.author !== currentUser._id && !currentUser.isAdmin) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -84,7 +92,101 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json({ success: 'post deleted' });
 };
 
+const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const postId = req.params.id;
+	const currentUserId = res.locals.currentUser._id;
+
+	if (!isValidObjectId(postId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+
+	const postDoc = await PostModel.findById(postId);
+	const currentUserDoc = await UserModel.findById(currentUserId);
+
+	if (!postDoc || !currentUserDoc) {
+		res.status(404).send({ error: 'post or current user not found' });
+		return;
+	}
+
+	if (postDoc.likes.includes(currentUserId)) {
+		res.status(400).json({ error: 'post already liked' });
+		return;
+	}
+
+	postDoc.likes.push(currentUserId);
+	currentUserDoc.likedPosts.push(postDoc._id);
+
+	const postDislikeIdx = postDoc.dislikes.indexOf(currentUserId);
+	const userDislikeIdx = currentUserDoc.dislikedPosts.indexOf(currentUserId);
+
+	if (postDislikeIdx !== -1) {
+		postDoc.dislikes.splice(postDislikeIdx, 1);
+	}
+
+	if (userDislikeIdx !== -1) {
+		currentUserDoc.dislikedPosts.splice(postDislikeIdx, 1);
+	}
+
+	await currentUserDoc.save();
+	await postDoc.save();
+
+	res.status(200).json({
+		success: 'post liked',
+	});
+};
+
+const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const postId = req.params.id;
+	const currentUserId = res.locals.currentUser._id;
+
+	if (!isValidObjectId(postId)) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+
+	const postDoc = await PostModel.findById(postId);
+	const currentUserDoc = await UserModel.findById(currentUserId);
+
+	if (!postDoc || !currentUserDoc) {
+		res.status(404).send({ error: 'post or current user not found' });
+		return;
+	}
+
+	if (postDoc.dislikes.includes(currentUserId)) {
+		res.status(400).json({ error: 'post already disliked' });
+		return;
+	}
+
+	postDoc.dislikes.push(currentUserId);
+	currentUserDoc.dislikedPosts.push(postDoc._id);
+
+	const postDislikeIdx = postDoc.likes.indexOf(currentUserId);
+	const userDislikeIdx = currentUserDoc.likedPosts.indexOf(currentUserId);
+
+	if (postDislikeIdx !== -1) {
+		postDoc.likes.splice(postDislikeIdx, 1);
+	}
+
+	if (userDislikeIdx !== -1) {
+		currentUserDoc.likedPosts.splice(postDislikeIdx, 1);
+	}
+
+	await currentUserDoc.save();
+	await postDoc.save();
+
+	res.status(200).json({
+		success: 'post liked',
+	});
+};
+
+const getTimelinePosts: IAsyncRequestHandler = async (req, res) => {
+	const currentUserFromCookie: TCurrentUser = res.locals.currentUser;
+	const currentUserDoc = await UserModel.findById(currentUserFromCookie._id);
+};
 export const createPost = catchAsyncRequestHandlerError(createPostUnsafe);
 export const getPost = catchAsyncRequestHandlerError(getPostUnsafe);
 export const updatePost = catchAsyncRequestHandlerError(updatePostUnsafe);
 export const deletePost = catchAsyncRequestHandlerError(deletePostUnsafe);
+export const likePost = catchAsyncRequestHandlerError(likePostUnsafe);
+export const dislikePost = catchAsyncRequestHandlerError(dislikePostUnsafe);
