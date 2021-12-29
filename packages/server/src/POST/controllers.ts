@@ -15,9 +15,7 @@ const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		...createPostInput,
 	});
 
-	res.status(200).json({
-		post: postDoc.toObject({ versionKey: false }),
-	});
+	res.status(200).json(postDoc);
 };
 
 const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -33,39 +31,32 @@ const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	res.status(200).json({ post: postDoc.toObject({ versionKey: false }) });
+	res.status(200).json(postDoc);
 };
 
 const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	if (!isValidObjectId(req.params.id)) {
+	const postId = req.params.id;
+	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
-	const postId = req.params.id;
+	const post = await PostModel.findByIdAndUpdate(
+		postId,
+		{
+			author: res.locals.currentUser._id,
+			...res.locals.validatedBody,
+			test: 2566,
+		},
+		{ new: true }
+	);
 
-	const postDoc = await PostModel.findById(postId);
-	if (!postDoc) {
+	if (!post) {
 		res.status(404).json({ error: 'post not found' });
 		return;
 	}
 
-	const currentUser: TCurrentUser = res.locals.currentUser;
-	if (
-		postDoc.author.toString() !== currentUser._id.toString() &&
-		!currentUser.isAdmin
-	) {
-		console.log(postDoc.author);
-		res.status(400).json({ error: 'not authorized' });
-		return;
-	}
-
-	const postUpdateInput: TPostInput = res.locals.validatedBody;
-	postDoc.$set({ ...postUpdateInput });
-	await postDoc.save();
-	res
-		.status(200)
-		.json({ updatedPost: postDoc.toObject({ versionKey: false }) });
+	res.status(200).json(post);
 };
 
 const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -180,9 +171,24 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	});
 };
 
-const getTimelinePosts: IAsyncRequestHandler = async (req, res) => {
+const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const currentUserFromCookie: TCurrentUser = res.locals.currentUser;
 	const currentUserDoc = await UserModel.findById(currentUserFromCookie._id);
+	if (!currentUserDoc) {
+		res.status(404).json({ error: 'no such user' });
+		return;
+	}
+
+	if (!currentUserDoc.followings.length) {
+		res.status(200).json([]);
+		return;
+	}
+
+	const posts = await PostModel.find({
+		author: { $in: currentUserDoc.followings },
+	});
+
+	res.status(200).json(posts);
 };
 export const createPost = catchAsyncRequestHandlerError(createPostUnsafe);
 export const getPost = catchAsyncRequestHandlerError(getPostUnsafe);
@@ -190,3 +196,6 @@ export const updatePost = catchAsyncRequestHandlerError(updatePostUnsafe);
 export const deletePost = catchAsyncRequestHandlerError(deletePostUnsafe);
 export const likePost = catchAsyncRequestHandlerError(likePostUnsafe);
 export const dislikePost = catchAsyncRequestHandlerError(dislikePostUnsafe);
+export const getTimelinePosts = catchAsyncRequestHandlerError(
+	getTimelinePostsUnsafe
+);

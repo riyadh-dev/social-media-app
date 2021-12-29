@@ -5,6 +5,7 @@ import {
 	deletePost,
 	dislikePost,
 	getPost,
+	getTimelinePosts,
 	likePost,
 	updatePost,
 } from './controllers';
@@ -22,6 +23,9 @@ router.post(
 	validateInput(createPostValidationSchema),
 	createPost
 );
+
+//get timeline post
+router.get('/timeline', authenticate(), getTimelinePosts);
 
 //read post
 router.get('/:id', getPost);
@@ -42,7 +46,5 @@ router.put('/:id/like', authenticate(), likePost);
 
 //dislike post
 router.put('/:id/dislike', authenticate(), dislikePost);
-
-//get timeline post
 
 export default router;

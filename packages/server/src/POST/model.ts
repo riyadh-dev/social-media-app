@@ -9,7 +9,7 @@ const UserSchema = new Schema<TPostDB>(
 		likes: [String],
 		dislikes: [String],
 	},
-	{ timestamps: true }
+	{ timestamps: true, versionKey: false }
 );
 
 export default model('Post', UserSchema);
