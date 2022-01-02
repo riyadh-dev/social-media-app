@@ -1,5 +1,21 @@
+import AppsIcon from '@mui/icons-material/Apps';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
+import FavoriteIcon from '@mui/icons-material/Favorite';
+import HomeIcon from '@mui/icons-material/Home';
 import MenuIcon from '@mui/icons-material/Menu';
-import { Tab, Tabs } from '@mui/material';
+import MessageIcon from '@mui/icons-material/Message';
+import NotificationsIcon from '@mui/icons-material/Notifications';
+import PeopleIcon from '@mui/icons-material/People';
+import SearchIcon from '@mui/icons-material/Search';
+import {
+	alpha,
+	InputBase,
+	ListItemIcon,
+	ListItemText,
+	styled,
+	Tab,
+	Tabs,
+} from '@mui/material';
 import AppBar from '@mui/material/AppBar';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
@@ -10,13 +26,51 @@ import MenuItem from '@mui/material/MenuItem';
 import Toolbar from '@mui/material/Toolbar';
 import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
-import PhoneIcon from '@mui/icons-material/Phone';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import PersonPinIcon from '@mui/icons-material/PersonPin';
+import React from 'react';
 
-const pages = ['Products', 'Pricing', 'Blog'];
 const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
+
+const Search = styled('div')(({ theme }) => ({
+	position: 'relative',
+	borderRadius: '50px',
+	backgroundColor: alpha(theme.palette.common.white, 0.15),
+	'&:hover': {
+		backgroundColor: alpha(theme.palette.common.white, 0.25),
+	},
+	marginLeft: 0,
+	width: '100%',
+	[theme.breakpoints.up('sm')]: {
+		marginLeft: theme.spacing(1),
+		width: 'auto',
+	},
+}));
+
+const SearchIconWrapper = styled('div')(({ theme }) => ({
+	padding: theme.spacing(0, 2),
+	height: '100%',
+	position: 'absolute',
+	pointerEvents: 'none',
+	display: 'flex',
+	alignItems: 'center',
+	justifyContent: 'center',
+}));
+
+const StyledInputBase = styled(InputBase)(({ theme }) => ({
+	color: 'inherit',
+	'& .MuiInputBase-input': {
+		padding: theme.spacing(1, 1, 1, 0),
+		// vertical padding + font size from searchIcon
+		paddingLeft: `calc(1em + ${theme.spacing(4)})`,
+		transition: theme.transitions.create('width'),
+		width: '100%',
+		[theme.breakpoints.up('sm')]: {
+			width: '12ch',
+			'&:focus': {
+				width: '20ch',
+			},
+		},
+	},
+}));
 
 const TopBar = () => {
 	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
@@ -50,21 +104,36 @@ const TopBar = () => {
 	return (
 		<AppBar position='static'>
 			<Container maxWidth={false}>
-				<Toolbar variant='dense' disableGutters>
-					<Typography
-						variant='h6'
-						noWrap
-						component='div'
-						sx={{ mr: 2, display: { xs: 'none', md: 'flex' } }}
+				<Toolbar disableGutters>
+					<Box
+						sx={{
+							display: { xs: 'none', md: 'flex' },
+							alignItems: 'center',
+							width: '245px',
+						}}
 					>
-						SocialApp
-					</Typography>
+						<Avatar
+							sx={{ mr: '10px' }}
+							src='https://img.icons8.com/fluency/240/000000/share-2.png'
+						>
+							SA
+						</Avatar>
+						<Search>
+							<SearchIconWrapper>
+								<SearchIcon />
+							</SearchIconWrapper>
+							<StyledInputBase
+								placeholder='Search…'
+								inputProps={{ 'aria-label': 'search' }}
+							/>
+						</Search>
+					</Box>
 
 					<Box sx={{ flexGrow: 1, display: { xs: 'flex', md: 'none' } }}>
 						<IconButton
 							size='large'
 							aria-label='account of current user'
-							aria-controls='menu-appbar'
+							aria-controls='menu-appBar'
 							aria-haspopup='true'
 							onClick={handleOpenNavMenu}
 							color='inherit'
@@ -72,7 +141,7 @@ const TopBar = () => {
 							<MenuIcon />
 						</IconButton>
 						<Menu
-							id='menu-appbar'
+							id='menu-appBar'
 							anchorEl={anchorElNav}
 							anchorOrigin={{
 								vertical: 'bottom',
@@ -87,13 +156,27 @@ const TopBar = () => {
 							onClose={handleCloseNavMenu}
 							sx={{
 								display: { xs: 'block', md: 'none' },
+								mt: '10px',
 							}}
 						>
-							{pages.map((page) => (
-								<MenuItem key={page} onClick={handleCloseNavMenu}>
-									<Typography textAlign='center'>{page}</Typography>
-								</MenuItem>
-							))}
+							<MenuItem>
+								<ListItemIcon>
+									<HomeIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Phone</ListItemText>
+							</MenuItem>
+							<MenuItem>
+								<ListItemIcon>
+									<FavoriteIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Favorites</ListItemText>
+							</MenuItem>
+							<MenuItem>
+								<ListItemIcon>
+									<PeopleIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Account</ListItemText>
+							</MenuItem>
 						</Menu>
 					</Box>
 					<Typography
@@ -107,6 +190,7 @@ const TopBar = () => {
 					<Box
 						sx={{
 							flexGrow: 1,
+							zIndex: 1,
 							display: { xs: 'none', md: 'flex' },
 							justifyContent: 'center',
 						}}
@@ -117,21 +201,65 @@ const TopBar = () => {
 							aria-label='icon tabs example'
 							centered
 						>
-							<Tab icon={<PhoneIcon />} aria-label='phone' />
+							<Tab icon={<HomeIcon />} aria-label='phone' sx={{ my: '8px' }} />
 							<Tab icon={<FavoriteIcon />} aria-label='favorite' />
-							<Tab icon={<PersonPinIcon />} aria-label='person' />
+							<Tab icon={<PeopleIcon />} aria-label='person' />
 						</Tabs>
 					</Box>
 
 					<Box sx={{ flexGrow: 0 }}>
+						<IconButton
+							sx={{
+								p: 0,
+								mx: '5px',
+								display: { xs: 'none', md: 'inline' },
+							}}
+						>
+							<Avatar alt='Avatar' />
+						</IconButton>
+						<IconButton
+							sx={{
+								p: 0,
+								mx: '5px',
+								display: { xs: 'none', md: 'inline' },
+							}}
+						>
+							<Avatar>
+								<AppsIcon />
+							</Avatar>
+						</IconButton>
+						<IconButton
+							sx={{
+								p: 0,
+								mx: '5px',
+								display: { xs: 'none', md: 'inline' },
+							}}
+						>
+							<Avatar>
+								<MessageIcon />
+							</Avatar>
+						</IconButton>
+						<IconButton
+							sx={{
+								p: 0,
+								mx: '5px',
+								display: { xs: 'none', md: 'inline' },
+							}}
+						>
+							<Avatar>
+								<NotificationsIcon />
+							</Avatar>
+						</IconButton>
 						<Tooltip title='Open settings'>
-							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0 }}>
-								<Avatar alt='Remy Sharp' src='/static/images/avatar/2.jpg' />
+							<IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: '5px' }}>
+								<Avatar>
+									<ArrowDropDownIcon />
+								</Avatar>
 							</IconButton>
 						</Tooltip>
 						<Menu
 							sx={{ mt: '45px' }}
-							id='menu-appbar'
+							id='menu-appBar'
 							anchorEl={anchorElUser}
 							anchorOrigin={{
 								vertical: 'top',
