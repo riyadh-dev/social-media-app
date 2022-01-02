@@ -1,12 +1,12 @@
-import AppsIcon from '@mui/icons-material/Apps';
-import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDown';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import HomeIcon from '@mui/icons-material/Home';
-import MenuIcon from '@mui/icons-material/Menu';
-import MessageIcon from '@mui/icons-material/Message';
-import NotificationsIcon from '@mui/icons-material/Notifications';
-import PeopleIcon from '@mui/icons-material/People';
-import SearchIcon from '@mui/icons-material/Search';
+import AppsIcon from '@mui/icons-material/AppsRounded';
+import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
+import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
+import HomeIcon from '@mui/icons-material/HomeRounded';
+import MenuIcon from '@mui/icons-material/MenuRounded';
+import MessageIcon from '@mui/icons-material/MessageRounded';
+import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
+import PeopleIcon from '@mui/icons-material/PeopleRounded';
+import SearchIcon from '@mui/icons-material/SearchRounded';
 import {
 	alpha,
 	InputBase,
