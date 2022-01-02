@@ -1,12 +1,15 @@
 import AppsIcon from '@mui/icons-material/AppsRounded';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
+import DarkModeIcon from '@mui/icons-material/DarkMode';
 import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
+import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MenuIcon from '@mui/icons-material/MenuRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
 import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
 import PeopleIcon from '@mui/icons-material/PeopleRounded';
 import SearchIcon from '@mui/icons-material/SearchRounded';
+import SettingsIcon from '@mui/icons-material/SettingsRounded';
 import {
 	alpha,
 	InputBase,
@@ -163,7 +166,7 @@ const TopBar = () => {
 								<ListItemIcon>
 									<HomeIcon fontSize='small' />
 								</ListItemIcon>
-								<ListItemText>Phone</ListItemText>
+								<ListItemText>Home</ListItemText>
 							</MenuItem>
 							<MenuItem>
 								<ListItemIcon>
@@ -175,7 +178,7 @@ const TopBar = () => {
 								<ListItemIcon>
 									<PeopleIcon fontSize='small' />
 								</ListItemIcon>
-								<ListItemText>Account</ListItemText>
+								<ListItemText>Friends</ListItemText>
 							</MenuItem>
 						</Menu>
 					</Box>
@@ -190,7 +193,6 @@ const TopBar = () => {
 					<Box
 						sx={{
 							flexGrow: 1,
-							zIndex: 1,
 							display: { xs: 'none', md: 'flex' },
 							justifyContent: 'center',
 						}}
@@ -201,13 +203,13 @@ const TopBar = () => {
 							aria-label='icon tabs example'
 							centered
 						>
-							<Tab icon={<HomeIcon />} aria-label='phone' sx={{ my: '8px' }} />
-							<Tab icon={<FavoriteIcon />} aria-label='favorite' />
-							<Tab icon={<PeopleIcon />} aria-label='person' />
+							<Tab icon={<HomeIcon />} aria-label='Home' sx={{ my: '8px' }} />
+							<Tab icon={<FavoriteIcon />} aria-label='Favorite' />
+							<Tab icon={<PeopleIcon />} aria-label='Friends' />
 						</Tabs>
 					</Box>
 
-					<Box sx={{ flexGrow: 0 }}>
+					<Box>
 						<IconButton
 							sx={{
 								p: 0,
@@ -258,7 +260,7 @@ const TopBar = () => {
 							</IconButton>
 						</Tooltip>
 						<Menu
-							sx={{ mt: '45px' }}
+							sx={{ mt: '50px' }}
 							id='menu-appBar'
 							anchorEl={anchorElUser}
 							anchorOrigin={{
@@ -273,11 +275,24 @@ const TopBar = () => {
 							open={Boolean(anchorElUser)}
 							onClose={handleCloseUserMenu}
 						>
-							{settings.map((setting) => (
-								<MenuItem key={setting} onClick={handleCloseNavMenu}>
-									<Typography textAlign='center'>{setting}</Typography>
-								</MenuItem>
-							))}
+							<MenuItem onClick={handleCloseNavMenu}>
+								<ListItemIcon>
+									<SettingsIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Settings</ListItemText>
+							</MenuItem>
+							<MenuItem onClick={handleCloseNavMenu}>
+								<ListItemIcon>
+									<DarkModeIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Dark Mode</ListItemText>
+							</MenuItem>
+							<MenuItem onClick={handleCloseNavMenu}>
+								<ListItemIcon>
+									<LogoutIcon fontSize='small' />
+								</ListItemIcon>
+								<ListItemText>Log Out</ListItemText>
+							</MenuItem>
 						</Menu>
 					</Box>
 				</Toolbar>
