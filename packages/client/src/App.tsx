@@ -1,5 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import { createTheme } from '@mui/material';
+import { createTheme, CssBaseline } from '@mui/material';
 import React from 'react';
 import TopBar from './components/TopBar';
 
@@ -12,9 +12,9 @@ const darkTheme = createTheme({
 function App() {
 	return (
 		<ThemeProvider theme={darkTheme}>
-			<div className='App'>
+			<CssBaseline>
 				<TopBar />
-			</div>
+			</CssBaseline>
 		</ThemeProvider>
 	);
 }

@@ -31,8 +31,6 @@ import Tooltip from '@mui/material/Tooltip';
 import Typography from '@mui/material/Typography';
 import React from 'react';
 
-const settings = ['Profile', 'Account', 'Dashboard', 'Logout'];
-
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
 	borderRadius: '50px',
@@ -105,7 +103,7 @@ const TopBar = () => {
 	};
 
 	return (
-		<AppBar position='static'>
+		<AppBar position='static' color='inherit'>
 			<Container maxWidth={false}>
 				<Toolbar disableGutters>
 					<Box
@@ -115,12 +113,11 @@ const TopBar = () => {
 							width: '245px',
 						}}
 					>
-						<Avatar
-							sx={{ mr: '10px' }}
-							src='https://img.icons8.com/fluency/240/000000/share-2.png'
-						>
-							SA
-						</Avatar>
+						<img
+							src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
+							alt='Logo'
+							style={{ width: '45px' }}
+						/>
 						<Search>
 							<SearchIconWrapper>
 								<SearchIcon />
