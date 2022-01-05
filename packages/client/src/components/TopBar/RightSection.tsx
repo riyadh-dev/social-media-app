@@ -1,6 +1,7 @@
 import AppsIcon from '@mui/icons-material/AppsRounded';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
+import LightModeIcon from '@mui/icons-material/LightModeRounded';
 import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
 import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
@@ -13,6 +14,8 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import { themeState } from '../../recoil/states';
 
 const RightSection = () => {
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -25,6 +28,15 @@ const RightSection = () => {
 
 	const handleCloseUserMenu = () => {
 		setAnchorElUser(null);
+	};
+
+	const [theme, setTheme] = useRecoilState(themeState);
+
+	const handleToggleTheme = () => {
+		setTheme((currVal) => ({
+			isUserPicked: true,
+			mode: currVal.mode === 'dark' ? 'light' : 'dark',
+		}));
 	};
 
 	return (
@@ -97,11 +109,17 @@ const RightSection = () => {
 					</ListItemIcon>
 					<ListItemText>Settings</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={handleCloseUserMenu}>
+				<MenuItem onClick={handleToggleTheme}>
 					<ListItemIcon>
-						<DarkModeIcon fontSize='small' />
+						{theme.mode === 'light' ? (
+							<DarkModeIcon fontSize='small' />
+						) : (
+							<LightModeIcon fontSize='small' />
+						)}
 					</ListItemIcon>
-					<ListItemText>Dark Mode</ListItemText>
+					<ListItemText>
+						{theme.mode === 'light' ? 'Dark Mode' : 'Light Mode'}
+					</ListItemText>
 				</MenuItem>
 				<MenuItem onClick={handleCloseUserMenu}>
 					<ListItemIcon>
