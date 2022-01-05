@@ -16,7 +16,8 @@ const MiddleSection = () => {
 		<Box
 			sx={{
 				flexGrow: 1,
-				visibility: { xs: 'collapse', md: 'visible' },
+				visibility: { xs: 'hidden', md: 'visible' },
+				width: { xs: 0, md: 'auto' },
 			}}
 		>
 			<Tabs
