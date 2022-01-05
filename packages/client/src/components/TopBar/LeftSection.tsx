@@ -11,9 +11,9 @@ import { sideBarOpenState } from '../../recoil/states';
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
 	borderRadius: '50px',
-	backgroundColor: alpha(theme.palette.common.white, 0.15),
+	backgroundColor: alpha(theme.palette.action.active, 0.1),
 	'&:hover': {
-		backgroundColor: alpha(theme.palette.common.white, 0.25),
+		backgroundColor: alpha(theme.palette.action.active, 0.15),
 	},
 	marginLeft: 0,
 	width: '100%',
