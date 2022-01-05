@@ -10,3 +10,8 @@ export const themeState = atom<ITheme>({
 	},
 	effects_UNSTABLE: [themePersistEffect],
 });
+
+export const sideBarOpenState = atom({
+	key: 'sideBarOpenState',
+	default: false,
+});

@@ -1,21 +1,12 @@
-import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
-import HomeIcon from '@mui/icons-material/HomeRounded';
 import MenuIcon from '@mui/icons-material/MenuRounded';
-import PeopleIcon from '@mui/icons-material/PeopleRounded';
 import SearchIcon from '@mui/icons-material/SearchRounded';
-import {
-	alpha,
-	InputBase,
-	ListItemIcon,
-	ListItemText,
-	styled,
-} from '@mui/material';
+import { alpha, InputBase, styled } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
-import Menu from '@mui/material/Menu';
-import MenuItem from '@mui/material/MenuItem';
 import React from 'react';
+import { useRecoilState } from 'recoil';
+import { sideBarOpenState } from '../../recoil/states';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -60,16 +51,10 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const LeftSection = () => {
-	const [anchorElNav, setAnchorElNav] = React.useState<null | HTMLElement>(
-		null
-	);
+	const setSideBarOpen = useRecoilState(sideBarOpenState)[1];
 
-	const handleOpenNavMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorElNav(event.currentTarget);
-	};
-
-	const handleCloseNavMenu = () => {
-		setAnchorElNav(null);
+	const handleOpenSideBar = (event: React.MouseEvent<HTMLElement>) => {
+		setSideBarOpen((currVal) => !currVal);
 	};
 
 	return (
@@ -114,54 +99,9 @@ const LeftSection = () => {
 					display: { xs: 'flex', md: 'none' },
 				}}
 			>
-				<IconButton
-					size='large'
-					aria-label='account of current user'
-					aria-controls='menu-appBar'
-					aria-haspopup='true'
-					onClick={handleOpenNavMenu}
-					color='inherit'
-				>
+				<IconButton size='large' onClick={handleOpenSideBar} color='inherit'>
 					<MenuIcon />
 				</IconButton>
-				<Menu
-					id='menu-appBar'
-					anchorEl={anchorElNav}
-					anchorOrigin={{
-						vertical: 'bottom',
-						horizontal: 'left',
-					}}
-					keepMounted
-					transformOrigin={{
-						vertical: 'top',
-						horizontal: 'left',
-					}}
-					open={Boolean(anchorElNav)}
-					onClose={handleCloseNavMenu}
-					sx={{
-						display: { xs: 'inline', md: 'none' },
-						mt: '10px',
-					}}
-				>
-					<MenuItem>
-						<ListItemIcon>
-							<HomeIcon fontSize='small' />
-						</ListItemIcon>
-						<ListItemText>Home</ListItemText>
-					</MenuItem>
-					<MenuItem>
-						<ListItemIcon>
-							<FavoriteIcon fontSize='small' />
-						</ListItemIcon>
-						<ListItemText>Favorites</ListItemText>
-					</MenuItem>
-					<MenuItem>
-						<ListItemIcon>
-							<PeopleIcon fontSize='small' />
-						</ListItemIcon>
-						<ListItemText>Friends</ListItemText>
-					</MenuItem>
-				</Menu>
 			</Box>
 		</Box>
 	);
