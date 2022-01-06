@@ -1,30 +1,72 @@
-import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
-import HomeIcon from '@mui/icons-material/HomeRounded';
-import PeopleIcon from '@mui/icons-material/PeopleRounded';
+import { Avatar, Badge, ListItemAvatar, styled } from '@mui/material';
 import Box from '@mui/material/Box';
 import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
-import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { sideBarOpenState } from '../recoil/states';
+import { sideBarOpenState } from '../../recoil/states';
 
 const DRAWER_WIDTH = 300;
 
 interface Props {
 	window?: () => Window;
 }
-const SideBar = (props: Props) => {
+
+const StyledBadge = styled(Badge)(({ theme }) => ({
+	'& .MuiBadge-badge': {
+		backgroundColor: '#44b700',
+		color: '#44b700',
+		boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+		'&::after': {
+			position: 'absolute',
+			top: 0,
+			left: 0,
+			width: '100%',
+			height: '100%',
+			borderRadius: '50%',
+			animation: 'ripple 1.2s infinite ease-in-out',
+			border: '1px solid currentColor',
+			content: '""',
+		},
+	},
+	'@keyframes ripple': {
+		'0%': {
+			transform: 'scale(.8)',
+			opacity: 1,
+		},
+		'100%': {
+			transform: 'scale(2.4)',
+			opacity: 0,
+		},
+	},
+}));
+
+const FriendsList = (props: Props) => {
 	const { window } = props;
 	const [sideBarOpen, setSideBarOpen] = useRecoilState(sideBarOpenState);
 
 	const handleDrawerToggle = () => {
 		setSideBarOpen(!sideBarOpen);
 	};
+
+	const userListItem = (username: string) => (
+		<ListItem button>
+			<ListItemAvatar>
+				<StyledBadge
+					overlap='circular'
+					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+					variant='dot'
+				>
+					<Avatar alt='Avatar' />
+				</StyledBadge>
+			</ListItemAvatar>
+			<ListItemText primary={username} />
+		</ListItem>
+	);
 
 	const drawer = (
 		<div>
@@ -41,24 +83,9 @@ const SideBar = (props: Props) => {
 					},
 				}}
 			>
-				<ListItem button>
-					<ListItemIcon>
-						<HomeIcon />
-					</ListItemIcon>
-					<ListItemText>Home</ListItemText>
-				</ListItem>
-				<ListItem button>
-					<ListItemIcon>
-						<FavoriteIcon />
-					</ListItemIcon>
-					<ListItemText>Favorites</ListItemText>
-				</ListItem>
-				<ListItem button>
-					<ListItemIcon>
-						<PeopleIcon />
-					</ListItemIcon>
-					<ListItemText>Friends</ListItemText>
-				</ListItem>
+				{['Ino', 'Millia Rage', 'Baiken', 'Chipp'].map((username) =>
+					userListItem(username)
+				)}
 			</List>
 		</div>
 	);
@@ -73,6 +100,7 @@ const SideBar = (props: Props) => {
 			aria-label='mailbox folders'
 		>
 			<Drawer
+				anchor='right'
 				container={container}
 				variant='temporary'
 				open={sideBarOpen}
@@ -93,6 +121,7 @@ const SideBar = (props: Props) => {
 
 			<Drawer
 				variant='permanent'
+				anchor='right'
 				sx={{
 					display: { xs: 'none', md: 'block' },
 					width: DRAWER_WIDTH,
@@ -100,7 +129,7 @@ const SideBar = (props: Props) => {
 					[`& .MuiDrawer-paper`]: {
 						width: DRAWER_WIDTH,
 						boxSizing: 'border-box',
-						borderRight: 'none',
+						border: 'none',
 					},
 				}}
 			>
@@ -110,4 +139,4 @@ const SideBar = (props: Props) => {
 	);
 };
 
-export default SideBar;
+export default FriendsList;
