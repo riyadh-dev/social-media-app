@@ -16,34 +16,55 @@ interface Props {
 	window?: () => Window;
 }
 
-const StyledBadge = styled(Badge)(({ theme }) => ({
-	'& .MuiBadge-badge': {
-		backgroundColor: '#44b700',
-		color: '#44b700',
-		boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
-		'&::after': {
-			position: 'absolute',
-			top: 0,
-			left: 0,
-			width: '100%',
-			height: '100%',
-			borderRadius: '50%',
-			animation: 'ripple 1.2s infinite ease-in-out',
-			border: '1px solid currentColor',
-			content: '""',
-		},
-	},
-	'@keyframes ripple': {
-		'0%': {
-			transform: 'scale(.8)',
-			opacity: 1,
-		},
-		'100%': {
-			transform: 'scale(2.4)',
-			opacity: 0,
-		},
-	},
-}));
+interface IUserInArr {
+	username: string;
+	isOnline: boolean;
+}
+
+const Users: IUserInArr[] = [
+	{ username: 'Ino', isOnline: false },
+	{ username: 'Millia Rage', isOnline: true },
+	{ username: 'Baiken', isOnline: true },
+	{ username: 'Chipp', isOnline: false },
+];
+
+const StatusBadge = (isOnline: boolean) =>
+	!isOnline
+		? styled(Badge)(({ theme }) => ({
+				'& .MuiBadge-badge': {
+					backgroundColor: theme.palette.text.secondary,
+					color: theme.palette.text.secondary,
+					boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+				},
+		  }))
+		: styled(Badge)(({ theme }) => ({
+				'& .MuiBadge-badge': {
+					backgroundColor: '#44b700',
+					color: '#44b700',
+					boxShadow: `0 0 0 2px ${theme.palette.background.paper}`,
+					'&::after': {
+						position: 'absolute',
+						top: 0,
+						left: 0,
+						width: '100%',
+						height: '100%',
+						borderRadius: '50%',
+						animation: 'ripple 1.2s infinite ease-in-out',
+						border: '1px solid currentColor',
+						content: '""',
+					},
+				},
+				'@keyframes ripple': {
+					'0%': {
+						transform: 'scale(.8)',
+						opacity: 1,
+					},
+					'100%': {
+						transform: 'scale(2.4)',
+						opacity: 0,
+					},
+				},
+		  }));
 
 const FriendsList = (props: Props) => {
 	const { window } = props;
@@ -53,20 +74,23 @@ const FriendsList = (props: Props) => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
-	const userListItem = (username: string) => (
-		<ListItem button>
-			<ListItemAvatar>
-				<StyledBadge
-					overlap='circular'
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-					variant='dot'
-				>
-					<Avatar alt='Avatar' />
-				</StyledBadge>
-			</ListItemAvatar>
-			<ListItemText primary={username} />
-		</ListItem>
-	);
+	const userListItem = (username: string, isOnline: boolean) => {
+		const CustomBadge = StatusBadge(isOnline);
+		return (
+			<ListItem button key={username}>
+				<ListItemAvatar>
+					<CustomBadge
+						overlap='circular'
+						anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+						variant='dot'
+					>
+						<Avatar alt='Avatar' />
+					</CustomBadge>
+				</ListItemAvatar>
+				<ListItemText primary={username} />
+			</ListItem>
+		);
+	};
 
 	const drawer = (
 		<div>
@@ -83,9 +107,7 @@ const FriendsList = (props: Props) => {
 					},
 				}}
 			>
-				{['Ino', 'Millia Rage', 'Baiken', 'Chipp'].map((username) =>
-					userListItem(username)
-				)}
+				{Users.map((user) => userListItem(user.username, user.isOnline))}
 			</List>
 		</div>
 	);
