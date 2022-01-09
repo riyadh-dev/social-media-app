@@ -4,7 +4,7 @@ import Post from './Post';
 
 const Feed = () => {
 	return (
-		<Stack spacing={3}>
+		<Stack spacing={2.5} sx={{ mt: '84px', mb: '20px' }}>
 			<Post />
 			<Post />
 			<Post />

@@ -99,6 +99,7 @@ const FriendsList = (props: Props) => {
 			<List
 				sx={{
 					mx: '8px',
+					mt: '12px',
 					'& .MuiButtonBase-root': {
 						borderRadius: '8px',
 						':hover': {

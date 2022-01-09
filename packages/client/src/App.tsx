@@ -43,9 +43,7 @@ function App() {
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline>
 				<TopBar />
-				<Container
-					sx={{ display: 'flex', justifyContent: 'space-between', my: '70px' }}
-				>
+				<Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
 					<SideBar />
 					<Feed />
 					<FriendsList />
