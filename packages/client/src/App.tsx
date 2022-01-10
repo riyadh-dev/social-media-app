@@ -1,10 +1,5 @@
 import { ThemeProvider } from '@emotion/react';
-import {
-	Container,
-	createTheme,
-	CssBaseline,
-	useMediaQuery,
-} from '@mui/material';
+import { createTheme, CssBaseline, Stack, useMediaQuery } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
 import Feed from './components/Feed';
@@ -43,11 +38,11 @@ function App() {
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline>
 				<TopBar />
-				<Container sx={{ display: 'flex', justifyContent: 'space-between' }}>
+				<Stack justifyContent='space-between' direction='row'>
 					<SideBar />
 					<Feed />
 					<FriendsList />
-				</Container>
+				</Stack>
 			</CssBaseline>
 		</ThemeProvider>
 	);
