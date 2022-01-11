@@ -1,5 +1,5 @@
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
-import { styled, useTheme } from '@mui/material/styles';
+import { styled } from '@mui/material/styles';
 import React from 'react';
 const COVER_IMG =
 	'https://images.pexels.com/photos/2002719/pexels-photo-2002719.jpeg?cs=srgb&dl=pexels-timothy-paule-ii-2002719.jpg&fm=jpg';
@@ -8,13 +8,12 @@ const StyledBox = styled(Box)(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
 }));
 
-const StyledAvatar = styled(Avatar)(({ theme }) => ({
-	color: theme.palette.background.paper,
+const AvatarBox = styled(Box)(({ theme }) => ({
+	backgroundColor: theme.palette.background.paper,
+	border: `4px solid ${theme.palette.background.paper}`,
 }));
 
 const UpperSection = () => {
-	const theme = useTheme();
-	console.log(theme.palette.mode);
 	return (
 		<StyledBox
 			sx={{
@@ -50,16 +49,23 @@ const UpperSection = () => {
 						direction={{ xs: 'column', md: 'row' }}
 						alignItems={{ xs: 'center', md: 'flex-start' }}
 					>
-						<StyledAvatar
+						<AvatarBox
 							sx={{
-								border: '4px solid',
 								width: '150px',
 								height: '150px',
 								mt: '-40px',
 								mx: '40px',
+								borderRadius: '50%',
 							}}
-							alt='Avatar'
-						/>
+						>
+							<Avatar
+								alt='Avatar'
+								sx={{
+									width: '100%',
+									height: '100%',
+								}}
+							/>
+						</AvatarBox>
 
 						<Typography
 							sx={{
