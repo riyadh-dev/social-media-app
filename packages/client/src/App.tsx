@@ -1,12 +1,26 @@
 import { ThemeProvider } from '@emotion/react';
-import { createTheme, CssBaseline, Stack, useMediaQuery } from '@mui/material';
+import {
+	createTheme,
+	CssBaseline,
+	PaletteMode,
+	Theme,
+	useMediaQuery,
+} from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
 import { useRecoilState } from 'recoil';
-import Feed from './components/Feed';
-import FriendsList from './components/FriendsList';
-import SideBar from './components/SideBar';
+import Profile from './components/Profile';
 import TopBar from './components/TopBar';
 import { themeState } from './recoil/states';
+
+const getTheme = (mode: PaletteMode): Theme =>
+	createTheme({
+		palette: {
+			mode,
+			background: {
+				default: mode === 'light' ? '#F0F2F5' : '#18191A',
+			},
+		},
+	});
 
 function App() {
 	const [theme, setTheme] = useRecoilState(themeState);
@@ -16,12 +30,7 @@ function App() {
 		: 'light';
 
 	const muiTheme = useMemo(
-		() =>
-			createTheme({
-				palette: {
-					mode: theme.isUserPicked ? theme.mode : prefThemeMode,
-				},
-			}),
+		() => getTheme(theme.isUserPicked ? theme.mode : prefThemeMode),
 		[prefThemeMode, theme]
 	);
 
@@ -38,11 +47,7 @@ function App() {
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline>
 				<TopBar />
-				<Stack justifyContent='space-between' direction='row'>
-					<SideBar />
-					<Feed />
-					<FriendsList />
-				</Stack>
+				<Profile />
 			</CssBaseline>
 		</ThemeProvider>
 	);
