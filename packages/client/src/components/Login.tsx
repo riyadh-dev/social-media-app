@@ -12,8 +12,8 @@ import React from 'react';
 const Login = () => {
 	return (
 		<Stack
-			direction={['column', 'column', 'row']}
-			justifyContent={['flex-start', 'flex-start', 'space-around']}
+			direction={{ xs: 'column', md: 'row' }}
+			justifyContent={{ xs: 'flex-start', md: 'center' }}
 			alignItems='center'
 			spacing={3}
 			sx={{ height: '100vh' }}
