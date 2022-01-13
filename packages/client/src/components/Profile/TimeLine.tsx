@@ -4,8 +4,8 @@ import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SchoolIcon from '@mui/icons-material/School';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import {
+	Button,
 	ImageListItemBar,
-	Link,
 	Paper,
 	Stack,
 	Typography,
@@ -58,9 +58,9 @@ const TimeLine = () => {
 						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 							Photos
 						</Typography>
-						<Link color='primary' variant='h5'>
+						<Button color='primary' variant='text'>
 							See All Photos
-						</Link>
+						</Button>
 					</Stack>
 					<ImageList cols={3}>
 						{itemData.map((item) => (
@@ -81,9 +81,9 @@ const TimeLine = () => {
 						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 							Friends
 						</Typography>
-						<Link color='primary' variant='h5'>
+						<Button color='primary' variant='text'>
 							See All Friends
-						</Link>
+						</Button>
 					</Stack>
 					<ImageList gap={16}>
 						{itemData.slice(0, 4).map((item) => (
