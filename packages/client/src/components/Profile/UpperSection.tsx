@@ -24,7 +24,7 @@ const UpperSection = () => {
 				sx={{
 					px: { xs: 0, md: '20px' },
 					pb: '20px',
-					width: { xs: '100%', md: '70%' },
+					width: { xs: '100%', md: '980px' },
 					mx: 'auto',
 				}}
 			>
