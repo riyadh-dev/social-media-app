@@ -6,6 +6,7 @@ import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import {
 	Button,
 	ImageListItemBar,
+	Link,
 	Paper,
 	Stack,
 	Typography,
@@ -24,8 +25,18 @@ const TimeLine = () => {
 			spacing={3}
 			sx={{ mt: '20px' }}
 		>
-			<Stack spacing={2.5}>
-				<Paper sx={{ p: '20px', width: '400px' }}>
+			<Stack
+				spacing={2.5}
+				sx={{
+					maxWidth: { xs: '680px', md: '400px' },
+					width: { xs: '100%', md: 'auto' },
+				}}
+			>
+				<Paper
+					sx={{
+						p: '20px',
+					}}
+				>
 					<Stack spacing={2.5}>
 						<Typography sx={{ fontWeight: 'bold' }} variant='h5'>
 							Intro
@@ -53,7 +64,7 @@ const TimeLine = () => {
 					</Stack>
 				</Paper>
 
-				<Paper sx={{ p: '20px', width: '400px' }}>
+				<Paper sx={{ p: '20px', maxWidth: { xs: '680px', md: '400px' } }}>
 					<Stack direction='row' spacing={1} justifyContent='space-between'>
 						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 							Photos
@@ -64,19 +75,21 @@ const TimeLine = () => {
 					</Stack>
 					<ImageList cols={3}>
 						{itemData.map((item) => (
-							<ImageListItem key={item.img}>
-								<img
-									src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-									srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-									alt={item.title}
-									loading='lazy'
-								/>
-							</ImageListItem>
+							<Link href={item.img}>
+								<ImageListItem key={item.img}>
+									<img
+										src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+										srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+										alt={item.title}
+										loading='lazy'
+									/>
+								</ImageListItem>
+							</Link>
 						))}
 					</ImageList>
 				</Paper>
 
-				<Paper sx={{ p: '20px', width: '400px' }}>
+				<Paper sx={{ p: '20px', maxWidth: { xs: '680px', md: '400px' } }}>
 					<Stack direction='row' spacing={1} justifyContent='space-between'>
 						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 							Friends
@@ -87,16 +100,18 @@ const TimeLine = () => {
 					</Stack>
 					<ImageList gap={16}>
 						{itemData.slice(0, 4).map((item) => (
-							<ImageListItem key={item.img}>
-								<img
-									src={`${item.img}?w=248&fit=crop&auto=format`}
-									srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-									alt={item.title}
-									loading='lazy'
-									style={{ borderRadius: '8px' }}
-								/>
-								<ImageListItemBar title={item.title} position='below' />
-							</ImageListItem>
+							<Link href={item.img} underline='none' color='inherit'>
+								<ImageListItem key={item.img}>
+									<img
+										src={`${item.img}?w=248&fit=crop&auto=format`}
+										srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
+										alt={item.title}
+										loading='lazy'
+										style={{ borderRadius: '8px' }}
+									/>
+									<ImageListItemBar title={item.title} position='below' />
+								</ImageListItem>
+							</Link>
 						))}
 					</ImageList>
 				</Paper>
