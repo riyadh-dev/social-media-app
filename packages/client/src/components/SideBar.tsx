@@ -10,6 +10,7 @@ import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { sideBarOpenState } from '../recoil/states';
 
@@ -42,19 +43,19 @@ const SideBar = (props: Props) => {
 					},
 				}}
 			>
-				<ListItem button>
+				<ListItem button component={RouterLink} to='/'>
 					<ListItemIcon>
 						<HomeIcon />
 					</ListItemIcon>
 					<ListItemText>Home</ListItemText>
 				</ListItem>
-				<ListItem button>
+				<ListItem button component={RouterLink} to='/favorites'>
 					<ListItemIcon>
 						<FavoriteIcon />
 					</ListItemIcon>
 					<ListItemText>Favorites</ListItemText>
 				</ListItem>
-				<ListItem button>
+				<ListItem button component={RouterLink} to='/friends'>
 					<ListItemIcon>
 						<PeopleIcon />
 					</ListItemIcon>

@@ -4,13 +4,15 @@ import PeopleIcon from '@mui/icons-material/PeopleRounded';
 import { Tab, Tabs } from '@mui/material';
 import Box from '@mui/material/Box';
 import React from 'react';
+import { Link, useLocation } from 'react-router-dom';
+
+const useCurrentTab = (paths: string[]) => {
+	const currentPath = useLocation().pathname;
+	return paths.includes(currentPath) ? currentPath : null;
+};
 
 const MiddleSection = () => {
-	const [tabValue, setTabValue] = React.useState(0);
-
-	const handleTabChange = (event: React.SyntheticEvent, newValue: number) => {
-		setTabValue(newValue);
-	};
+	const tabValue = useCurrentTab(['/', '/friends', '/favorites']);
 
 	return (
 		<Box
@@ -20,15 +22,29 @@ const MiddleSection = () => {
 				width: { xs: 0, md: 'auto' },
 			}}
 		>
-			<Tabs
-				value={tabValue}
-				onChange={handleTabChange}
-				aria-label='icon tabs example'
-				centered
-			>
-				<Tab icon={<HomeIcon />} aria-label='Home' sx={{ my: '8px' }} />
-				<Tab icon={<FavoriteIcon />} aria-label='Favorite' />
-				<Tab icon={<PeopleIcon />} aria-label='Friends' />
+			<Tabs value={tabValue} centered>
+				<Tab
+					icon={<HomeIcon />}
+					aria-label='Home'
+					sx={{ height: '64px' }}
+					component={Link}
+					to='/'
+					value='/'
+				/>
+				<Tab
+					icon={<FavoriteIcon />}
+					aria-label='Favorite'
+					component={Link}
+					to='/favorites'
+					value='/favorites'
+				/>
+				<Tab
+					icon={<PeopleIcon />}
+					aria-label='Friends'
+					component={Link}
+					to='/friends'
+					value='/friends'
+				/>
 			</Tabs>
 		</Box>
 	);

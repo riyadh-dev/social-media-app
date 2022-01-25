@@ -5,6 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import React from 'react';
+import { Link } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { sideBarOpenState } from '../../recoil/states';
 
@@ -65,11 +66,13 @@ const LeftSection = () => {
 				width: { md: '245px' },
 			}}
 		>
-			<img
-				src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
-				alt='Logo'
-				style={{ width: '40px', marginInline: '5px' }}
-			/>
+			<Link to='/'>
+				<img
+					src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
+					alt='Logo'
+					style={{ width: '40px', marginInline: '5px' }}
+				/>
+			</Link>
 
 			<Search sx={{ display: { xs: 'none', md: 'inline' } }}>
 				<SearchIconWrapper>

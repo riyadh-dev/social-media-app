@@ -3,12 +3,18 @@ import {
 	createTheme,
 	CssBaseline,
 	PaletteMode,
+	Stack,
 	Theme,
 	useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
+import { Route, Routes, useMatch } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import Feed from './components/Feed';
+import FriendsList from './components/FriendsList';
+import Login from './components/Login';
 import Profile from './components/Profile';
+import SideBar from './components/SideBar';
 import TopBar from './components/TopBar';
 import { themeState } from './recoil/states';
 
@@ -43,11 +49,27 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
+	const showTopBar = !useMatch('login');
+
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline>
-				<TopBar />
-				<Profile />
+				{showTopBar ? <TopBar /> : null}
+
+				<Routes>
+					<Route
+						path='/'
+						element={
+							<Stack direction='row' justifyContent='space-between'>
+								<SideBar />
+								<Feed />
+								<FriendsList />
+							</Stack>
+						}
+					/>
+					<Route path='/login' element={<Login />} />
+					<Route path='/profile/:id' element={<Profile />} />
+				</Routes>
 			</CssBaseline>
 		</ThemeProvider>
 	);
