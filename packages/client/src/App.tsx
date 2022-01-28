@@ -57,6 +57,8 @@ function App() {
 				{showTopBar ? <TopBar /> : null}
 
 				<Routes>
+					<Route path='/login' element={<Login />} />
+					<Route path='/profile/:id' element={<Profile />} />
 					<Route
 						path='/'
 						element={
@@ -67,8 +69,6 @@ function App() {
 							</Stack>
 						}
 					/>
-					<Route path='/login' element={<Login />} />
-					<Route path='/profile/:id' element={<Profile />} />
 				</Routes>
 			</CssBaseline>
 		</ThemeProvider>
