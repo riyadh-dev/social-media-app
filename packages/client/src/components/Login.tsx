@@ -7,9 +7,31 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import React from 'react';
+import axios from 'axios';
+import React, { useEffect, useState } from 'react';
 
 const Login = () => {
+	const [data, setData] = useState(null);
+
+	useEffect(() => {
+		const loginReq = async () => {
+			const res = await axios.post(
+				'http://localhost:4000/api/users/login',
+				{
+					username: 'user1',
+					password: 'password',
+				},
+				{
+					withCredentials: true,
+				}
+			);
+			setData(res.data);
+		};
+		loginReq();
+	}, [setData]);
+
+	console.log(data);
+
 	return (
 		<Stack
 			direction={{ xs: 'column', md: 'row' }}
