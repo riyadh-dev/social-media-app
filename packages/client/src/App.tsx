@@ -8,7 +8,7 @@ import {
 	useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
-import { Route, Routes, useMatch } from 'react-router-dom';
+import { Navigate, Route, Routes, useMatch } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import Feed from './components/Feed';
 import FriendsList from './components/FriendsList';
@@ -16,7 +16,7 @@ import Login from './components/Login';
 import Profile from './components/Profile';
 import SideBar from './components/SideBar';
 import TopBar from './components/TopBar';
-import { themeState } from './recoil/states';
+import { currentUserState, themeState } from './recoil/states';
 
 const getTheme = (mode: PaletteMode): Theme =>
 	createTheme({
@@ -51,6 +51,8 @@ function App() {
 
 	const showTopBar = !useMatch('login');
 
+	const currentUser = useRecoilState(currentUserState)[0];
+
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline>
@@ -67,7 +69,10 @@ function App() {
 							</Stack>
 						}
 					/>
-					<Route path='/login' element={<Login />} />
+					<Route
+						path='/login'
+						element={currentUser ? <Navigate to='/' /> : <Login />}
+					/>
 					<Route path='/profile/:id' element={<Profile />} />
 				</Routes>
 			</CssBaseline>
