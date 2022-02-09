@@ -47,6 +47,7 @@ const RightSection = () => {
 					mx: '5px',
 					borderRadius: '24px',
 					display: { xs: 'none', md: 'inline-flex' },
+					textTransform: 'none',
 				}}
 				variant='text'
 				startIcon={<Avatar alt='Avatar' />}
