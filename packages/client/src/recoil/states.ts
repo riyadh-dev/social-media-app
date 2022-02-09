@@ -1,6 +1,6 @@
 import { atom } from 'recoil';
-import { ITheme } from '../common/interfaces';
-import { themePersistEffect } from './effects';
+import { ICurrentUser, ITheme } from '../common/interfaces';
+import { currentUserPersistEffect, themePersistEffect } from './effects';
 
 export const themeState = atom<ITheme>({
 	key: 'themeState',
@@ -9,6 +9,12 @@ export const themeState = atom<ITheme>({
 		isUserPicked: false,
 	},
 	effects_UNSTABLE: [themePersistEffect],
+});
+
+export const currentUserState = atom<ICurrentUser | null>({
+	key: 'currentUserState',
+	default: null,
+	effects_UNSTABLE: [currentUserPersistEffect],
 });
 
 export const sideBarOpenState = atom({

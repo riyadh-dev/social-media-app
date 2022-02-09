@@ -1,5 +1,5 @@
 import { AtomEffect } from 'recoil';
-import { ITheme } from '../common/interfaces';
+import { ICurrentUser, ITheme } from '../common/interfaces';
 
 export const themePersistEffect: AtomEffect<ITheme> = ({ setSelf, onSet }) => {
 	const savedValue = localStorage.getItem('themeState');
@@ -11,5 +11,21 @@ export const themePersistEffect: AtomEffect<ITheme> = ({ setSelf, onSet }) => {
 		isReset
 			? localStorage.removeItem('themeState')
 			: localStorage.setItem('themeState', JSON.stringify(newValue));
+	});
+};
+
+export const currentUserPersistEffect: AtomEffect<ICurrentUser | null> = ({
+	setSelf,
+	onSet,
+}) => {
+	const savedValue = localStorage.getItem('currentUserState');
+	if (savedValue != null) {
+		setSelf(JSON.parse(savedValue));
+	}
+
+	onSet((newValue, _, isReset) => {
+		isReset
+			? localStorage.removeItem('currentUserState')
+			: localStorage.setItem('currentUserState', JSON.stringify(newValue));
 	});
 };

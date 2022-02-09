@@ -1,17 +1,26 @@
+import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Button,
 	Divider,
+	FormControl,
+	FormHelperText,
+	IconButton,
+	InputAdornment,
+	InputLabel,
+	OutlinedInput,
 	Paper,
 	Stack,
-	TextField,
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
 import { AxiosError } from 'axios';
-import React, { useEffect } from 'react';
+import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { ILoginInput, loginReq } from '../common/requests';
+import { useRecoilState } from 'recoil';
+import { ILoginInput } from '../common/interfaces';
+import { loginReq } from '../common/requests';
+import { currentUserState } from '../recoil/states';
 
 const Login = () => {
 	const {
@@ -23,16 +32,11 @@ const Login = () => {
 
 	const onError = (err: AxiosError) => {
 		const errMsg = err?.response?.data.error;
-		if (errMsg === 'wrong password or username') {
-			setError('username', { message: errMsg });
-			setError('password', { message: errMsg });
-		} else {
-			setError('username', { message: err.message });
-			setError('password', { message: err.message });
-		}
+		setError('username', { message: errMsg });
+		setError('password', { message: errMsg });
 	};
 
-	const { data, mutate, isLoading, isSuccess, reset } = useMutation(loginReq, {
+	const { data, mutate, isLoading, isSuccess } = useMutation(loginReq, {
 		onError,
 	});
 
@@ -40,11 +44,17 @@ const Login = () => {
 		mutate(user);
 	};
 
+	const setCurrentUser = useRecoilState(currentUserState)[1];
+
 	useEffect(() => {
 		if (isSuccess && data) {
-			localStorage.setItem('currentUser', JSON.stringify(data));
+			setCurrentUser(data);
 		}
-	}, [data, isSuccess]);
+	}, [data, isSuccess, setCurrentUser]);
+
+	const [showPassword, setShowPassword] = useState(false);
+
+	const handleToggleShowPassword = () => setShowPassword((prev) => !prev);
 
 	return (
 		<Stack
@@ -72,18 +82,37 @@ const Login = () => {
 			</Box>
 			<Paper sx={{ p: '20px', width: '400px' }}>
 				<Stack spacing={2} component='form' onSubmit={handleSubmit(onSubmit)}>
-					<TextField
-						id='email'
-						label='Email'
-						variant='outlined'
-						{...register('username')}
-					/>
-					<TextField
-						id='password'
-						label='Password'
-						variant='outlined'
-						{...register('password')}
-					/>
+					<FormControl variant='outlined' error={Boolean(errors.username)}>
+						<InputLabel htmlFor='email'>Email</InputLabel>
+						<OutlinedInput id='email' label='Email' {...register('username')} />
+						<FormHelperText id='email'>
+							{errors.username?.message}
+						</FormHelperText>
+					</FormControl>
+					<FormControl variant='outlined' error={Boolean(errors.password)}>
+						<InputLabel htmlFor='password'>Password</InputLabel>
+						<OutlinedInput
+							id='password'
+							label='Password'
+							type={showPassword ? 'text' : 'password'}
+							{...register('password')}
+							endAdornment={
+								<InputAdornment position='end'>
+									<IconButton
+										aria-label='toggle password visibility'
+										onClick={handleToggleShowPassword}
+										edge='end'
+									>
+										{showPassword ? <VisibilityOff /> : <Visibility />}
+									</IconButton>
+								</InputAdornment>
+							}
+						/>
+						<FormHelperText id='password'>
+							{errors.password?.message}
+						</FormHelperText>
+					</FormControl>
+
 					<Button
 						variant='contained'
 						size='large'
