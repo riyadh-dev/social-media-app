@@ -63,7 +63,7 @@ const LeftSection = () => {
 			sx={{
 				display: 'flex',
 				alignItems: 'center',
-				width: { md: '245px' },
+				width: { md: '245px', lg: '342px' },
 			}}
 		>
 			<Link to='/'>

@@ -6,7 +6,7 @@ import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
 import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
 import SettingsIcon from '@mui/icons-material/SettingsRounded';
-import { ListItemIcon, ListItemText } from '@mui/material';
+import { Button, ListItemIcon, ListItemText } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
@@ -15,7 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
 import { useRecoilState } from 'recoil';
-import { themeState } from '../../recoil/states';
+import { currentUserState, themeState } from '../../recoil/states';
 
 const RightSection = () => {
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -39,16 +39,20 @@ const RightSection = () => {
 		}));
 	};
 
+	const currentUser = useRecoilState(currentUserState)[0];
 	return (
 		<Box>
-			<IconButton
+			<Button
 				sx={{
-					p: 0,
 					mx: '5px',
+					borderRadius: '24px',
+					display: { xs: 'none', md: 'inline-flex' },
 				}}
+				variant='text'
+				startIcon={<Avatar alt='Avatar' />}
 			>
-				<Avatar alt='Avatar' />
-			</IconButton>
+				{currentUser?.username}
+			</Button>
 			<IconButton
 				sx={{
 					p: 0,
