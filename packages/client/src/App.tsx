@@ -8,7 +8,7 @@ import {
 	useMediaQuery,
 } from '@mui/material';
 import React, { useEffect, useMemo } from 'react';
-import { Navigate, Route, Routes, useMatch } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import Feed from './components/Feed';
 import FriendsList from './components/FriendsList';
@@ -49,33 +49,31 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
-	const showTopBar = !useMatch('login');
-
 	const currentUser = useRecoilState(currentUserState)[0];
 
 	return (
 		<ThemeProvider theme={muiTheme}>
-			<CssBaseline>
-				{showTopBar ? <TopBar /> : null}
-
-				<Routes>
-					<Route
-						path='/'
-						element={
-							<Stack direction='row' justifyContent='space-between'>
-								<SideBar />
-								<Feed />
-								<FriendsList />
-							</Stack>
-						}
-					/>
-					<Route
-						path='/login'
-						element={currentUser ? <Navigate to='/' /> : <Login />}
-					/>
-					<Route path='/profile/:id' element={<Profile />} />
-				</Routes>
-			</CssBaseline>
+			<CssBaseline />
+			{!currentUser ? (
+				<Login />
+			) : (
+				<>
+					<TopBar />
+					<Routes>
+						<Route
+							path='/'
+							element={
+								<Stack direction='row' justifyContent='space-between'>
+									<SideBar />
+									<Feed />
+									<FriendsList />
+								</Stack>
+							}
+						/>
+						<Route path='/profile/:id' element={<Profile />} />
+					</Routes>
+				</>
+			)}
 		</ThemeProvider>
 	);
 }
