@@ -9,3 +9,10 @@ export const loginReq = async (user: ILoginInput) => {
 	});
 	return data;
 };
+
+export const logoutReq = async () => {
+	const { data } = await axios.post(`${server_domain}/users/logout`, {
+		withCredentials: true,
+	});
+	return data;
+};

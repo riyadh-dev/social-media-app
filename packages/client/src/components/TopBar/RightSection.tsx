@@ -15,6 +15,7 @@ import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
 import { useRecoilState } from 'recoil';
+import { logoutReq } from '../../common/requests';
 import { currentUserState, themeState } from '../../recoil/states';
 
 const RightSection = () => {
@@ -39,7 +40,13 @@ const RightSection = () => {
 		}));
 	};
 
-	const currentUser = useRecoilState(currentUserState)[0];
+	const [currentUser, setCurrentUser] = useRecoilState(currentUserState);
+
+	const handleLogout = () => {
+		setCurrentUser(null);
+		logoutReq();
+	};
+
 	return (
 		<Box>
 			<Button
@@ -126,7 +133,7 @@ const RightSection = () => {
 						{theme.mode === 'light' ? 'Dark Mode' : 'Light Mode'}
 					</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={handleCloseUserMenu}>
+				<MenuItem onClick={handleLogout}>
 					<ListItemIcon>
 						<LogoutIcon fontSize='small' />
 					</ListItemIcon>
