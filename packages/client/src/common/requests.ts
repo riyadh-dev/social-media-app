@@ -16,3 +16,17 @@ export const logoutReq = async () => {
 	});
 	return data;
 };
+
+export const TimelineReq = async () => {
+	const { data } = await axios.get(`${server_domain}/posts/timeline`, {
+		withCredentials: true,
+	});
+	return data;
+};
+
+export const UserReq = async (userId: string) => {
+	const { data } = await axios.get(`${server_domain}/users/${userId}`, {
+		withCredentials: true,
+	});
+	return data;
+};

@@ -14,7 +14,6 @@ import {
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import React from 'react';
-import Post from '../Feed/Post';
 
 const TimeLine = () => {
 	return (
@@ -117,12 +116,7 @@ const TimeLine = () => {
 				</Paper>
 			</Stack>
 
-			<Stack spacing={2.5}>
-				<Post />
-				<Post />
-				<Post />
-				<Post />
-			</Stack>
+			<Stack spacing={2.5}></Stack>
 		</Stack>
 	);
 };
