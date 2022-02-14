@@ -25,7 +25,7 @@ router.post(
 );
 
 //get timeline post
-router.get('/timeline', authenticate(), getTimelinePosts);
+router.get('/timeline/:userId', getTimelinePosts);
 
 //read post
 router.get('/:id', getPost);

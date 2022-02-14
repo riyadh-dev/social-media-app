@@ -172,20 +172,20 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUserFromCookie: TCurrentUser = res.locals.currentUser;
-	const currentUserDoc = await UserModel.findById(currentUserFromCookie._id);
-	if (!currentUserDoc) {
+	const userId = req.params.userId;
+	const userDoc = await UserModel.findById(userId);
+	if (!userDoc) {
 		res.status(404).json({ error: 'no such user' });
 		return;
 	}
 
-	if (!currentUserDoc.followings.length) {
+	if (!userDoc.followings.length) {
 		res.status(200).json([]);
 		return;
 	}
 
 	const posts = await PostModel.find({
-		author: { $in: currentUserDoc.followings },
+		author: { $in: userDoc.followings },
 	});
 
 	res.status(200).json(posts);
