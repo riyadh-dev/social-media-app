@@ -9,12 +9,12 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
-import { red } from '@mui/material/colors';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
 import { useQuery } from 'react-query';
+import { Link as RouterLink } from 'react-router-dom';
 import { ICurrentUser as IUser, IPost } from '../../common/interfaces';
 import { UserReq } from '../../common/requests';
 
@@ -51,23 +51,28 @@ export default function Post({ postData }: { postData: IPost }) {
 		() => UserReq(postData.author)
 	);
 
-	if (isError || isLoading) return null;
+	if (isError || isLoading || !data) return null;
+
+	const postDate = new Date(data.createdAt);
 
 	return (
 		<Card sx={{ maxWidth: 680 }}>
 			<CardHeader
 				avatar={
-					<Avatar sx={{ bgcolor: red[500] }} aria-label='avatar'>
-						R
-					</Avatar>
+					<Avatar
+						src={data.profilePicture}
+						aria-label='avatar'
+						component={RouterLink}
+						to={'/profile/' + data._id}
+					/>
 				}
 				action={
 					<IconButton aria-label='settings'>
 						<MoreVertIcon />
 					</IconButton>
 				}
-				title={data?.username}
-				subheader={postData.createdAt}
+				title={data.username}
+				subheader={postDate.toLocaleString()}
 			/>
 			<CardMedia component='img' image={postData.img} alt='post img' />
 			<CardContent>
