@@ -1,12 +1,20 @@
 import { Stack } from '@mui/material';
 import React from 'react';
 import { useQuery } from 'react-query';
+import { useRecoilState } from 'recoil';
 import { IPost } from '../../common/interfaces';
 import { TimelineReq } from '../../common/requests';
+import { currentUserState } from '../../recoil/states';
 import Post from './Post';
 
 const Feed = () => {
-	const { data, isError, isLoading } = useQuery<IPost[]>('posts', TimelineReq);
+	const currentUser = useRecoilState(currentUserState)[0];
+
+	const { data, isError, isLoading } = useQuery<IPost[]>(
+		['posts', currentUser?._id],
+		() => TimelineReq(currentUser ? currentUser._id : ''),
+		{ enabled: Boolean(currentUser) }
+	);
 
 	if (isError) return <h1>Error</h1>;
 	if (isLoading) return <h1>Loading</h1>;

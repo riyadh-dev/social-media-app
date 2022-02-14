@@ -14,8 +14,21 @@ import {
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import React from 'react';
+import { useQuery } from 'react-query';
+import { useParams } from 'react-router-dom';
+import { IPost } from '../../common/interfaces';
+import { TimelineReq } from '../../common/requests';
+import Post from '../Feed/Post';
 
 const TimeLine = () => {
+	const { id } = useParams<{ id: string }>();
+
+	const { data, isError, isLoading } = useQuery<IPost[]>(['posts', id], () =>
+		TimelineReq(id ? id : '')
+	);
+
+	if (isError || isLoading) return null;
+
 	return (
 		<Stack
 			direction={{ xs: 'column', md: 'row' }}
@@ -116,7 +129,11 @@ const TimeLine = () => {
 				</Paper>
 			</Stack>
 
-			<Stack spacing={2.5}></Stack>
+			<Stack spacing={2.5}>
+				{data?.map((postData) => (
+					<Post key={postData._id} postData={postData} />
+				))}
+			</Stack>
 		</Stack>
 	);
 };
