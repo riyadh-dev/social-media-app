@@ -29,7 +29,8 @@ const genUser = async (usersNumber: number) => {
 			username: 'user' + index, //faker.name.firstName(),
 			password: 'password',
 			isAdmin: faker.datatype.boolean(),
-			profilePicture: faker.internet.avatar(),
+			profilePicture:
+				faker.image.people() + '?random=' + Math.floor(Math.random() * 100000),
 			dislikedPosts: [],
 			followers: [],
 			followings: [],
@@ -52,7 +53,10 @@ const genPosts = async (postsNumber: number, usersNumber: number) => {
 			const post: TPostDB = {
 				author: userDoc.id,
 				description: faker.commerce.productDescription(),
-				img: faker.image.nature(),
+				img:
+					faker.image.nature() +
+					'?random=' +
+					Math.floor(Math.random() * 100000),
 				dislikes: [],
 				likes: [],
 			};
