@@ -42,9 +42,9 @@ export default function Post({ postData }: { postData: IPost }) {
 
 	const canExpand = postData.description.length > 160;
 	const description =
-		canExpand && expanded
-			? postData.description
-			: postData.description.substring(0, 160) + ' ...';
+		canExpand === true && expanded === false
+			? postData.description.substring(0, 160) + ' ...'
+			: postData.description;
 
 	const { data, isError, isLoading } = useQuery<IUser>(
 		['user', postData.author],
