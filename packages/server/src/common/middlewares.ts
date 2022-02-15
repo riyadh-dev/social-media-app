@@ -7,7 +7,7 @@ import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
 
 export const validateInput =
-	(validationSchema: Joi.ObjectSchema): RequestHandler =>
+	(validationSchema: Joi.AnySchema): RequestHandler =>
 	(req, res, next) => {
 		const { error, value } = validationSchema.validate(req.body);
 		if (error) {

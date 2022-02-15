@@ -2,11 +2,12 @@ import bcrypt from 'bcryptjs';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import { isValidObjectId } from 'mongoose';
+import { isUniqueInArray } from '../common/helpers';
 import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import UserModel from './model';
-import { TCurrentUser, TLoginInput } from './types';
+import { TCurrentUser, TGetUsersInput, TLoginInput } from './types';
 
 const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
@@ -142,6 +143,23 @@ const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(user);
 };
 
+const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const userIds = res.locals.validatedBody as TGetUsersInput;
+	const filteredIds = userIds.filter(isUniqueInArray);
+	const usersPromises = filteredIds.map(async (userId) => {
+		if (!isValidObjectId(userId)) {
+			return;
+		}
+		const userDoc = await UserModel.findById(userId);
+		return userDoc?.toObject({ versionKey: false });
+	});
+
+	const users = (await Promise.all(usersPromises)).filter((user) =>
+		Boolean(user)
+	);
+	res.status(200).json(users);
+};
+
 const followUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const followedUserId = req.params.id;
 	const followerUserId = res.locals.currentUser._id;
@@ -233,5 +251,6 @@ export const login = catchAsyncRequestHandlerError(loginUnsafe);
 export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
 export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
 export const getUser = catchAsyncRequestHandlerError(getUserUnsafe);
+export const getUsers = catchAsyncRequestHandlerError(getUsersUnsafe);
 export const follow = catchAsyncRequestHandlerError(followUnsafe);
 export const unfollow = catchAsyncRequestHandlerError(unfollowUnsafe);

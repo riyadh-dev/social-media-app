@@ -12,3 +12,5 @@ export type TSignUpInput = Pick<
 	IUserBase,
 	'password' | 'username' | 'profilePicture'
 >;
+
+export type TGetUsersInput = string[];

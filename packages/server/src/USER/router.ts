@@ -10,12 +10,14 @@ import {
 	deleteUser,
 	follow,
 	getUser,
+	getUsers,
 	login,
 	logout,
 	unfollow,
 	updateUser,
 } from './controllers';
 import {
+	getUsersValidationSchema,
 	loginValidationSchema,
 	signupValidationSchema,
 	updateValidationSchema,
@@ -26,6 +28,7 @@ const router = Router();
 router.post('/', validateInput(signupValidationSchema), createUser);
 router.post('/login', validateInput(loginValidationSchema), csrfLogin, login);
 router.post('/logout', logout);
+router.post('/list', validateInput(getUsersValidationSchema), getUsers);
 
 router.use(csrfProtection);
 

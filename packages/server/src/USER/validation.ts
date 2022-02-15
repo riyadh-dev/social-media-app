@@ -1,5 +1,10 @@
 import Joi from 'joi';
-import { TLoginInput, TSignUpInput, TUpdateUser } from './types';
+import {
+	TGetUsersInput,
+	TLoginInput,
+	TSignUpInput,
+	TUpdateUser,
+} from './types';
 
 export const signupValidationSchema = Joi.object<TSignUpInput>({
 	username: Joi.string(),
@@ -19,3 +24,5 @@ export const updateValidationSchema = Joi.object<TUpdateUser>({
 	username: Joi.string(),
 	profilePicture: Joi.string().uri(),
 });
+
+export const getUsersValidationSchema = Joi.array().items(Joi.string());
