@@ -6,7 +6,6 @@ import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import {
 	Button,
 	ImageListItemBar,
-	Link,
 	Paper,
 	Stack,
 	Typography,
@@ -15,19 +14,29 @@ import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import React from 'react';
 import { useQuery } from 'react-query';
-import { useParams } from 'react-router-dom';
-import { IPost } from '../../common/interfaces';
-import { TimelineReq } from '../../common/requests';
+import { Link as RouterLink, useParams } from 'react-router-dom';
+import { ICurrentUser as IUser, IPost } from '../../common/interfaces';
+import { TimelineReq, UserReq, UsersReq } from '../../common/requests';
 import Post from '../Feed/Post';
 
 const TimeLine = () => {
 	const { id } = useParams<{ id: string }>();
 
-	const { data, isError, isLoading } = useQuery<IPost[]>(['posts', id], () =>
+	const postsRes = useQuery<IPost[]>(['posts', id], () =>
 		TimelineReq(id ? id : '')
 	);
 
-	if (isError || isLoading) return null;
+	const userRes = useQuery<IUser>(['user', id], () => UserReq(id as string));
+
+	const friendsRes = useQuery<IUser[]>(
+		['friendsList', id],
+		() => UsersReq(userRes.data?.followings),
+		{ enabled: Boolean(userRes.data) }
+	);
+
+	if (postsRes.status !== 'success') return null;
+	if (userRes.status !== 'success') return null;
+	if (friendsRes.status !== 'success') return null;
 
 	return (
 		<Stack
@@ -87,16 +96,14 @@ const TimeLine = () => {
 					</Stack>
 					<ImageList cols={3}>
 						{itemData.map((item) => (
-							<Link href={item.img}>
-								<ImageListItem key={item.img}>
-									<img
-										src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
-										srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
-										alt={item.title}
-										loading='lazy'
-									/>
-								</ImageListItem>
-							</Link>
+							<ImageListItem key={item.img}>
+								<img
+									src={`${item.img}?w=164&h=164&fit=crop&auto=format`}
+									srcSet={`${item.img}?w=164&h=164&fit=crop&auto=format&dpr=2 2x`}
+									alt={item.title}
+									loading='lazy'
+								/>
+							</ImageListItem>
 						))}
 					</ImageList>
 				</Paper>
@@ -110,27 +117,29 @@ const TimeLine = () => {
 							See All Friends
 						</Button>
 					</Stack>
-					<ImageList gap={16}>
-						{itemData.slice(0, 4).map((item) => (
-							<Link href={item.img} underline='none' color='inherit'>
-								<ImageListItem key={item.img}>
-									<img
-										src={`${item.img}?w=248&fit=crop&auto=format`}
-										srcSet={`${item.img}?w=248&fit=crop&auto=format&dpr=2 2x`}
-										alt={item.title}
-										loading='lazy'
-										style={{ borderRadius: '8px' }}
-									/>
-									<ImageListItemBar title={item.title} position='below' />
-								</ImageListItem>
-							</Link>
+					<ImageList cols={3} gap={8}>
+						{friendsRes.data?.map((user) => (
+							<ImageListItem
+								component={RouterLink}
+								key={user._id}
+								to={`/profile/${user._id}`}
+								sx={{ textDecoration: 'none', color: 'inherit' }}
+							>
+								<img
+									src={user.profilePicture}
+									alt={user.username}
+									loading='lazy'
+									style={{ borderRadius: '8px' }}
+								/>
+								<ImageListItemBar title={user.username} position='below' />
+							</ImageListItem>
 						))}
 					</ImageList>
 				</Paper>
 			</Stack>
 
 			<Stack spacing={2.5}>
-				{data?.map((postData) => (
+				{postsRes.data?.map((postData) => (
 					<Post key={postData._id} postData={postData} />
 				))}
 			</Stack>

@@ -7,8 +7,11 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
+import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { sideBarOpenState } from '../../recoil/states';
+import { ICurrentUser } from '../../common/interfaces';
+import { UsersReq } from '../../common/requests';
+import { currentUserState, sideBarOpenState } from '../../recoil/states';
 
 const DRAWER_WIDTH = 300;
 
@@ -20,13 +23,6 @@ interface IUserInArr {
 	username: string;
 	isOnline: boolean;
 }
-
-const Users: IUserInArr[] = [
-	{ username: 'Ino', isOnline: false },
-	{ username: 'Millia Rage', isOnline: true },
-	{ username: 'Baiken', isOnline: false },
-	{ username: 'Chipp', isOnline: true },
-];
 
 const OnlineBadge = styled(Badge)(({ theme }) => ({
 	'& .MuiBadge-badge': {
@@ -92,6 +88,18 @@ const FriendsList = (props: Props) => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
+	const { followings, _id } = useRecoilState(
+		currentUserState
+	)[0] as ICurrentUser;
+	const { data, status } = useQuery<ICurrentUser[]>(['FriendsList', _id], () =>
+		UsersReq(followings)
+	);
+
+	const container =
+		window !== undefined ? () => window().document.body : undefined;
+
+	if (status !== 'success') return null;
+
 	const drawer = (
 		<div>
 			<Toolbar />
@@ -108,15 +116,16 @@ const FriendsList = (props: Props) => {
 					},
 				}}
 			>
-				{Users.map((user) => (
-					<FriendsListItem isOnline={user.isOnline} username={user.username} />
+				{data?.map((user) => (
+					<FriendsListItem
+						key={user._id}
+						isOnline={true}
+						username={user.username}
+					/>
 				))}
 			</List>
 		</div>
 	);
-
-	const container =
-		window !== undefined ? () => window().document.body : undefined;
 
 	return (
 		<Box

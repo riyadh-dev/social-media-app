@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { ILoginInput } from './interfaces';
+import { TGetUsersInput } from './types';
 
 const server_domain = 'http://localhost:4000/api';
 
@@ -31,5 +32,16 @@ export const UserReq = async (userId: string) => {
 	const { data } = await axios.get(`${server_domain}/users/${userId}`, {
 		withCredentials: true,
 	});
+	return data;
+};
+
+export const UsersReq = async (getUsersInput: TGetUsersInput | undefined) => {
+	const { data } = await axios.post(
+		`${server_domain}/users/list`,
+		getUsersInput,
+		{
+			withCredentials: true,
+		}
+	);
 	return data;
 };
