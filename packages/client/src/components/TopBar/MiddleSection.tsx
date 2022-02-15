@@ -8,7 +8,7 @@ import { Link, useLocation } from 'react-router-dom';
 
 const useCurrentTab = (paths: string[]) => {
 	const currentPath = useLocation().pathname;
-	return paths.includes(currentPath) ? currentPath : null;
+	return paths.includes(currentPath) ? currentPath : false;
 };
 
 const MiddleSection = () => {
