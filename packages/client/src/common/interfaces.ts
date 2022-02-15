@@ -19,6 +19,7 @@ export interface ICurrentUser {
 	likedPosts: string[];
 	dislikedPosts: string[];
 	isAdmin: boolean;
+	csrfToken: string;
 	createdAt: Date;
 	updatedAt: Date;
 }
