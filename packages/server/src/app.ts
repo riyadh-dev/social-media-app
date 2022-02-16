@@ -1,15 +1,17 @@
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
 import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
 import { csrfProtection, handlePassedError } from './common/middlewares';
-import { COOKIE_SECRET } from './config/secrets';
+import { CLIENT_ORIGIN, COOKIE_SECRET } from './config/secrets';
 import postRouter from './POST/router';
 import userRouter from './USER/router';
 
 const app = express();
 
+app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
 app.use(helmet({ contentSecurityPolicy: false }));
 app.use(cookieParser(COOKIE_SECRET));
 app.use(express.json());

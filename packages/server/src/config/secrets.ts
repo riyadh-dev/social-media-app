@@ -13,10 +13,11 @@ if (fs.existsSync('.env')) {
 }
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
-export const MONGODB_URI = process.env['MONGODB_URI'] ?? '';
-export const PORT = process.env['PORT'] ?? '';
-export const JWT_SECRET = process.env['JWT_SECRET'] ?? '';
-export const COOKIE_SECRET = process.env['COOKIE_SECRET'] ?? '';
+export const MONGODB_URI = process.env['MONGODB_URI'];
+export const PORT = process.env['PORT'];
+export const JWT_SECRET = process.env['JWT_SECRET'];
+export const COOKIE_SECRET = process.env['COOKIE_SECRET'];
+export const CLIENT_ORIGIN = process.env['CLIENT_ORIGIN'];
 
 if (!MONGODB_URI) {
 	console.error(
@@ -36,5 +37,9 @@ if (!COOKIE_SECRET) {
 	console.error(
 		'No cookie secret secret. Set COOKIE_SECRET environment variable.'
 	);
+	process.exit(1);
+}
+if (!CLIENT_ORIGIN) {
+	console.error('No client origin. Set CLIENT_ORIGIN environment variable.');
 	process.exit(1);
 }
