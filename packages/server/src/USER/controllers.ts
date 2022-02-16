@@ -79,15 +79,16 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	const updateUser = await UserModel.findByIdAndUpdate(
 		updatedUserId,
-		res.locals.validatedBody
-	);
+		res.locals.validatedBody,
+		{ new: true }
+	).select('-password');
 
 	if (!updateUser) {
 		res.status(400).json({ error: 'no such user' });
 		return;
 	}
 
-	res.status(200).json({ success: 'user updated' });
+	res.status(200).json(updateUser.toObject({ versionKey: false }));
 };
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -134,7 +135,7 @@ const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const userDoc = await UserModel.findById(userId);
+	const userDoc = await UserModel.findById(userId).select('-password');
 	if (!userDoc) {
 		res.status(400).json({ error: 'no such user' });
 		return;
@@ -150,7 +151,7 @@ const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
 		if (!isValidObjectId(userId)) {
 			return;
 		}
-		const userDoc = await UserModel.findById(userId);
+		const userDoc = await UserModel.findById(userId).select('-password');
 		return userDoc?.toObject({ versionKey: false });
 	});
 
