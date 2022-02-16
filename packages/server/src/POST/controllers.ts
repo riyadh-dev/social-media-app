@@ -46,7 +46,6 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		{
 			author: res.locals.currentUser._id,
 			...res.locals.validatedBody,
-			test: 2566,
 		},
 		{ new: true }
 	);
@@ -122,9 +121,7 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await currentUserDoc.save();
 	await postDoc.save();
 
-	res.status(200).json({
-		success: 'post liked',
-	});
+	res.status(200).json(postDoc);
 };
 
 const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -166,9 +163,7 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await currentUserDoc.save();
 	await postDoc.save();
 
-	res.status(200).json({
-		success: 'post liked',
-	});
+	res.status(200).json(postDoc);
 };
 
 const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
