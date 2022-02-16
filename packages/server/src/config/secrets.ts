@@ -13,11 +13,11 @@ if (fs.existsSync('.env')) {
 }
 
 export const IS_PROD = process.env.NODE_ENV === 'production';
-export const MONGODB_URI = process.env['MONGODB_URI'];
-export const PORT = process.env['PORT'];
-export const JWT_SECRET = process.env['JWT_SECRET'];
-export const COOKIE_SECRET = process.env['COOKIE_SECRET'];
-export const CLIENT_ORIGIN = process.env['CLIENT_ORIGIN'];
+export const MONGODB_URI = process.env['MONGODB_URI'] ?? '';
+export const PORT = process.env['PORT'] ?? '';
+export const JWT_SECRET = process.env['JWT_SECRET'] ?? '';
+export const COOKIE_SECRET = process.env['COOKIE_SECRET'] ?? '';
+export const CLIENT_ORIGIN = process.env['CLIENT_ORIGIN'] ?? '';
 
 if (!MONGODB_URI) {
 	console.error(
