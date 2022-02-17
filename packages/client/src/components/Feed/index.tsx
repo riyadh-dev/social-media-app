@@ -11,7 +11,7 @@ const Feed = () => {
 	const currentUser = useRecoilState(currentUserState)[0];
 
 	const { data, isError, isLoading } = useQuery<IPost[]>(
-		['posts', currentUser?._id],
+		['posts', 'timeline', currentUser?._id],
 		() => TimelineReq(currentUser ? currentUser._id : ''),
 		{ enabled: Boolean(currentUser) }
 	);

@@ -22,7 +22,7 @@ import Post from '../Feed/Post';
 const TimeLine = () => {
 	const { id } = useParams<{ id: string }>();
 
-	const postsRes = useQuery<IPost[]>(['posts', id], () =>
+	const postsRes = useQuery<IPost[]>(['posts', 'timeline', id], () =>
 		TimelineReq(id ? id : '')
 	);
 

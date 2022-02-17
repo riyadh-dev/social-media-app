@@ -45,3 +45,21 @@ export const UsersReq = async (getUsersInput: TGetUsersInput | undefined) => {
 	);
 	return data;
 };
+
+export const likePostReq = async (postId: string | undefined) => {
+	const { data } = await axios.put(
+		`${server_domain}/posts/${postId}/like`,
+		{},
+		{ withCredentials: true }
+	);
+	return data;
+};
+
+export const dislikePostReq = async (postId: string | undefined) => {
+	const { data } = await axios.put(
+		`${server_domain}/posts/${postId}/dislike`,
+		{},
+		{ withCredentials: true }
+	);
+	return data;
+};
