@@ -2,7 +2,7 @@ import csurf from 'csurf';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import { TJwtUser } from 'src/USER/types';
+import UserModel from '../USER/model';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
 
@@ -52,19 +52,22 @@ export const csrfProtection = csurf({
 
 export const authenticate =
 	(options?: { isAdmin?: boolean }): RequestHandler =>
-	(req, res, next) => {
+	async (req, res, next) => {
 		try {
-			const currentUser = jwt.verify(
+			const currentUserId = jwt.verify(
 				req.signedCookies.cookieToken,
 				JWT_SECRET
-			) as unknown as TJwtUser;
+			);
 
-			if (options?.isAdmin && !currentUser.isAdmin) {
-				res.status(403).json({ error: 'not authorized' });
-				return;
+			if (options?.isAdmin) {
+				const currentUser = await UserModel.findById(currentUserId);
+				if (!currentUser?.isAdmin) {
+					res.status(403).json({ error: 'not authorized' });
+					return;
+				}
 			}
 
-			res.locals = { currentUser };
+			res.locals = { currentUserId };
 			next();
 		} catch (_error) {
 			res.clearCookie('token');

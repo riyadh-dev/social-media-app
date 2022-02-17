@@ -1,5 +1,4 @@
 import { isValidObjectId } from 'mongoose';
-import { TCurrentUser } from 'src/USER/types';
 import { IAsyncRequestHandler } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import UserModel from '../USER/model';
@@ -7,11 +6,11 @@ import PostModel from './model';
 import { TPostInput } from './types';
 
 const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUser: TCurrentUser = res.locals.currentUser;
+	const currentUserId: string = res.locals.currentUserId;
 	const createPostInput: TPostInput = res.locals.validatedBody;
 
 	const postDoc = await PostModel.create({
-		author: currentUser._id,
+		author: currentUserId,
 		...createPostInput,
 	});
 
@@ -44,7 +43,7 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const post = await PostModel.findByIdAndUpdate(
 		postId,
 		{
-			author: res.locals.currentUser._id,
+			author: res.locals.currentUserId,
 			...res.locals.validatedBody,
 		},
 		{ new: true }
@@ -71,8 +70,10 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const currentUser: TCurrentUser = res.locals.currentUser;
-	if (postDoc.author !== currentUser._id && !currentUser.isAdmin) {
+	const currentUserId = res.locals.currentUserId;
+	const currentUserDoc = await UserModel.findById(currentUserId);
+
+	if (postDoc.author !== currentUserId && !currentUserDoc?.isAdmin) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -84,7 +85,7 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postId = req.params.id;
-	const currentUserId = res.locals.currentUser._id;
+	const currentUserId = res.locals.currentUserId;
 
 	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid user id' });
@@ -126,7 +127,7 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postId = req.params.id;
-	const currentUserId = res.locals.currentUser._id;
+	const currentUserId = res.locals.currentUserId;
 
 	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid user id' });

@@ -7,7 +7,7 @@ import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
 import { catchAsyncRequestHandlerError } from '../common/middlewares';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import UserModel from './model';
-import { TCurrentUser, TGetUsersInput, TLoginInput } from './types';
+import { TGetUsersInput, TLoginInput } from './types';
 
 const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
@@ -43,7 +43,7 @@ const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const jwtToken = jwt.sign(payload, JWT_SECRET);
+	const jwtToken = jwt.sign(payload._id.toString(), JWT_SECRET);
 	res.cookie('cookieToken', jwtToken, {
 		httpOnly: true,
 		signed: true,
@@ -65,21 +65,27 @@ export const logout: RequestHandler = (req, res) => {
 
 const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const updatedUserId = req.params.id;
-	const currentUser: TCurrentUser = res.locals.currentUser;
-
 	if (!isValidObjectId(updatedUserId)) {
 		res.status(400).json({ error: 'invalid user id' });
 		return;
 	}
 
-	if (updatedUserId !== currentUser._id && !currentUser.isAdmin) {
+	const currentUserId: string = res.locals.currentUserId;
+	const currentUserDoc = await UserModel.findById(currentUserId);
+	if (updatedUserId !== currentUserId && !currentUserDoc?.isAdmin) {
 		res.status(400).json({ error: 'you can only update your account' });
 		return;
 	}
 
+	const updateInput = res.locals.validatedBody;
+	if (updateInput.password) {
+		const salt = bcrypt.genSaltSync(10);
+		updateInput.password = bcrypt.hashSync(updateInput.password, salt);
+	}
+
 	const updateUser = await UserModel.findByIdAndUpdate(
 		updatedUserId,
-		res.locals.validatedBody,
+		updateInput,
 		{ new: true }
 	).select('-password');
 
@@ -92,7 +98,7 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const deletingUserId: string = res.locals.currentUser._id;
+	const currentUserId: string = res.locals.currentUserId;
 	const deletedUserId = req.params.id;
 
 	if (!isValidObjectId(deletedUserId)) {
@@ -100,7 +106,8 @@ const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	if (!res.locals.currentUser.isAdmin && deletedUserId !== deletingUserId) {
+	const currentUserDoc = await UserModel.findById(currentUserId);
+	if (!currentUserDoc?.isAdmin && deletedUserId !== currentUserId) {
 		res.status(400).json({
 			error: 'can not delete an account that is not yours',
 		});
@@ -163,7 +170,7 @@ const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const followUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const followedUserId = req.params.id;
-	const followerUserId = res.locals.currentUser._id;
+	const followerUserId = res.locals.currentUserId;
 
 	if (!isValidObjectId(followedUserId)) {
 		res.status(400).json({ error: 'invalid user id' });
@@ -203,7 +210,7 @@ const followUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const unfollowUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const followedUserId = req.params.id;
-	const followerUserId = res.locals.currentUser._id;
+	const followerUserId = res.locals.currentUserId;
 
 	if (!isValidObjectId(followedUserId)) {
 		res.status(400).json({ error: 'invalid user id' });
