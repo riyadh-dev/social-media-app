@@ -169,6 +169,8 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.params.userId;
+	const date = req.params.date;
+
 	const userDoc = await UserModel.findById(userId);
 	if (!userDoc) {
 		res.status(404).json({ error: 'no such user' });
@@ -181,8 +183,11 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const posts = await PostModel.find({
-		author: { $in: userDoc.followings },
-	});
+		author: { $in: [...userDoc.followings, userDoc._id.toString()] },
+		createdAt: { $lt: new Date(parseInt(date)) },
+	})
+		.sort({ createdAt: -1 })
+		.limit(10);
 
 	res.status(200).json(posts);
 };
