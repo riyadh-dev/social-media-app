@@ -3,7 +3,11 @@ import { TPostDB } from './types';
 
 const UserSchema = new Schema<TPostDB>(
 	{
-		author: String,
+		author: {
+			id: String,
+			profilePicture: String,
+			username: String,
+		},
 		description: String,
 		img: String,
 		likes: [String],

@@ -9,8 +9,19 @@ const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const currentUserId: string = res.locals.currentUserId;
 	const createPostInput: TPostInput = res.locals.validatedBody;
 
+	const currentUserDoc = await UserModel.findById(currentUserId);
+	if (!currentUserDoc) {
+		res.status(404).json({ error: 'no such user' });
+		return;
+	}
+
+	const { username, profilePicture, _id: id } = currentUserDoc;
 	const postDoc = await PostModel.create({
-		author: currentUserId,
+		author: {
+			_id: id,
+			username,
+			profilePicture,
+		},
 		...createPostInput,
 	});
 
@@ -183,7 +194,7 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const posts = await PostModel.find({
-		author: { $in: [...userDoc.followings, userDoc._id.toString()] },
+		'author.id': { $in: [...userDoc.followings, userDoc._id.toString()] },
 		createdAt: { $lt: new Date(parseInt(date)) },
 	})
 		.sort({ createdAt: -1 })
