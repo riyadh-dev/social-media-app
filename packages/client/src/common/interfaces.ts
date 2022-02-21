@@ -34,3 +34,8 @@ export interface IPost {
 	createdAt: string;
 	updatedAt: string;
 }
+
+export interface IAddPostInput {
+	description: string;
+	img?: string;
+}

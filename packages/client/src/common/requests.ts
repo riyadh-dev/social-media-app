@@ -1,5 +1,5 @@
 import axios from 'axios';
-import { ILoginInput } from './interfaces';
+import { IAddPostInput, ILoginInput } from './interfaces';
 import { TGetUsersInput } from './types';
 
 const server_domain = 'http://localhost:4000/api';
@@ -61,5 +61,12 @@ export const dislikePostReq = async (postId: string | undefined) => {
 		{},
 		{ withCredentials: true }
 	);
+	return data;
+};
+
+export const addPostReq = async (postId: IAddPostInput) => {
+	const { data } = await axios.post(`${server_domain}/posts`, postId, {
+		withCredentials: true,
+	});
 	return data;
 };
