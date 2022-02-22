@@ -18,9 +18,12 @@ export const logoutReq = async () => {
 	return data;
 };
 
-export const TimelineReq = async (userId: string) => {
+export const TimelineReq = async (
+	userId: string,
+	date: number = Date.now()
+) => {
 	const { data } = await axios.get(
-		`${server_domain}/posts/timeline/${userId}`,
+		`${server_domain}/posts/timeline/${userId}/${date}`,
 		{
 			withCredentials: true,
 		}

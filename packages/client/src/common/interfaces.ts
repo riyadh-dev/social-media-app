@@ -26,7 +26,11 @@ export interface ICurrentUser {
 
 export interface IPost {
 	_id: string;
-	author: string;
+	author: {
+		id: string;
+		username: string;
+		profilePicture: string;
+	};
 	description: string;
 	img: string;
 	likes: string[];

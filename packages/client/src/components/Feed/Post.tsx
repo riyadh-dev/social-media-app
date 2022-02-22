@@ -14,16 +14,12 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import { useMutation, useQuery } from 'react-query';
+import { useMutation } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { queryClient } from '../..';
-import {
-	ICurrentUser,
-	ICurrentUser as IUser,
-	IPost,
-} from '../../common/interfaces';
-import { dislikePostReq, likePostReq, UserReq } from '../../common/requests';
+import { ICurrentUser, IPost } from '../../common/interfaces';
+import { dislikePostReq, likePostReq } from '../../common/requests';
 import { currentUserState } from '../../recoil/states';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -41,7 +37,13 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
-export default function Post({ postData }: { postData: IPost }) {
+export default function Post({
+	postData,
+	lastItemRef,
+}: {
+	postData: IPost;
+	lastItemRef?: (node: HTMLDivElement) => void;
+}) {
 	const [expanded, setExpanded] = React.useState(false);
 
 	const handleExpandClick = () => {
@@ -53,10 +55,6 @@ export default function Post({ postData }: { postData: IPost }) {
 		canExpand === true && expanded === false
 			? postData.description.substring(0, 160) + ' ...'
 			: postData.description;
-
-	const { data, status } = useQuery<IUser>(['user', postData.author], () =>
-		UserReq(postData.author)
-	);
 
 	const likeMutation = useMutation(() => likePostReq(postData._id), {
 		onSuccess: () => queryClient.invalidateQueries(['posts']),
@@ -70,9 +68,6 @@ export default function Post({ postData }: { postData: IPost }) {
 		currentUserState
 	)[0] as ICurrentUser;
 
-	if (status !== 'success' || !data) return null;
-
-	const postDate = new Date(data.createdAt);
 	const thumbUpColor = postData.likes.includes(currentUserId)
 		? 'primary'
 		: 'inherit';
@@ -80,15 +75,17 @@ export default function Post({ postData }: { postData: IPost }) {
 		? 'error'
 		: 'inherit';
 
+	const postDate = new Date(postData.createdAt).toLocaleDateString();
+
 	return (
-		<Card sx={{ maxWidth: 680 }}>
+		<Card sx={{ maxWidth: 680 }} ref={lastItemRef}>
 			<CardHeader
 				avatar={
 					<Avatar
-						src={data.profilePicture}
+						src={postData.author.profilePicture}
 						aria-label='avatar'
 						component={RouterLink}
-						to={'/profile/' + data._id}
+						to={'/profile/' + postData.author.id}
 					/>
 				}
 				action={
@@ -96,10 +93,12 @@ export default function Post({ postData }: { postData: IPost }) {
 						<MoreVertIcon />
 					</IconButton>
 				}
-				title={data.username}
-				subheader={postDate.toLocaleString()}
+				title={postData.author.username}
+				subheader={postDate}
 			/>
-			<CardMedia component='img' image={postData.img} alt='post img' />
+			{postData.img && (
+				<CardMedia component='img' image={postData.img} alt='post img' />
+			)}
 			<CardContent>
 				<Typography paragraph>{description}</Typography>
 			</CardContent>

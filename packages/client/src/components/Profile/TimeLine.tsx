@@ -5,6 +5,7 @@ import SchoolIcon from '@mui/icons-material/School';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import {
 	Button,
+	Collapse,
 	ImageListItemBar,
 	Paper,
 	Stack,
@@ -13,26 +14,44 @@ import {
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import React from 'react';
-import { useQuery } from 'react-query';
+import { useInfiniteQuery, useQuery } from 'react-query';
 import { Link as RouterLink, useParams } from 'react-router-dom';
+import { TransitionGroup } from 'react-transition-group';
+import { useIntersectionObserver } from '../../common/hooks';
 import { ICurrentUser as IUser, IPost } from '../../common/interfaces';
 import { TimelineReq, UserReq, UsersReq } from '../../common/requests';
 import Post from '../Feed/Post';
+import PostForm from '../PostForm';
 
 const TimeLine = () => {
-	const { id } = useParams<{ id: string }>();
-
-	const postsRes = useQuery<IPost[]>(['posts', 'timeline', id], () =>
-		TimelineReq(id ? id : '')
-	);
+	const id = useParams<{ id: string }>().id ?? '';
 
 	const userRes = useQuery<IUser>(['user', id], () => UserReq(id as string));
-
 	const friendsRes = useQuery<IUser[]>(
 		['friendsList', id],
 		() => UsersReq(userRes.data?.followings),
 		{ enabled: Boolean(userRes.data) }
 	);
+
+	const postsRes = useInfiniteQuery<IPost[]>(
+		['posts', 'timeline', id],
+		({ pageParam }) => TimelineReq(id, pageParam),
+		{
+			getNextPageParam: (lastPage) =>
+				lastPage.length
+					? Date.parse(lastPage[lastPage.length - 1].createdAt)
+					: undefined,
+		}
+	);
+
+	const { intersectionItemRef } = useIntersectionObserver<HTMLDivElement>({
+		onIntersection: postsRes.fetchNextPage,
+		enable: postsRes.status !== 'loading',
+	});
+
+	if (postsRes.status !== 'success') return <></>;
+
+	const posts = postsRes.data?.pages.flat() ?? [];
 
 	if (postsRes.status !== 'success') return null;
 	if (userRes.status !== 'success') return null;
@@ -139,9 +158,18 @@ const TimeLine = () => {
 			</Stack>
 
 			<Stack spacing={2.5}>
-				{postsRes.data?.map((postData) => (
-					<Post key={postData._id} postData={postData} />
-				))}
+				<PostForm />
+				<TransitionGroup component={null}>
+					{posts.map((post, idx) => (
+						<Collapse timeout={800} key={post._id}>
+							{idx + 1 === posts.length ? (
+								<Post lastItemRef={intersectionItemRef} postData={post} />
+							) : (
+								<Post postData={post} />
+							)}
+						</Collapse>
+					))}
+				</TransitionGroup>
 			</Stack>
 		</Stack>
 	);
