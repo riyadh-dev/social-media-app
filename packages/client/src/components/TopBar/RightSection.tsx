@@ -14,6 +14,7 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { logoutReq } from '../../common/requests';
 import { currentUserState, themeState } from '../../recoil/states';
@@ -50,6 +51,8 @@ const RightSection = () => {
 	return (
 		<Box>
 			<Button
+				component={RouterLink}
+				to={'/profile/' + currentUser?._id}
 				sx={{
 					mx: '5px',
 					borderRadius: '24px',
@@ -57,7 +60,7 @@ const RightSection = () => {
 					textTransform: 'none',
 				}}
 				variant='text'
-				startIcon={<Avatar alt='Avatar' />}
+				startIcon={<Avatar alt='Avatar' src={currentUser?.profilePicture} />}
 			>
 				{currentUser?.username}
 			</Button>

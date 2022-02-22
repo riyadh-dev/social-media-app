@@ -9,7 +9,7 @@ import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
 import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { ICurrentUser } from '../../common/interfaces';
+import { ICurrentUser as IUser } from '../../common/interfaces';
 import { UsersReq } from '../../common/requests';
 import { currentUserState, sideBarOpenState } from '../../recoil/states';
 
@@ -17,11 +17,6 @@ const DRAWER_WIDTH = 300;
 
 interface Props {
 	window?: () => Window;
-}
-
-interface IUserInArr {
-	username: string;
-	isOnline: boolean;
 }
 
 const OnlineBadge = styled(Badge)(({ theme }) => ({
@@ -53,29 +48,35 @@ const OnlineBadge = styled(Badge)(({ theme }) => ({
 	},
 }));
 
-const FriendsListItem = ({ username, isOnline }: IUserInArr) => {
+const FriendsListItem = ({
+	user,
+	isOnline,
+}: {
+	user: IUser;
+	isOnline: boolean;
+}) => {
 	if (!isOnline)
 		return (
-			<ListItem button key={username}>
+			<ListItem button>
 				<ListItemAvatar>
-					<Avatar alt='Avatar' />
+					<Avatar src={user.profilePicture} alt='Avatar' />
 				</ListItemAvatar>
-				<ListItemText primary={username} />
+				<ListItemText primary={user.username} />
 			</ListItem>
 		);
 
 	return (
-		<ListItem button key={username}>
+		<ListItem button>
 			<ListItemAvatar>
 				<OnlineBadge
 					overlap='circular'
 					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 					variant='dot'
 				>
-					<Avatar alt='Avatar' />
+					<Avatar src={user.profilePicture} alt='Avatar' />
 				</OnlineBadge>
 			</ListItemAvatar>
-			<ListItemText primary={username} />
+			<ListItemText primary={user.username} />
 		</ListItem>
 	);
 };
@@ -88,10 +89,8 @@ const FriendsList = (props: Props) => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
-	const { followings, _id } = useRecoilState(
-		currentUserState
-	)[0] as ICurrentUser;
-	const { data, status } = useQuery<ICurrentUser[]>(['FriendsList', _id], () =>
+	const { followings, _id } = useRecoilState(currentUserState)[0] as IUser;
+	const { data, status } = useQuery<IUser[]>(['FriendsList', _id], () =>
 		UsersReq(followings)
 	);
 
@@ -117,11 +116,7 @@ const FriendsList = (props: Props) => {
 				}}
 			>
 				{data?.map((user) => (
-					<FriendsListItem
-						key={user._id}
-						isOnline={true}
-						username={user.username}
-					/>
+					<FriendsListItem key={user._id} isOnline={true} user={user} />
 				))}
 			</List>
 		</div>
