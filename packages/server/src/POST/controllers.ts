@@ -18,7 +18,7 @@ const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { username, profilePicture, _id: id } = currentUserDoc;
 	const postDoc = await PostModel.create({
 		author: {
-			_id: id,
+			id,
 			username,
 			profilePicture,
 		},
