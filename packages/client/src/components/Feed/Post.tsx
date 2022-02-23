@@ -18,7 +18,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import useDislikePost from '../../common/hooks/mutations/useDislike';
 import useLikePost from '../../common/hooks/mutations/useLike';
-import { ICurrentUser, IPost } from '../../common/interfaces';
+import { IPost } from '../../common/interfaces';
 import { currentUserState } from '../../recoil/states';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -58,9 +58,7 @@ export default function Post({
 	const likeMutation = useLikePost(post._id);
 	const dislikeMutation = useDislikePost(post._id);
 
-	const { _id: currentUserId } = useRecoilState(
-		currentUserState
-	)[0] as ICurrentUser;
+	const currentUserId = useRecoilState(currentUserState)[0]?._id ?? '';
 
 	const thumbUpColor = post.likes.includes(currentUserId)
 		? 'primary'
