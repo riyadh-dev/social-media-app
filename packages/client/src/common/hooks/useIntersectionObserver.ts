@@ -5,7 +5,7 @@ interface IntersectionObserverArgs {
 	enable: boolean;
 }
 
-export const useIntersectionObserver = <T extends Element>({
+const useIntersectionObserver = <T extends Element>({
 	onIntersection,
 	enable,
 }: IntersectionObserverArgs) => {
@@ -28,5 +28,7 @@ export const useIntersectionObserver = <T extends Element>({
 		[enable, onIntersection]
 	);
 
-	return { intersectionItemRef };
+	return intersectionItemRef;
 };
+
+export default useIntersectionObserver;

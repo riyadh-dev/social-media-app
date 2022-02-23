@@ -7,10 +7,9 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { useRecoilState } from 'recoil';
+import useUsers from '../../common/hooks/queries/useUsers';
 import { ICurrentUser as IUser } from '../../common/interfaces';
-import { UsersReq } from '../../common/requests';
 import { currentUserState, sideBarOpenState } from '../../recoil/states';
 
 const DRAWER_WIDTH = 300;
@@ -89,15 +88,11 @@ const FriendsList = (props: Props) => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
-	const { followings, _id } = useRecoilState(currentUserState)[0] as IUser;
-	const { data, status } = useQuery<IUser[]>(['FriendsList', _id], () =>
-		UsersReq(followings)
-	);
+	const currentUser = useRecoilState(currentUserState)[0];
+	const { data } = useUsers(currentUser?.followings);
 
 	const container =
 		window !== undefined ? () => window().document.body : undefined;
-
-	if (status !== 'success') return null;
 
 	const drawer = (
 		<div>
@@ -115,9 +110,10 @@ const FriendsList = (props: Props) => {
 					},
 				}}
 			>
-				{data?.map((user) => (
-					<FriendsListItem key={user._id} isOnline={true} user={user} />
-				))}
+				{data &&
+					data.map((user) => (
+						<FriendsListItem key={user._id} isOnline={true} user={user} />
+					))}
 			</List>
 		</div>
 	);

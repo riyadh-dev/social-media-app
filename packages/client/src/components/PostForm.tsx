@@ -10,11 +10,9 @@ import {
 } from '@mui/material';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { queryClient } from '..';
+import useAddPost from '../common/hooks/mutations/useAddPost';
 import { IAddPostInput } from '../common/interfaces';
-import { addPostReq } from '../common/requests';
 import { currentUserState } from '../recoil/states';
 
 const PostForm = () => {
@@ -22,17 +20,15 @@ const PostForm = () => {
 	const { handleSubmit, register, reset, resetField } =
 		useForm<IAddPostInput>();
 
-	const { mutate, status } = useMutation(addPostReq, {
-		onSuccess: () => queryClient.invalidateQueries(['posts']),
-	});
+	const { mutate, isSuccess, isError, status } = useAddPost();
 
 	const onSubmit = (post: IAddPostInput) => {
 		mutate(post);
 	};
 
 	useEffect(() => {
-		if (status === 'error' || status === 'success') reset();
-	}, [reset, status]);
+		if (isSuccess) reset();
+	}, [isSuccess, reset]);
 
 	const [photoEnabled, setPhotoEnabled] = useState(false);
 	const handleEnablePhoto = () => {
@@ -98,7 +94,7 @@ const PostForm = () => {
 					variant='text'
 					startIcon={<AddCircleIcon />}
 					disabled={status === 'loading'}
-					color={status === 'error' ? 'error' : 'primary'}
+					color={isError ? 'error' : 'primary'}
 				>
 					{sendBtnText}
 				</Button>

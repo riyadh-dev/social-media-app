@@ -14,12 +14,11 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import * as React from 'react';
-import { useMutation } from 'react-query';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { queryClient } from '../..';
+import useDislikePost from '../../common/hooks/mutations/useDislike';
+import useLikePost from '../../common/hooks/mutations/useLike';
 import { ICurrentUser, IPost } from '../../common/interfaces';
-import { dislikePostReq, likePostReq } from '../../common/requests';
 import { currentUserState } from '../../recoil/states';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -38,10 +37,10 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 }));
 
 export default function Post({
-	postData,
+	post,
 	lastItemRef,
 }: {
-	postData: IPost;
+	post: IPost;
 	lastItemRef?: (node: HTMLDivElement) => void;
 }) {
 	const [expanded, setExpanded] = React.useState(false);
@@ -50,42 +49,37 @@ export default function Post({
 		setExpanded(!expanded);
 	};
 
-	const canExpand = postData.description.length > 160;
+	const canExpand = post.description.length > 160;
 	const description =
 		canExpand === true && expanded === false
-			? postData.description.substring(0, 160) + ' ...'
-			: postData.description;
+			? post.description.substring(0, 160) + ' ...'
+			: post.description;
 
-	const likeMutation = useMutation(() => likePostReq(postData._id), {
-		onSuccess: () => queryClient.invalidateQueries(['posts']),
-	});
-
-	const dislikeMutation = useMutation(() => dislikePostReq(postData._id), {
-		onSuccess: () => queryClient.invalidateQueries(['posts']),
-	});
+	const likeMutation = useLikePost(post._id);
+	const dislikeMutation = useDislikePost(post._id);
 
 	const { _id: currentUserId } = useRecoilState(
 		currentUserState
 	)[0] as ICurrentUser;
 
-	const thumbUpColor = postData.likes.includes(currentUserId)
+	const thumbUpColor = post.likes.includes(currentUserId)
 		? 'primary'
 		: 'inherit';
-	const thumbDownColor = postData.dislikes.includes(currentUserId)
+	const thumbDownColor = post.dislikes.includes(currentUserId)
 		? 'error'
 		: 'inherit';
 
-	const postDate = new Date(postData.createdAt).toLocaleDateString();
+	const postDate = new Date(post.createdAt).toLocaleDateString();
 
 	return (
-		<Card sx={{ maxWidth: 680 }} ref={lastItemRef}>
+		<Card ref={lastItemRef}>
 			<CardHeader
 				avatar={
 					<Avatar
-						src={postData.author.profilePicture}
+						src={post.author.profilePicture}
 						aria-label='avatar'
 						component={RouterLink}
-						to={'/profile/' + postData.author.id}
+						to={'/profile/' + post.author.id}
 					/>
 				}
 				action={
@@ -93,11 +87,11 @@ export default function Post({
 						<MoreVertIcon />
 					</IconButton>
 				}
-				title={postData.author.username}
+				title={post.author.username}
 				subheader={postDate}
 			/>
-			{postData.img && (
-				<CardMedia component='img' image={postData.img} alt='post img' />
+			{post.img && (
+				<CardMedia component='img' image={post.img} alt='post img' />
 			)}
 			<CardContent>
 				<Typography paragraph>{description}</Typography>
@@ -105,7 +99,7 @@ export default function Post({
 			<CardActions disableSpacing>
 				<IconButton aria-label='like' onClick={() => likeMutation.mutate()}>
 					<Badge
-						badgeContent={postData.likes.length}
+						badgeContent={post.likes.length}
 						color='primary'
 						anchorOrigin={{
 							vertical: 'bottom',
@@ -120,7 +114,7 @@ export default function Post({
 					onClick={() => dislikeMutation.mutate()}
 				>
 					<Badge
-						badgeContent={postData.dislikes.length}
+						badgeContent={post.dislikes.length}
 						color='error'
 						anchorOrigin={{
 							vertical: 'bottom',

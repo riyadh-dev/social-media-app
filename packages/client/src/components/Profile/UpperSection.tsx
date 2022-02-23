@@ -1,10 +1,8 @@
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
-import { useQuery } from 'react-query';
 import { useParams } from 'react-router-dom';
-import { ICurrentUser } from '../../common/interfaces';
-import { UserReq } from '../../common/requests';
+import useUser from '../../common/hooks/queries/useUser';
 const COVER_IMG =
 	'https://images.pexels.com/photos/2002719/pexels-photo-2002719.jpeg?cs=srgb&dl=pexels-timothy-paule-ii-2002719.jpg&fm=jpg';
 
@@ -18,12 +16,8 @@ const AvatarBox = styled(Box)(({ theme }) => ({
 }));
 
 const UpperSection = () => {
-	const { id } = useParams<{ id: string }>();
-	const { data, status } = useQuery<ICurrentUser>(['user', id], () =>
-		UserReq(id as string)
-	);
-
-	if (status !== 'success') return null;
+	const userId = useParams<{ id: string }>().id;
+	const { data } = useUser(userId);
 
 	return (
 		<StyledBox

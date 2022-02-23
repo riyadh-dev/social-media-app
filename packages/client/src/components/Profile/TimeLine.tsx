@@ -14,62 +14,37 @@ import {
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import React from 'react';
-import { useInfiniteQuery, useQuery } from 'react-query';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { TransitionGroup } from 'react-transition-group';
-import { useIntersectionObserver } from '../../common/hooks';
-import { ICurrentUser as IUser, IPost } from '../../common/interfaces';
-import { TimelineReq, UserReq, UsersReq } from '../../common/requests';
+import useTimeline from '../../common/hooks/queries/useTimeline';
+import useUser from '../../common/hooks/queries/useUser';
+import useUsers from '../../common/hooks/queries/useUsers';
 import Post from '../Feed/Post';
 import PostForm from '../PostForm';
 
 const TimeLine = () => {
-	const id = useParams<{ id: string }>().id ?? '';
+	const id = useParams<{ id: string }>().id;
+	const userQuery = useUser(id);
 
-	const userRes = useQuery<IUser>(['user', id], () => UserReq(id as string));
-	const friendsRes = useQuery<IUser[]>(
-		['friendsList', id],
-		() => UsersReq(userRes.data?.followings),
-		{ enabled: Boolean(userRes.data) }
-	);
+	const friends = userQuery.data?.followings;
+	const friendsQuery = useUsers(friends);
 
-	const postsRes = useInfiniteQuery<IPost[]>(
-		['posts', 'timeline', id],
-		({ pageParam }) => TimelineReq(id, pageParam),
-		{
-			getNextPageParam: (lastPage) =>
-				lastPage.length
-					? Date.parse(lastPage[lastPage.length - 1].createdAt)
-					: undefined,
-		}
-	);
+	const { intersectionItemRef, ...postsQuery } = useTimeline(id);
 
-	const { intersectionItemRef } = useIntersectionObserver<HTMLDivElement>({
-		onIntersection: postsRes.fetchNextPage,
-		enable: postsRes.status !== 'loading',
-	});
-
-	if (postsRes.status !== 'success') return <></>;
-
-	const posts = postsRes.data?.pages.flat() ?? [];
-
-	if (postsRes.status !== 'success') return null;
-	if (userRes.status !== 'success') return null;
-	if (friendsRes.status !== 'success') return null;
-
+	const posts = postsQuery.data?.pages.flat();
 	return (
 		<Stack
 			direction={{ xs: 'column', md: 'row' }}
 			justifyContent={{ xs: 'flex-start', md: 'center' }}
 			alignItems={{ xs: 'center', md: 'flex-start' }}
 			spacing={3}
-			sx={{ mt: '20px' }}
+			sx={{ mt: '20px', mx: '16px' }}
 		>
 			<Stack
 				spacing={2.5}
 				sx={{
 					maxWidth: { xs: '680px', md: '400px' },
-					width: { xs: '100%', md: 'auto' },
+					width: { xs: '100%', md: '360' },
 				}}
 			>
 				<Paper
@@ -104,7 +79,7 @@ const TimeLine = () => {
 					</Stack>
 				</Paper>
 
-				<Paper sx={{ p: '20px', maxWidth: { xs: '680px', md: '400px' } }}>
+				<Paper sx={{ p: '20px' }}>
 					<Stack direction='row' spacing={1} justifyContent='space-between'>
 						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 							Photos
@@ -136,40 +111,49 @@ const TimeLine = () => {
 							See All Friends
 						</Button>
 					</Stack>
-					<ImageList cols={3} gap={8}>
-						{friendsRes.data?.map((user) => (
-							<ImageListItem
-								component={RouterLink}
-								key={user._id}
-								to={`/profile/${user._id}`}
-								sx={{ textDecoration: 'none', color: 'inherit' }}
-							>
-								<img
-									src={user.profilePicture}
-									alt={user.username}
-									loading='lazy'
-									style={{ borderRadius: '8px' }}
-								/>
-								<ImageListItemBar title={user.username} position='below' />
-							</ImageListItem>
-						))}
-					</ImageList>
+					{friendsQuery.data && (
+						<ImageList cols={3} gap={8}>
+							{friendsQuery.data?.map((friend) => (
+								<ImageListItem
+									component={RouterLink}
+									key={friend._id}
+									to={`/profile/${friend._id}`}
+									sx={{ textDecoration: 'none', color: 'inherit' }}
+								>
+									<img
+										src={friend.profilePicture}
+										alt={friend.username}
+										loading='lazy'
+										style={{ borderRadius: '8px' }}
+									/>
+									<ImageListItemBar title={friend.username} position='below' />
+								</ImageListItem>
+							))}
+						</ImageList>
+					)}
 				</Paper>
 			</Stack>
-
-			<Stack spacing={2.5}>
+			<Stack
+				spacing={2.5}
+				sx={{
+					maxWidth: { xs: '680px', md: '500px' },
+					width: '100%',
+				}}
+			>
 				<PostForm />
-				<TransitionGroup component={null}>
-					{posts.map((post, idx) => (
-						<Collapse timeout={800} key={post._id}>
-							{idx + 1 === posts.length ? (
-								<Post lastItemRef={intersectionItemRef} postData={post} />
-							) : (
-								<Post postData={post} />
-							)}
-						</Collapse>
-					))}
-				</TransitionGroup>
+				{posts && (
+					<TransitionGroup component={null}>
+						{posts.map((post, idx) => (
+							<Collapse timeout={800} key={post._id}>
+								{idx + 1 === posts.length ? (
+									<Post lastItemRef={intersectionItemRef} post={post} />
+								) : (
+									<Post post={post} />
+								)}
+							</Collapse>
+						))}
+					</TransitionGroup>
+				)}
 			</Stack>
 		</Stack>
 	);
