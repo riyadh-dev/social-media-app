@@ -7,6 +7,7 @@ import path from 'path';
 import { csrfProtection, handlePassedError } from './common/middlewares';
 import { CLIENT_ORIGIN, COOKIE_SECRET } from './config/secrets';
 import postRouter from './POST/router';
+import postsCommentRouter from './POST_COMMENT/router';
 import userRouter from './USER/router';
 
 const app = express();
@@ -23,6 +24,7 @@ app.get('/api', (req, res) => {
 
 app.use('/api/users', userRouter);
 app.use(csrfProtection);
+app.use('/api/posts/comments', postsCommentRouter);
 app.use('/api/posts', postRouter);
 
 app.use(express.static(path.join(__dirname, '../../client/build')));

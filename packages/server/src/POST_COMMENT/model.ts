@@ -1,15 +1,14 @@
 import { model, Schema } from 'mongoose';
-import { TPostDB } from './types';
+import { TPostCommentDB } from './types';
 
-const UserSchema = new Schema<TPostDB>(
+const UserSchema = new Schema<TPostCommentDB>(
 	{
 		author: {
 			id: String,
 			profilePicture: String,
 			username: String,
 		},
-		description: String,
-		img: String,
+		text: String,
 		likes: [String],
 		dislikes: [String],
 		comments: [String],
@@ -17,4 +16,4 @@ const UserSchema = new Schema<TPostDB>(
 	{ timestamps: true, versionKey: false }
 );
 
-export default model('Post', UserSchema);
+export default model('PostComment', UserSchema);

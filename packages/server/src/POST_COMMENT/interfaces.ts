@@ -1,15 +1,15 @@
-export interface IPost {
+export interface IPostComment {
 	_id: string;
 	author: {
 		id: string;
 		username: string;
 		profilePicture: string;
 	};
-	description: string;
-	img: string;
+	text: string;
 	likes: string[];
 	dislikes: string[];
 	comments: string[];
+
 	createdAt: string;
 	updatedAt: string;
 }
