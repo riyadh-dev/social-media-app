@@ -16,19 +16,19 @@ import {
 
 const router = Router();
 
+//get post comments
+router.post(
+	'/list/:date',
+	validateInput(getPostCommentsValidationSchema),
+	getPostComments
+);
+
 //create post comment
 router.post(
 	'/:postId',
 	authenticate(),
 	validateInput(createPostCommentValidationSchema),
 	createPostComment
-);
-
-//get post comments
-router.get(
-	'/list/:date',
-	validateInput(getPostCommentsValidationSchema),
-	getPostComments
 );
 
 //update post
