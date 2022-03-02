@@ -13,12 +13,12 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import axios, { AxiosError } from 'axios';
+import { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useRecoilState } from 'recoil';
-import { ICurrentUser, ILoginInput } from '../common/interfaces';
+import { ILoginInput } from '../common/interfaces';
 import { loginReq } from '../common/requests';
 import { currentUserState } from '../recoil/states';
 
@@ -49,8 +49,6 @@ const Login = () => {
 	useEffect(() => {
 		if (isSuccess && data) {
 			setCurrentUser(data);
-			const currentUser: ICurrentUser = data;
-			axios.defaults.headers.common['csrf-token'] = currentUser.csrfToken;
 		}
 	}, [data, isSuccess, setCurrentUser]);
 
