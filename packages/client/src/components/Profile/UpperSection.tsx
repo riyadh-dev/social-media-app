@@ -1,8 +1,16 @@
+import ChatIcon from '@mui/icons-material/Chat';
+import PersonIcon from '@mui/icons-material/Person';
+import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import React from 'react';
 import { useParams } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import useAddFriend from '../../common/hooks/mutations/useAddFriend';
+import useRemoveFriend from '../../common/hooks/mutations/useRemoveFriend';
 import useUser from '../../common/hooks/queries/useUser';
+import { currentUserState } from '../../recoil/states';
+
 const COVER_IMG =
 	'https://images.pexels.com/photos/2002719/pexels-photo-2002719.jpeg?cs=srgb&dl=pexels-timothy-paule-ii-2002719.jpg&fm=jpg';
 
@@ -18,6 +26,20 @@ const AvatarBox = styled(Box)(({ theme }) => ({
 const UpperSection = () => {
 	const userId = useParams<{ id: string }>().id;
 	const { data } = useUser(userId);
+	const currentUser = useRecoilState(currentUserState)[0];
+	const isFriend = Boolean(currentUser?.followings.includes(userId as string));
+
+	const addFriendMutation = useAddFriend();
+	const removeFriendMutation = useRemoveFriend();
+
+	const onAddRemoveFriend = () => {
+		isFriend
+			? removeFriendMutation.mutate(userId)
+			: addFriendMutation.mutate(userId);
+	};
+
+	const isAddRemoveFriendLoading =
+		addFriendMutation.isLoading || removeFriendMutation.isLoading;
 
 	return (
 		<StyledBox
@@ -90,8 +112,20 @@ const UpperSection = () => {
 						direction={{ xs: 'column', sm: 'row' }}
 						spacing={2}
 					>
-						<Button variant='outlined'>Friends</Button>
-						<Button variant='contained'>Message</Button>
+						<Button
+							startIcon={isFriend ? <PersonIcon /> : <PersonAddIcon />}
+							variant={isFriend ? 'outlined' : 'contained'}
+							onClick={onAddRemoveFriend}
+							disabled={isAddRemoveFriendLoading}
+						>
+							{isFriend ? 'Remove Friends' : 'Add Friends'}
+						</Button>
+						<Button
+							startIcon={<ChatIcon />}
+							variant={isFriend ? 'contained' : 'outlined'}
+						>
+							Message
+						</Button>
 					</Stack>
 				</Stack>
 			</Box>
