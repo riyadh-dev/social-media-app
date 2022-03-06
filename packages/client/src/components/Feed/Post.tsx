@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import { Badge } from '@mui/material';
+import { Badge, Button, Divider, Paper, Stack, TextField } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,11 +13,14 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import * as React from 'react';
+import React, { useEffect, useState } from 'react';
+import { useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import useAddPostComment from '../../common/hooks/mutations/useAddComment';
 import useDislikePost from '../../common/hooks/mutations/useDislike';
 import useLikePost from '../../common/hooks/mutations/useLike';
+import useComments from '../../common/hooks/queries/useComments';
 import { IPost } from '../../common/interfaces';
 import { currentUserState } from '../../recoil/states';
 
@@ -36,6 +39,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
+const CommentText = styled(Paper)(({ theme }) => ({
+	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
+	borderRadius: '16px',
+}));
+
 export default function Post({
 	post,
 	lastItemRef,
@@ -43,10 +51,32 @@ export default function Post({
 	post: IPost;
 	lastItemRef?: (node: HTMLDivElement) => void;
 }) {
-	const [expanded, setExpanded] = React.useState(false);
+	const [expanded, setExpanded] = useState(false);
+	const [showComments, setShowComments] = useState(false);
+	const currentUser = useRecoilState(currentUserState)[0];
+
+	const { handleSubmit, register, reset } = useForm<{ text: string }>();
+
+	const commentsQuery = useComments(post.comments, post._id, showComments);
+
+	const addPostMutation = useAddPostComment(post._id);
+	const likeMutation = useLikePost(post._id);
+	const dislikeMutation = useDislikePost(post._id);
+
+	const onSubmit = (postComment: { text: string }) => {
+		addPostMutation.mutate(postComment);
+	};
+
+	useEffect(() => {
+		if (addPostMutation.isSuccess) reset();
+	}, [addPostMutation.isSuccess, reset]);
 
 	const handleExpandClick = () => {
 		setExpanded(!expanded);
+	};
+
+	const handleShowComments = () => {
+		setShowComments((prev) => !prev);
 	};
 
 	const canExpand = post.description.length > 160;
@@ -55,20 +85,14 @@ export default function Post({
 			? post.description.substring(0, 160) + ' ...'
 			: post.description;
 
-	const likeMutation = useLikePost(post._id);
-	const dislikeMutation = useDislikePost(post._id);
-
-	const currentUserId = useRecoilState(currentUserState)[0]?._id ?? '';
-
-	const thumbUpColor = post.likes.includes(currentUserId)
+	const thumbUpColor = post.likes.includes(currentUser?._id ?? '')
 		? 'primary'
 		: 'inherit';
-	const thumbDownColor = post.dislikes.includes(currentUserId)
+	const thumbDownColor = post.dislikes.includes(currentUser?._id ?? '')
 		? 'error'
 		: 'inherit';
 
 	const postDate = new Date(post.createdAt).toLocaleDateString();
-
 	return (
 		<Card ref={lastItemRef}>
 			<CardHeader
@@ -125,6 +149,14 @@ export default function Post({
 				<IconButton aria-label='share'>
 					<ShareIcon />
 				</IconButton>
+				<Button
+					onClick={handleShowComments}
+					variant='text'
+					sx={{ ml: 'auto' }}
+					disabled={!post.comments.length || commentsQuery.isLoading}
+				>
+					{post.comments.length} Comments
+				</Button>
 				{canExpand && (
 					<ExpandMore
 						expand={expanded}
@@ -136,6 +168,37 @@ export default function Post({
 					</ExpandMore>
 				)}
 			</CardActions>
+			<Divider variant='middle' />
+			<Stack
+				direction='row'
+				spacing={2}
+				sx={{ m: 3 }}
+				component='form'
+				onSubmit={handleSubmit(onSubmit)}
+			>
+				<Avatar src={currentUser?.profilePicture} />
+				<TextField
+					placeholder='Write a comment...'
+					size='small'
+					fullWidth
+					helperText='Press Enter to post.'
+					disabled={addPostMutation.isLoading}
+					{...register('text')}
+				/>
+			</Stack>
+
+			{showComments && (
+				<Stack direction='column' spacing={3} sx={{ m: 3 }}>
+					{commentsQuery.data?.map((comment) => (
+						<Stack key={comment._id} direction='row' spacing={2}>
+							<Avatar src={comment.author.profilePicture} />
+							<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
+								<Typography>{comment.text}</Typography>
+							</CommentText>
+						</Stack>
+					))}
+				</Stack>
+			)}
 		</Card>
 	);
 }

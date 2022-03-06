@@ -35,6 +35,7 @@ export interface IPost {
 	img: string;
 	likes: string[];
 	dislikes: string[];
+	comments: string[];
 	createdAt: string;
 	updatedAt: string;
 }
@@ -42,4 +43,20 @@ export interface IPost {
 export interface IAddPostInput {
 	description: string;
 	img?: string;
+}
+
+export interface IPostComment {
+	_id: string;
+	author: {
+		id: string;
+		username: string;
+		profilePicture: string;
+	};
+	text: string;
+	likes: string[];
+	dislikes: string[];
+	comments: string[];
+
+	createdAt: string;
+	updatedAt: string;
 }
