@@ -13,7 +13,7 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { AxiosError } from 'axios';
+import axios, { AxiosError } from 'axios';
 import React, { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
@@ -49,6 +49,7 @@ const Login = () => {
 	useEffect(() => {
 		if (isSuccess && data) {
 			setCurrentUser(data);
+			axios.defaults.headers.common['csrf-token'] = data.csrfToken;
 		}
 	}, [data, isSuccess, setCurrentUser]);
 
