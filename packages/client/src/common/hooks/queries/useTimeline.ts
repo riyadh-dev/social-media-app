@@ -33,7 +33,7 @@ const useTimeline = (userId: string | undefined) => {
 	);
 	const intersectionItemRef = useIntersectionObserver({
 		onIntersection: postInfiniteQuery.fetchNextPage,
-		enable: postInfiniteQuery.isLoading,
+		enable: !postInfiniteQuery.isLoading,
 	});
 
 	return {
