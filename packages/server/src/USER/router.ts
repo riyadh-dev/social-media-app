@@ -11,6 +11,7 @@ import {
 	follow,
 	getUser,
 	getUsers,
+	getUsersByIds,
 	login,
 	logout,
 	unfollow,
@@ -28,7 +29,8 @@ const router = Router();
 router.post('/', validateInput(signupValidationSchema), createUser);
 router.post('/login', validateInput(loginValidationSchema), csrfLogin, login);
 router.post('/logout', logout);
-router.post('/list', validateInput(getUsersValidationSchema), getUsers);
+router.post('/list', validateInput(getUsersValidationSchema), getUsersByIds);
+router.get('/list/:date', authenticate(), getUsers);
 
 router.use(csrfProtection);
 

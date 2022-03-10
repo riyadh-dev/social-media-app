@@ -151,7 +151,7 @@ const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(user);
 };
 
-const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
+const getUsersByIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userIds = res.locals.validatedBody as TGetUsersInput;
 	const filteredIds = userIds.filter(isUniqueInArray);
 	const usersPromises = filteredIds.map(async (userId) => {
@@ -165,6 +165,21 @@ const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const users = (await Promise.all(usersPromises)).filter((user) =>
 		Boolean(user)
 	);
+	res.status(200).json(users);
+};
+
+const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const currentUser = await UserModel.findById(res.locals.currentUserId);
+	const date = req.params.date;
+	const followings = currentUser?.followings ?? [];
+
+	const users = await UserModel.find({
+		_id: { $nin: followings },
+		createdAt: { $lt: new Date(parseInt(date)) },
+	})
+		.sort({ createdAt: -1 })
+		.limit(16);
+
 	res.status(200).json(users);
 };
 
@@ -232,7 +247,8 @@ const unfollowUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const followedUserIdIndex = followerUserDoc.followers.indexOf(followedUserId);
+	const followedUserIdIndex =
+		followerUserDoc.followings.indexOf(followedUserId);
 	const followerUserIdIndex = followedUserDoc.followers.indexOf(followerUserId);
 
 	if (followedUserIdIndex === -1 && followerUserIdIndex === -1) {
@@ -260,5 +276,6 @@ export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
 export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
 export const getUser = catchAsyncRequestHandlerError(getUserUnsafe);
 export const getUsers = catchAsyncRequestHandlerError(getUsersUnsafe);
+export const getUsersByIds = catchAsyncRequestHandlerError(getUsersByIdsUnsafe);
 export const follow = catchAsyncRequestHandlerError(followUnsafe);
 export const unfollow = catchAsyncRequestHandlerError(unfollowUnsafe);
