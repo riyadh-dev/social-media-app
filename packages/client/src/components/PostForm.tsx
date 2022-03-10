@@ -55,7 +55,7 @@ const PostForm = () => {
 		<Paper component='form' onSubmit={handleSubmit(onSubmit)}>
 			<Stack direction='column' sx={{ p: '12px' }} spacing={2}>
 				<Stack direction='row' spacing={2}>
-					<Avatar />
+					<Avatar src={currentUser?.profilePicture} />
 					<TextField
 						placeholder={`What's on your mind, ${currentUser?.username}?`}
 						size='small'
