@@ -13,6 +13,7 @@ import { useRecoilState } from 'recoil';
 import Feed from './components/Feed';
 import FriendsList from './components/FriendsList';
 import Login from './components/Login';
+import FriendsListPage from './components/pages/FriendsList';
 import Profile from './components/Profile';
 import SideBar from './components/SideBar';
 import TopBar from './components/TopBar';
@@ -71,6 +72,7 @@ function App() {
 							}
 						/>
 						<Route path='/profile/:id' element={<Profile />} />
+						<Route path='/friends' element={<FriendsListPage />} />
 					</Routes>
 				</>
 			)}

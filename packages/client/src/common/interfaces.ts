@@ -20,8 +20,8 @@ export interface ICurrentUser {
 	dislikedPosts: string[];
 	isAdmin: boolean;
 	csrfToken: string;
-	createdAt: Date;
-	updatedAt: Date;
+	createdAt: string;
+	updatedAt: string;
 }
 
 export interface IPost {
