@@ -1,6 +1,5 @@
-import { Collapse, Stack } from '@mui/material';
+import { Stack } from '@mui/material';
 import React from 'react';
-import { TransitionGroup } from 'react-transition-group';
 import { useRecoilState } from 'recoil';
 import useTimeline from '../../common/hooks/queries/useTimeline';
 import { currentUserState } from '../../recoil/states';
@@ -23,19 +22,18 @@ const Feed = () => {
 			}}
 		>
 			<PostForm />
-			{posts && (
-				<TransitionGroup component={null}>
-					{posts.map((post, idx) => (
-						<Collapse timeout={800} key={post._id}>
-							{idx + 1 === posts.length ? (
-								<Post lastItemRef={intersectionItemRef} post={post} />
-							) : (
-								<Post post={post} />
-							)}
-						</Collapse>
-					))}
-				</TransitionGroup>
-			)}
+			{posts &&
+				posts.map((post, idx) =>
+					idx + 1 === posts.length ? (
+						<Post
+							key={post._id}
+							lastItemRef={intersectionItemRef}
+							post={post}
+						/>
+					) : (
+						<Post key={post._id} post={post} />
+					)
+				)}
 		</Stack>
 	);
 };
