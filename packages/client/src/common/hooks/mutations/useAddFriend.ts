@@ -17,13 +17,14 @@ const addFriend = async (userId: string | undefined): Promise<string> => {
 	return data;
 };
 
-const useAddFriend = () => {
+const useAddFriend = (userId: string | undefined = undefined) => {
 	const setCurrentUser = useRecoilState(currentUserState)[1];
-	const newFriendId = useParams().id;
+	const newFriendId = useParams().id ?? userId;
 
 	return useMutation(addFriend, {
 		onSuccess: () => {
 			queryClient.invalidateQueries(['posts']);
+			queryClient.invalidateQueries(['users']);
 			setCurrentUser((prev) => {
 				if (!prev) return null;
 				const followings = newFriendId

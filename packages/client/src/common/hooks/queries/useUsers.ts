@@ -15,7 +15,7 @@ const getUsersByIds = async (
 };
 
 const useUsers = (userIds: string[] = []) =>
-	useQuery(['users', ...userIds], () => getUsersByIds(userIds), {
+	useQuery(['users', 'friends list'], () => getUsersByIds(userIds), {
 		enabled: Boolean(userIds.length),
 	});
 
