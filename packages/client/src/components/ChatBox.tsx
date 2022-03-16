@@ -1,10 +1,13 @@
+import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import {
 	alpha,
 	Avatar,
 	CardHeader,
 	Divider,
 	IconButton,
+	InputAdornment,
 	InputBase,
 	Paper,
 	Stack,
@@ -14,6 +17,7 @@ import {
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import React from 'react';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
@@ -94,8 +98,24 @@ export default function ChatBox() {
 			<CardContent sx={{ height: 353, overflowX: 'hidden', overflowY: 'auto' }}>
 				{arr.map((item, idx) => (idx % 2 === 0 ? <ChatMsg /> : <OwnChatMsg />))}
 			</CardContent>
-			<CardActions>
-				<CustomInput placeholder='Aa' inputProps={{ 'aria-label': 'chat' }} />
+			<CardActions sx={{ justifyContent: 'space-between' }}>
+				<IconButton aria-label='add'>
+					<AddCircleIcon color='primary' />
+				</IconButton>
+				<CustomInput
+					placeholder='Aa'
+					inputProps={{ 'aria-label': 'chat' }}
+					endAdornment={
+						<InputAdornment position='end'>
+							<IconButton>
+								<EmojiEmotionsIcon color='primary' />
+							</IconButton>
+						</InputAdornment>
+					}
+				/>
+				<IconButton aria-label='like'>
+					<ThumbUpIcon color='primary' />
+				</IconButton>
 			</CardActions>
 		</Card>
 	);
