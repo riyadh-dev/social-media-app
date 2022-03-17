@@ -1,9 +1,12 @@
 import AddCircleIcon from '@mui/icons-material/AddCircle';
 import CloseIcon from '@mui/icons-material/Close';
+import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
+import RemoveIcon from '@mui/icons-material/Remove';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
 import {
 	alpha,
 	Avatar,
+	Button,
 	CardHeader,
 	Divider,
 	IconButton,
@@ -17,7 +20,6 @@ import {
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import EmojiEmotionsIcon from '@mui/icons-material/EmojiEmotions';
 import React from 'react';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
@@ -34,6 +36,7 @@ const OwmChatMsgPaper = styled(Paper)(({ theme }) => ({
 const CustomInput = styled(InputBase)(({ theme }) => ({
 	position: 'relative',
 	borderRadius: '50px',
+	marginInline: '16px',
 	backgroundColor: alpha(theme.palette.action.active, 0.1),
 	'&:hover': {
 		backgroundColor: alpha(theme.palette.action.active, 0.15),
@@ -85,15 +88,31 @@ export default function ChatBox() {
 			}}
 		>
 			<CardHeader
-				avatar={<Avatar />}
-				action={
-					<IconButton aria-label='close' sx={{ mr: '8px' }}>
-						<CloseIcon />
-					</IconButton>
+				sx={{ p: '3px' }}
+				avatar={
+					<Button
+						//component={RouterLink}
+						//to={'/profile/' + currentUser?._id}
+						sx={{
+							textTransform: 'none',
+						}}
+						variant='text'
+						startIcon={<Avatar alt='Avatar' sx={{ height: 32, width: 32 }} />}
+					>
+						{'username'}
+					</Button>
 				}
-				title='Username'
-				sx={{ p: '8px' }}
-			/>
+				action={
+					<Stack direction='row'>
+						<IconButton aria-label='close'>
+							<RemoveIcon />
+						</IconButton>
+						<IconButton aria-label='close' sx={{ mr: '8px' }}>
+							<CloseIcon />
+						</IconButton>
+					</Stack>
+				}
+			></CardHeader>
 			<Divider />
 			<CardContent sx={{ height: 353, overflowX: 'hidden', overflowY: 'auto' }}>
 				{arr.map((item, idx) => (idx % 2 === 0 ? <ChatMsg /> : <OwnChatMsg />))}
