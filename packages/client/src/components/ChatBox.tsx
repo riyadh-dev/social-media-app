@@ -7,7 +7,6 @@ import {
 	alpha,
 	Avatar,
 	Button,
-	CardHeader,
 	Divider,
 	IconButton,
 	InputAdornment,
@@ -37,6 +36,7 @@ const CustomInput = styled(InputBase)(({ theme }) => ({
 	position: 'relative',
 	borderRadius: '50px',
 	marginInline: '16px',
+	height: '36px',
 	backgroundColor: alpha(theme.palette.action.active, 0.1),
 	'&:hover': {
 		backgroundColor: alpha(theme.palette.action.active, 0.15),
@@ -87,32 +87,28 @@ export default function ChatBox() {
 				zIndex: 9999,
 			}}
 		>
-			<CardHeader
-				sx={{ p: '3px' }}
-				avatar={
-					<Button
-						//component={RouterLink}
-						//to={'/profile/' + currentUser?._id}
-						sx={{
-							textTransform: 'none',
-						}}
-						variant='text'
-						startIcon={<Avatar alt='Avatar' sx={{ height: 32, width: 32 }} />}
-					>
-						{'username'}
-					</Button>
-				}
-				action={
-					<Stack direction='row'>
-						<IconButton aria-label='close'>
-							<RemoveIcon />
-						</IconButton>
-						<IconButton aria-label='close' sx={{ mr: '8px' }}>
-							<CloseIcon />
-						</IconButton>
-					</Stack>
-				}
-			></CardHeader>
+			<Stack direction='row' justifyContent='space-between' alignItems='center'>
+				<Button
+					//component={RouterLink}
+					//to={'/profile/' + currentUser?._id}
+					sx={{
+						textTransform: 'none',
+						m: '2px',
+					}}
+					variant='text'
+					startIcon={<Avatar alt='Avatar' sx={{ height: 32, width: 32 }} />}
+				>
+					{'username'}
+				</Button>
+				<Stack direction='row' spacing={1} sx={{ p: '8px' }}>
+					<IconButton aria-label='close' sx={{ height: 26, width: 26 }}>
+						<RemoveIcon />
+					</IconButton>
+					<IconButton aria-label='close' sx={{ height: 26, width: 26 }}>
+						<CloseIcon />
+					</IconButton>
+				</Stack>
+			</Stack>
 			<Divider />
 			<CardContent sx={{ height: 353, overflowX: 'hidden', overflowY: 'auto' }}>
 				{arr.map((item, idx) => (idx % 2 === 0 ? <ChatMsg /> : <OwnChatMsg />))}
@@ -126,7 +122,7 @@ export default function ChatBox() {
 					inputProps={{ 'aria-label': 'chat' }}
 					endAdornment={
 						<InputAdornment position='end'>
-							<IconButton>
+							<IconButton sx={{ height: '28px', width: '28px', mr: '4px' }}>
 								<EmojiEmotionsIcon color='primary' />
 							</IconButton>
 						</InputAdornment>
