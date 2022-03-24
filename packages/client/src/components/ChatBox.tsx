@@ -20,6 +20,8 @@ import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import React from 'react';
+import { Link as RouterLink } from 'react-router-dom';
+import { ICurrentUser } from '../common/interfaces';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
@@ -74,31 +76,33 @@ const ChatMsg = () => (
 	</Stack>
 );
 
-export default function ChatBox() {
+export default function ChatBox({
+	user,
+}: {
+	user: Omit<ICurrentUser, 'csrfToken'>;
+}) {
 	const arr = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 	return (
 		<Card
 			sx={{
 				width: 338,
 				height: 465,
-				position: 'absolute',
-				bottom: 0,
-				right: 100,
-				zIndex: 9999,
 			}}
 		>
 			<Stack direction='row' justifyContent='space-between' alignItems='center'>
 				<Button
-					//component={RouterLink}
-					//to={'/profile/' + currentUser?._id}
+					component={RouterLink}
+					to={'/profile/' + user._id}
 					sx={{
 						textTransform: 'none',
 						m: '2px',
 					}}
 					variant='text'
-					startIcon={<Avatar alt='Avatar' sx={{ height: 32, width: 32 }} />}
+					startIcon={
+						<Avatar src={user.profilePicture} sx={{ height: 32, width: 32 }} />
+					}
 				>
-					{'username'}
+					{user.username}
 				</Button>
 				<Stack direction='row' spacing={1} sx={{ p: '8px' }}>
 					<IconButton aria-label='close' sx={{ height: 26, width: 26 }}>
@@ -111,7 +115,9 @@ export default function ChatBox() {
 			</Stack>
 			<Divider />
 			<CardContent sx={{ height: 353, overflowX: 'hidden', overflowY: 'auto' }}>
-				{arr.map((item, idx) => (idx % 2 === 0 ? <ChatMsg /> : <OwnChatMsg />))}
+				{arr.map((item, idx) =>
+					idx % 2 === 0 ? <ChatMsg key={idx} /> : <OwnChatMsg key={idx} />
+				)}
 			</CardContent>
 			<CardActions sx={{ justifyContent: 'space-between' }}>
 				<IconButton aria-label='add'>
