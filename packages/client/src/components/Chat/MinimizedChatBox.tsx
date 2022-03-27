@@ -2,8 +2,8 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Avatar, Badge, styled } from '@mui/material';
 import React, { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ICurrentUser } from '../common/interfaces';
-import { chatBoxState } from '../recoil/states';
+import { ICurrentUser } from '../../common/interfaces';
+import { chatBoxState } from '../../recoil/states';
 
 const CloseAvatar = styled(Avatar)(({ theme }) => ({
 	width: '20px',
@@ -23,15 +23,35 @@ const MinimizedChatBox = ({
 
 	const onRemoveMinimizedChat = () => {
 		setChatBox((prev) => {
-			const minimized = [...prev.minimized];
-			const toRemoveIdx = minimized.indexOf(user);
-			minimized.splice(toRemoveIdx, 1);
+			const { minimized, open } = prev;
+			minimized.delete(user._id);
 			return {
-				open: prev.open,
 				minimized,
+				open,
 			};
 		});
 	};
+
+	const onOpenMinimizedChat = () => {
+		setChatBox((prev) => {
+			const { minimized, open } = prev;
+			minimized.delete(user._id);
+
+			const openKeys = Array.from(open.keys());
+			if (openKeys.length >= 3) {
+				// eslint-disable-next-line @typescript-eslint/no-non-null-assertion
+				minimized.set(openKeys[0], open.get(openKeys[0])!);
+				open.delete(openKeys[0]);
+			}
+
+			open.set(user._id, user);
+			return {
+				minimized,
+				open,
+			};
+		});
+	};
+
 	return (
 		<Badge
 			overlap='circular'
@@ -52,6 +72,7 @@ const MinimizedChatBox = ({
 			<Avatar
 				src={user.profilePicture}
 				sx={{ height: '48px', width: '48px', cursor: 'pointer' }}
+				onClick={onOpenMinimizedChat}
 			/>
 		</Badge>
 	);

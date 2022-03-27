@@ -21,7 +21,9 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
-import { ICurrentUser } from '../common/interfaces';
+import { useRecoilState } from 'recoil';
+import { ICurrentUser } from '../../common/interfaces';
+import { chatBoxState } from '../../recoil/states';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
@@ -82,6 +84,38 @@ export default function ChatBox({
 	user: Omit<ICurrentUser, 'csrfToken'>;
 }) {
 	const arr = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
+
+	const setChatBox = useRecoilState(chatBoxState)[1];
+	const onMinimize = () => {
+		setChatBox((prev) => {
+			const { minimized, open } = prev;
+
+			open.delete(user._id);
+			minimized.set(user._id, user);
+
+			const minKeys = Array.from(minimized.keys());
+			if (minKeys.length >= 7) {
+				minimized.delete(minKeys[0]);
+			}
+
+			return {
+				minimized,
+				open,
+			};
+		});
+	};
+
+	const onClose = () => {
+		setChatBox((prev) => {
+			const { minimized, open } = prev;
+			open.delete(user._id);
+			return {
+				minimized,
+				open,
+			};
+		});
+	};
+
 	return (
 		<Card
 			sx={{
@@ -105,10 +139,18 @@ export default function ChatBox({
 					{user.username}
 				</Button>
 				<Stack direction='row' spacing={1} sx={{ p: '8px' }}>
-					<IconButton aria-label='close' sx={{ height: 26, width: 26 }}>
+					<IconButton
+						aria-label='close'
+						sx={{ height: 26, width: 26 }}
+						onClick={onMinimize}
+					>
 						<RemoveIcon />
 					</IconButton>
-					<IconButton aria-label='close' sx={{ height: 26, width: 26 }}>
+					<IconButton
+						aria-label='minimize'
+						sx={{ height: 26, width: 26 }}
+						onClick={onClose}
+					>
 						<CloseIcon />
 					</IconButton>
 				</Stack>
