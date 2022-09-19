@@ -21,3 +21,11 @@ export const sideBarOpenState = atom({
 	key: 'sideBarOpenState',
 	default: false,
 });
+
+export const chatBoxState = atom({
+	key: 'chatBoxState',
+	default: {
+		minimized: new Map<string, Omit<ICurrentUser, 'csrfToken'>>(),
+		open: new Map<string, Omit<ICurrentUser, 'csrfToken'>>(),
+	},
+});
