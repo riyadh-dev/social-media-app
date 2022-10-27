@@ -51,7 +51,11 @@ const genPosts = async (postsNumber: number, usersNumber: number) => {
 	usersDocs.forEach((userDoc) => {
 		for (let index = 0; index < postsNumber; index++) {
 			const post: TPostDB = {
-				author: userDoc.id,
+				author: {
+					id: userDoc.id,
+					profilePicture: userDoc.profilePicture,
+					username: userDoc.username,
+				},
 				description: faker.commerce.productDescription(),
 				img:
 					faker.image.nature() +
@@ -59,6 +63,7 @@ const genPosts = async (postsNumber: number, usersNumber: number) => {
 					Math.floor(Math.random() * 100000),
 				dislikes: [],
 				likes: [],
+				comments: [],
 			};
 
 			createPostsPromises.push(PostModel.create(post));

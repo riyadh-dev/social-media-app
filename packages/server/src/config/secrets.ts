@@ -4,9 +4,11 @@ import fs from 'fs';
 if (fs.existsSync('.env')) {
 	console.log('Using .env file to supply config environment variables');
 	dotenv.config({ path: '.env' });
-} else if (fs.existsSync('.env.example')) {
-	console.log('Using .env.example file to supply config environment variables');
-	dotenv.config({ path: '.env.example' });
+} else if (fs.existsSync('.env.development')) {
+	console.log(
+		'Using .env.development file to supply config environment variables'
+	);
+	dotenv.config({ path: '.env.development' });
 } else {
 	console.error('No ENV file was provided');
 	process.exit(1);

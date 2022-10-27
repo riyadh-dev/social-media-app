@@ -10,6 +10,7 @@ import {
 import React, { useEffect, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import Chat from './components/Chat';
 import Feed from './components/Feed';
 import FriendsList from './components/FriendsList';
 import Login from './components/Login';
@@ -68,6 +69,7 @@ function App() {
 									<SideBar />
 									<Feed />
 									<FriendsList />
+									<Chat />
 								</Stack>
 							}
 						/>

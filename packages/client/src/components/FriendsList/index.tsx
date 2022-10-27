@@ -6,11 +6,14 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useSetRecoilState } from 'recoil';
 import useUsers from '../../common/hooks/queries/useUsers';
 import { ICurrentUser as IUser } from '../../common/interfaces';
-import { currentUserState, sideBarOpenState } from '../../recoil/states';
+import {
+	chatBoxState,
+	currentUserState,
+	sideBarOpenState,
+} from '../../recoil/states';
 
 const DRAWER_WIDTH = 300;
 
@@ -51,12 +54,28 @@ const FriendsListItem = ({
 	user,
 	isOnline,
 }: {
-	user: IUser;
+	user: Omit<IUser, 'csrfToken'>;
 	isOnline: boolean;
 }) => {
+	const setChatBox = useSetRecoilState(chatBoxState);
+	const handleOpenChatBox = () => {
+		setChatBox((prev) => {
+			const open = new Map(prev.open);
+			const minimized = new Map(prev.minimized);
+
+			open.set(user._id, user);
+			minimized.delete(user._id);
+
+			return {
+				open,
+				minimized,
+			};
+		});
+	};
+
 	if (!isOnline)
 		return (
-			<ListItem button>
+			<ListItem button onClick={handleOpenChatBox}>
 				<ListItemAvatar>
 					<Avatar src={user.profilePicture} alt='Avatar' />
 				</ListItemAvatar>
@@ -65,7 +84,7 @@ const FriendsListItem = ({
 		);
 
 	return (
-		<ListItem button>
+		<ListItem button onClick={handleOpenChatBox}>
 			<ListItemAvatar>
 				<OnlineBadge
 					overlap='circular'
