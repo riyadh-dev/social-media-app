@@ -7,6 +7,11 @@ export interface IUser {
 	email: string;
 	password: string;
 	friends: string[];
+	likedPosts: string[];
+	dislikedPosts: string[];
+	isAdmin: boolean;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IFriendRequest {
@@ -14,6 +19,8 @@ export interface IFriendRequest {
 	requester: string;
 	recipient: string;
 	status: TFriendRequestStatus;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IChatMessage {
@@ -22,6 +29,8 @@ export interface IChatMessage {
 	targetId: string;
 	text: string;
 	status: TChatMessageStatus;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IPost {
@@ -51,7 +60,6 @@ export interface IPostComment {
 	likes: string[];
 	dislikes: string[];
 	comments: string[];
-
 	createdAt: string;
 	updatedAt: string;
 }

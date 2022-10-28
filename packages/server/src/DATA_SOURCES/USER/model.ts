@@ -1,14 +1,14 @@
+import { IUser } from '@social-media-app/shared';
 import bcrypt from 'bcryptjs';
 import { model, Schema } from 'mongoose';
-import { TUserDB } from './types';
 
-const UserSchema = new Schema<TUserDB>(
+const UserSchema = new Schema<IUser>(
 	{
-		username: { type: String, unique: true },
+		email: { type: String, unique: true },
+		userName: { type: String, unique: true },
 		password: String,
-		profilePicture: String,
-		followers: [String],
-		followings: [String],
+		avatar: String,
+		friends: [String],
 		likedPosts: [String],
 		dislikedPosts: [String],
 		isAdmin: { type: Boolean, default: false },

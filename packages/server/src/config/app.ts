@@ -4,11 +4,11 @@ import express from 'express';
 import helmet from 'helmet';
 import morgan from 'morgan';
 import path from 'path';
-import { csrfProtection, handlePassedError } from './common/middlewares';
-import { CLIENT_ORIGIN, COOKIE_SECRET } from './config/secrets';
-import postRouter from './POST/router';
-import postsCommentRouter from './POST_COMMENT/router';
-import userRouter from './USER/router';
+import { csrfProtection, handlePassedError } from '../common/middlewares';
+import { CLIENT_ORIGIN, COOKIE_SECRET } from './secrets';
+import postRouter from '../DATA_SOURCES/POST/router';
+import postsCommentRouter from '../DATA_SOURCES/POST_COMMENT/router';
+import userRouter from '../DATA_SOURCES/USER/router';
 
 const app = express();
 

@@ -2,8 +2,8 @@ import csurf from 'csurf';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
-import UserModel from '../USER/model';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
+import UserModel from '../DATA_SOURCES/USER/model';
 import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
 
 export const validateInput =

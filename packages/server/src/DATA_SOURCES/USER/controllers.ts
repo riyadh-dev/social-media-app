@@ -2,10 +2,10 @@ import bcrypt from 'bcryptjs';
 import { ErrorRequestHandler, RequestHandler } from 'express';
 import jwt from 'jsonwebtoken';
 import { isValidObjectId } from 'mongoose';
-import { isUniqueInArray } from '../common/helpers';
-import { IAsyncRequestHandler, isErrorWithCode } from '../common/interfaces';
-import { catchAsyncRequestHandlerError } from '../common/middlewares';
-import { IS_PROD, JWT_SECRET } from '../config/secrets';
+import { isUniqueInArray } from '../../common/helpers';
+import { IAsyncRequestHandler, isErrorWithCode } from '../../common/interfaces';
+import { catchAsyncRequestHandlerError } from '../../common/middlewares';
+import { IS_PROD, JWT_SECRET } from '../../config/secrets';
 import UserModel from './model';
 import { TGetUsersInput, TLoginInput } from './types';
 

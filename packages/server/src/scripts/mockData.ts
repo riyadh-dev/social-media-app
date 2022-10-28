@@ -1,20 +1,10 @@
-import faker from 'faker';
-import { connection, Document, Types } from 'mongoose';
-import { TPostDB } from 'src/POST/types';
-import db from '../config/db';
-import PostModel from '../POST/model';
-import UserModel from '../USER/model';
-import { TUserDB } from '../USER/types';
-
-const clearDb = async () => {
-	const db = connection.db;
-	const collections = await db.listCollections().toArray();
-	collections
-		.map((collection) => collection.name)
-		.forEach(async (collectionName) => {
-			db.dropCollection(collectionName);
-		});
-};
+import { faker } from '@faker-js/faker';
+import { Document, Types } from 'mongoose';
+import { TPostDB } from 'src/DATA_SOURCES/POST/types';
+import { clearDB, connectDB } from '../config/db';
+import PostModel from '../DATA_SOURCES/POST/model';
+import UserModel from '../DATA_SOURCES/USER/model';
+import { TUserDB } from '../DATA_SOURCES/USER/types';
 
 //gen users
 const genUser = async (usersNumber: number) => {
@@ -88,8 +78,8 @@ const genPosts = async (postsNumber: number, usersNumber: number) => {
 };
 
 const main = async () => {
-	await db();
-	await clearDb();
+	await connectDB();
+	await clearDB();
 	await genPosts(15, 5);
 	console.log('DONE !!');
 	process.exit(0);

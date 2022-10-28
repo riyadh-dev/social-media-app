@@ -4,7 +4,7 @@ import {
 	csrfLogin,
 	csrfProtection,
 	validateInput,
-} from '../common/middlewares';
+} from '../../common/middlewares';
 import {
 	createUser,
 	deleteUser,

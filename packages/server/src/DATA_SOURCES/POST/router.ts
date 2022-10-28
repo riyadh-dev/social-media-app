@@ -1,5 +1,5 @@
 import { Router } from 'express';
-import { authenticate, validateInput } from '../common/middlewares';
+import { authenticate, validateInput } from '../../common/middlewares';
 import {
 	createPost,
 	deletePost,

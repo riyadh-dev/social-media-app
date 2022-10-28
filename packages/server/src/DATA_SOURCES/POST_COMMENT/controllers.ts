@@ -1,6 +1,6 @@
 import { isValidObjectId } from 'mongoose';
-import { IAsyncRequestHandler } from '../common/interfaces';
-import { catchAsyncRequestHandlerError } from '../common/middlewares';
+import { IAsyncRequestHandler } from '../../common/interfaces';
+import { catchAsyncRequestHandlerError } from '../../common/middlewares';
 import PostModel from '../POST/model';
 import UserModel from '../USER/model';
 import PostCommentModel from './model';
