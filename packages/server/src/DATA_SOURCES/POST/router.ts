@@ -20,7 +20,7 @@ const router = Router();
 router.post(
 	'/',
 	authenticate(),
-	validateInput(createPostValidationSchema),
+	validateInput(createPostValidationSchema, 'postInput'),
 	createPost
 );
 
@@ -34,7 +34,7 @@ router.get('/:id', getPost);
 router.put(
 	'/:id',
 	authenticate(),
-	validateInput(updatePostValidationSchema),
+	validateInput(updatePostValidationSchema, 'postInput'),
 	updatePost
 );
 

@@ -1,28 +1,24 @@
 import { isValidObjectId } from 'mongoose';
 import { IAsyncRequestHandler } from '../../common/interfaces';
-import { catchAsyncRequestHandlerError } from '../../common/middlewares';
+import { catchAsyncReqHandlerErr } from '../../common/middlewares';
 import UserModel from '../USER/model';
 import PostModel from './model';
-import { TPostInput } from './types';
 
 const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUserId: string = res.locals.currentUserId;
-	const createPostInput: TPostInput = res.locals.validatedBody;
-
-	const currentUserDoc = await UserModel.findById(currentUserId);
+	const currentUserDoc = await UserModel.findById(req.currentUserId);
 	if (!currentUserDoc) {
 		res.status(404).json({ error: 'no such user' });
 		return;
 	}
 
-	const { username, profilePicture, _id: id } = currentUserDoc;
+	const { userName, avatar, id } = currentUserDoc;
 	const postDoc = await PostModel.create({
 		author: {
 			id,
-			username,
-			profilePicture,
+			userName,
+			avatar,
 		},
-		...createPostInput,
+		...req.postInput,
 	});
 
 	res.status(200).json(postDoc);
@@ -53,10 +49,7 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	const post = await PostModel.findByIdAndUpdate(
 		postId,
-		{
-			author: res.locals.currentUserId,
-			...res.locals.validatedBody,
-		},
+		{ ...req.postInput },
 		{ new: true }
 	);
 
@@ -117,7 +110,7 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	postDoc.likes.push(currentUserId);
-	currentUserDoc.likedPosts.push(postDoc._id);
+	currentUserDoc.likedPosts.push(postDoc.id);
 
 	const postDislikeIdx = postDoc.dislikes.indexOf(currentUserId);
 	const userDislikeIdx = currentUserDoc.dislikedPosts.indexOf(currentUserId);
@@ -159,7 +152,7 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	postDoc.dislikes.push(currentUserId);
-	currentUserDoc.dislikedPosts.push(postDoc._id);
+	currentUserDoc.dislikedPosts.push(postDoc.id);
 
 	const postDislikeIdx = postDoc.likes.indexOf(currentUserId);
 	const userDislikeIdx = currentUserDoc.likedPosts.indexOf(currentUserId);
@@ -188,13 +181,13 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	if (!userDoc.followings.length) {
+	if (!userDoc.friends.length) {
 		res.status(200).json([]);
 		return;
 	}
 
 	const posts = await PostModel.find({
-		'author.id': { $in: [...userDoc.followings, userDoc._id.toString()] },
+		'author.id': { $in: [...userDoc.friends, userDoc.id.toString()] },
 		createdAt: { $lt: new Date(parseInt(date)) },
 	})
 		.sort({ createdAt: -1 })
@@ -202,12 +195,10 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	res.status(200).json(posts);
 };
-export const createPost = catchAsyncRequestHandlerError(createPostUnsafe);
-export const getPost = catchAsyncRequestHandlerError(getPostUnsafe);
-export const updatePost = catchAsyncRequestHandlerError(updatePostUnsafe);
-export const deletePost = catchAsyncRequestHandlerError(deletePostUnsafe);
-export const likePost = catchAsyncRequestHandlerError(likePostUnsafe);
-export const dislikePost = catchAsyncRequestHandlerError(dislikePostUnsafe);
-export const getTimelinePosts = catchAsyncRequestHandlerError(
-	getTimelinePostsUnsafe
-);
+export const createPost = catchAsyncReqHandlerErr(createPostUnsafe);
+export const getPost = catchAsyncReqHandlerErr(getPostUnsafe);
+export const updatePost = catchAsyncReqHandlerErr(updatePostUnsafe);
+export const deletePost = catchAsyncReqHandlerErr(deletePostUnsafe);
+export const likePost = catchAsyncReqHandlerErr(likePostUnsafe);
+export const dislikePost = catchAsyncReqHandlerErr(dislikePostUnsafe);
+export const getTimelinePosts = catchAsyncReqHandlerErr(getTimelinePostsUnsafe);

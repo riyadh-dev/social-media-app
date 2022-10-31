@@ -1,5 +1,5 @@
 import { model, Schema } from 'mongoose';
-import { IFriendRequest } from '@messaging-app/shared';
+import { IFriendRequest } from '@social-media-app/shared';
 
 const friendRequestModel = new Schema<IFriendRequest>(
 	{

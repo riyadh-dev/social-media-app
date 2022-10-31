@@ -19,7 +19,7 @@ const router = Router();
 //get post comments
 router.post(
 	'/list/:date',
-	validateInput(getPostCommentsValidationSchema),
+	validateInput(getPostCommentsValidationSchema, 'dBDocIds'),
 	getPostComments
 );
 
@@ -27,7 +27,7 @@ router.post(
 router.post(
 	'/:postId',
 	authenticate(),
-	validateInput(createPostCommentValidationSchema),
+	validateInput(createPostCommentValidationSchema, 'postCommentInput'),
 	createPostComment
 );
 
@@ -35,7 +35,7 @@ router.post(
 router.put(
 	'/:id',
 	authenticate(),
-	validateInput(updatePostCommentValidationSchema),
+	validateInput(updatePostCommentValidationSchema, 'postInput'),
 	updatePostComment
 );
 

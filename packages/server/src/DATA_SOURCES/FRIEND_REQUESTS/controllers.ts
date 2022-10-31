@@ -1,13 +1,13 @@
+import { dbDocIdValidationSchema } from '../../common/validation';
 import { IAsyncRequestHandler } from '../../common/interfaces';
-import { catchAsyncReqHandlerErr } from '../common/middleware';
-import friendRequestModel from './friendRequests.model';
-import userModel from '../USERS/users.model';
-import { mongooseIdValidationSchema } from '../USERS/users.validation';
-import { TFriendRequestInput } from './friendRequests.types';
+import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import userModel from '../USER/model';
+import friendRequestModel from './model';
+import { TFriendRequestInput } from './types';
 
 const sendFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;
-	const { value: friendId, error } = mongooseIdValidationSchema.validate(
+	const { value: friendId, error } = dbDocIdValidationSchema.validate(
 		req.params.friendId
 	);
 	if (error) {
@@ -73,7 +73,7 @@ const getReceivedFriendRequestUnsafe: IAsyncRequestHandler = async (
 
 const acceptFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;
-	const { value: friendRequestId, error } = mongooseIdValidationSchema.validate(
+	const { value: friendRequestId, error } = dbDocIdValidationSchema.validate(
 		req.params.requestId
 	);
 
@@ -112,7 +112,7 @@ const acceptFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const rejectFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;
-	const { value: friendRequestId, error } = mongooseIdValidationSchema.validate(
+	const { value: friendRequestId, error } = dbDocIdValidationSchema.validate(
 		req.params.requestId
 	);
 

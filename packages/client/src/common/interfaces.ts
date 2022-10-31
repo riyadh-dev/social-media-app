@@ -20,8 +20,8 @@ export interface ICurrentUser {
 	dislikedPosts: string[];
 	isAdmin: boolean;
 	csrfToken: string;
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IPost {
@@ -36,8 +36,8 @@ export interface IPost {
 	likes: string[];
 	dislikes: string[];
 	comments: string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IAddPostInput {
@@ -57,6 +57,6 @@ export interface IPostComment {
 	dislikes: string[];
 	comments: string[];
 
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }

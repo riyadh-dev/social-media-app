@@ -1,7 +1,7 @@
 import { IAsyncRequestHandler } from '../../common/interfaces';
-import { catchAsyncReqHandlerErr } from '../common/middleware';
-import { socketConnections } from '../config/app';
-import messagesModel from './messages.model';
+import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import { socketConnections } from '../../config/app';
+import messagesModel from './model';
 
 const createMessageUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const senderId = req.currentUserId as string;
@@ -37,10 +37,11 @@ const getMessagesByConversationMembersUnsafe: IAsyncRequestHandler = async (
 	req,
 	res
 ) => {
+	const userIds = req.dBDocIds;
 	const messages = await messagesModel
 		.find({
-			targetId: { $in: req.userIds },
-			senderId: { $in: req.userIds },
+			targetId: { $in: userIds },
+			senderId: { $in: userIds },
 		})
 		.sort({ createdAt: 1 });
 

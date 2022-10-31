@@ -1,11 +1,3 @@
-import { IPostComment } from './interfaces';
+import { IPostComment } from '@social-media-app/shared';
 
-export type TPostCommentDB = Omit<
-	IPostComment,
-	'_id' | 'createdAt' | 'updatedAt'
->;
-
-export type TPostCommentInput = Omit<
-	TPostCommentDB,
-	'likes' | 'dislikes' | 'author'
->;
+export type TPostCommentInput = Pick<IPostComment, 'text'>;

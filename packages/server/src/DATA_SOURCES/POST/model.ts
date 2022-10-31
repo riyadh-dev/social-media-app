@@ -1,12 +1,12 @@
+import { IPost } from '@social-media-app/shared';
 import { model, Schema } from 'mongoose';
-import { TPostDB } from './types';
 
-const UserSchema = new Schema<TPostDB>(
+const UserSchema = new Schema<IPost>(
 	{
 		author: {
 			id: String,
-			profilePicture: String,
-			username: String,
+			avatar: String,
+			userName: String,
 		},
 		description: String,
 		img: String,

@@ -1,7 +1,7 @@
+import { IChatMessage } from '@social-media-app/shared';
 import { model, Schema } from 'mongoose';
-import { IChatMsg } from '@messaging-app/shared';
 
-const messageSchema = new Schema<IChatMsg>(
+const messageSchema = new Schema<IChatMessage>(
 	{
 		senderId: String,
 		targetId: String,

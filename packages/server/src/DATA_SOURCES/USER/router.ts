@@ -5,20 +5,17 @@ import {
 	csrfProtection,
 	validateInput,
 } from '../../common/middlewares';
+import { dbDocIdsValidationSchema } from '../../common/validation';
 import {
-	createUser,
 	deleteUser,
-	follow,
-	getUser,
 	getUsers,
 	getUsersByIds,
 	login,
 	logout,
-	unfollow,
+	signup,
 	updateUser,
 } from './controllers';
 import {
-	getUsersValidationSchema,
 	loginValidationSchema,
 	signupValidationSchema,
 	updateValidationSchema,
@@ -26,10 +23,19 @@ import {
 
 const router = Router();
 
-router.post('/', validateInput(signupValidationSchema), createUser);
-router.post('/login', validateInput(loginValidationSchema), csrfLogin, login);
+router.post('/', validateInput(signupValidationSchema, 'signupInput'), signup);
+router.post(
+	'/login',
+	validateInput(loginValidationSchema, 'loginInput'),
+	csrfLogin,
+	login
+);
 router.post('/logout', logout);
-router.post('/list', validateInput(getUsersValidationSchema), getUsersByIds);
+router.post(
+	'/list',
+	validateInput(dbDocIdsValidationSchema, 'dBDocIds'),
+	getUsersByIds
+);
 router.get('/list/:date', authenticate(), getUsers);
 
 router.use(csrfProtection);
@@ -37,15 +43,10 @@ router.use(csrfProtection);
 router.put(
 	'/:id',
 	authenticate(),
-	validateInput(updateValidationSchema),
+	validateInput(updateValidationSchema, 'updateUserInput'),
 	updateUser
 );
 
 router.delete('/:id', authenticate(), deleteUser);
-
-router.get('/:id', getUser);
-
-router.put('/:id/follow', authenticate(), follow);
-router.put('/:id/unfollow', authenticate(), unfollow);
 
 export default router;

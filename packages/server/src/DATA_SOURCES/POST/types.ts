@@ -1,4 +1,3 @@
-import { IPost } from './interfaces';
+import { IPost } from '@social-media-app/shared';
 
-export type TPostDB = Omit<IPost, '_id' | 'createdAt' | 'updatedAt'>;
-export type TPostInput = Omit<TPostDB, 'likes' | 'dislikes' | 'author'>;
+export type TPostInput = Pick<IPost, 'img' | 'description'>;

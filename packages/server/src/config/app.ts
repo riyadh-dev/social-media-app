@@ -1,37 +1,63 @@
-import cookieParser from 'cookie-parser';
+import cookie from 'cookie-parser';
 import cors from 'cors';
 import express from 'express';
+import rateLimit from 'express-rate-limit';
 import helmet from 'helmet';
+import hpp from 'hpp';
 import morgan from 'morgan';
 import path from 'path';
-import { csrfProtection, handlePassedError } from '../common/middlewares';
-import { CLIENT_ORIGIN, COOKIE_SECRET } from './secrets';
-import postRouter from '../DATA_SOURCES/POST/router';
-import postsCommentRouter from '../DATA_SOURCES/POST_COMMENT/router';
-import userRouter from '../DATA_SOURCES/USER/router';
+import WebSocket from 'ws';
+import { handleCsrfErr } from '../common/middlewares';
+import router from './router';
+import { CLIENT_ORIGIN, COOKIE_SECRET, IS_PROD } from './secrets';
 
 const app = express();
 
-app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+//cors for dev env
+if (!IS_PROD) app.use(cors({ origin: CLIENT_ORIGIN, credentials: true }));
+
+// Enabling helmet
 app.use(helmet({ contentSecurityPolicy: false }));
-app.use(cookieParser(COOKIE_SECRET));
+
+// Prevent http param pollution
+app.use(hpp());
+
+//parse json body
 app.use(express.json());
-app.use(morgan('common'));
 
-app.get('/api', (req, res) => {
-	res.send('Hello World!');
-});
+// Limiting each IP to 100 requests per windowMs
+if (IS_PROD) {
+	const limiter = rateLimit({
+		windowMs: 15 * 60 * 1000, // 15 minutes
+		max: 100,
+	});
 
-app.use('/api/users', userRouter);
-app.use(csrfProtection);
-app.use('/api/posts/comments', postsCommentRouter);
-app.use('/api/posts', postRouter);
+	app.use('/api', limiter);
+}
 
-app.use(express.static(path.join(__dirname, '../../client/build')));
-app.get('/', function (req, res) {
-	res.sendFile(path.join(__dirname, '../../client/build', 'index.html'));
-});
+// Dev logging middleware
+if (!IS_PROD) {
+	app.use(morgan('dev'));
+}
 
-app.use(handlePassedError);
+//Hash map of userIds as key and socket connection as values
+export const socketConnections = new Map<string, WebSocket.WebSocket>();
+
+//Set up cookie parser
+export const cookieParser = cookie(COOKIE_SECRET);
+app.use(cookieParser);
+
+app.use('/api', router);
+
+// Serve static assets in production
+if (IS_PROD) {
+	app.use(express.static(path.join(__dirname, '../../../client/build')));
+	app.get('/', function (req, res) {
+		res.sendFile(path.join(__dirname, '../../../client/build', 'index.html'));
+	});
+}
+
+//set csurf error
+app.use(handleCsrfErr);
 
 export default app;

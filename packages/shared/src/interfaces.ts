@@ -35,33 +35,25 @@ export interface IChatMessage {
 
 export interface IPost {
 	id: string;
-	author: {
-		id: string;
-		username: string;
-		profilePicture: string;
-	};
+	author: Pick<IUser, 'id' | 'userName' | 'avatar'>;
 	description: string;
 	img: string;
 	likes: string[];
 	dislikes: string[];
 	comments: string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IPostComment {
 	id: string;
-	author: {
-		id: string;
-		username: string;
-		profilePicture: string;
-	};
+	author: Pick<IUser, 'id' | 'userName' | 'avatar'>;
 	text: string;
 	likes: string[];
 	dislikes: string[];
 	comments: string[];
-	createdAt: string;
-	updatedAt: string;
+	createdAt: Date;
+	updatedAt: Date;
 }
 
 export interface IChatMessageTypingAction {

@@ -1,15 +1,12 @@
-import { IUserBase } from './interfaces';
+import { IUser } from '@social-media-app/shared';
 
-export type TUserDB = Omit<IUserBase, '_id' | 'createdAt' | 'updatedAt'>;
-export type TUpdateUser = Omit<
-	IUserBase,
-	'_id' | 'createdAt' | 'updatedAt' | 'isAdmin'
+export type TUpdateUser = Pick<
+	IUser,
+	'userName' | 'avatar' | 'email' | 'password'
 >;
-export type TCurrentUser = Omit<IUserBase, 'password'>;
-export type TLoginInput = Pick<IUserBase, 'password' | 'username'>;
+export type TCurrentUser = Omit<IUser, 'password'>;
+export type TLoginInput = Pick<IUser, 'password' | 'email'>;
 export type TSignUpInput = Pick<
-	IUserBase,
-	'password' | 'username' | 'profilePicture'
+	IUser,
+	'userName' | 'email' | 'password' | 'avatar'
 >;
-
-export type TGetUsersInput = string[];

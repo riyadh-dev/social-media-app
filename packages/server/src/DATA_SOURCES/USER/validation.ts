@@ -1,28 +1,21 @@
 import Joi from 'joi';
-import {
-	TGetUsersInput,
-	TLoginInput,
-	TSignUpInput,
-	TUpdateUser,
-} from './types';
+import { TLoginInput, TSignUpInput, TUpdateUser } from './types';
 
 export const signupValidationSchema = Joi.object<TSignUpInput>({
-	username: Joi.string(),
+	userName: Joi.string(),
+	email: Joi.string().trim().lowercase().email(),
 	password: Joi.string().min(8),
-	profilePicture: Joi.string().uri(),
+	avatar: Joi.string().uri().optional(),
 });
 
 export const loginValidationSchema = Joi.object<TLoginInput>({
-	username: Joi.string(),
+	email: Joi.string().trim().lowercase().email(),
 	password: Joi.string().min(8),
 });
 
 export const updateValidationSchema = Joi.object<TUpdateUser>({
-	followings: Joi.array().items(Joi.string()),
-	followers: Joi.array().items(Joi.string()),
+	userName: Joi.string().min(3),
+	email: Joi.string().trim().lowercase().email(),
+	avatar: Joi.string().uri(),
 	password: Joi.string().min(8),
-	username: Joi.string(),
-	profilePicture: Joi.string().uri(),
 });
-
-export const getUsersValidationSchema = Joi.array().items(Joi.string());

@@ -1,15 +1,18 @@
 import bcrypt from 'bcryptjs';
 import { ErrorRequestHandler, RequestHandler } from 'express';
+import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { isValidObjectId } from 'mongoose';
-import { isUniqueInArray } from '../../common/helpers';
 import { IAsyncRequestHandler, isErrorWithCode } from '../../common/interfaces';
-import { catchAsyncRequestHandlerError } from '../../common/middlewares';
+import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import { dbDocIdValidationSchema } from '../../common/validation';
+import { socketConnections } from '../../config/app';
 import { IS_PROD, JWT_SECRET } from '../../config/secrets';
+import FriendRequestsModel from '../../DATA_SOURCES/FRIEND_REQUESTS/model';
 import UserModel from './model';
-import { TGetUsersInput, TLoginInput } from './types';
+import { TLoginInput } from './types';
 
-const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
+const signupErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
 		if (err.code === 11000) {
 			res.status(500).json({
@@ -21,7 +24,7 @@ const createUserErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	next(err);
 };
 
-const createUserUnsafe: IAsyncRequestHandler = async (req, res) => {
+const signupUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await UserModel.create(res.locals.validatedBody);
 	res.status(200).json({
 		success: 'user created successfully',
@@ -30,9 +33,9 @@ const createUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const loginInput: TLoginInput = res.locals.validatedBody;
-	const userDoc = await UserModel.findOne({ username: loginInput.username });
+	const userDoc = await UserModel.findOne({ email: loginInput.email });
 	if (!userDoc) {
-		res.status(400).json({ error: 'wrong password or username' });
+		res.status(400).json({ error: 'wrong password or email' });
 		return;
 	}
 
@@ -134,148 +137,126 @@ const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json({ success: 'user deleted' });
 };
 
-const getUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const userId = req.params.id;
-
-	if (!isValidObjectId(userId)) {
+const getUserByIdUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const { value: userId, error } = dbDocIdValidationSchema.validate(
+		req.params.userId
+	);
+	if (error) {
 		res.status(400).json({ error: 'invalid user id' });
 		return;
 	}
 
-	const userDoc = await UserModel.findById(userId).select('-password');
-	if (!userDoc) {
+	const user = await UserModel.findById(userId).select('-password');
+	if (!user) {
 		res.status(400).json({ error: 'no such user' });
 		return;
 	}
-	const user = userDoc.toObject({ versionKey: false });
+
 	res.status(200).json(user);
 };
 
 const getUsersByIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const userIds = res.locals.validatedBody as TGetUsersInput;
-	const filteredIds = userIds.filter(isUniqueInArray);
-	const usersPromises = filteredIds.map(async (userId) => {
-		if (!isValidObjectId(userId)) {
-			return;
-		}
-		const userDoc = await UserModel.findById(userId).select('-password');
-		return userDoc?.toObject({ versionKey: false });
-	});
+	const userIds = req.dBDocIds;
+	const users = await UserModel.find({ _id: { $in: userIds } });
+	res.status(200).json(users);
+};
 
-	const users = (await Promise.all(usersPromises)).filter((user) =>
-		Boolean(user)
+const removeFriendUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const userId = req.currentUserId as string;
+	const { value: friendId, error } = dbDocIdValidationSchema.validate(
+		req.params.friendId
 	);
-	res.status(200).json(users);
+	if (error) {
+		res.status(400).json({ error: 'invalid user id' });
+		return;
+	}
+	const user = await UserModel.findById(userId);
+	const friend = await UserModel.findById(friendId);
+	if (!user || !friend) {
+		res.status(400).json({ error: 'user or friend not found' });
+		return;
+	}
+
+	const userIdx = friend.friends.indexOf(userId);
+	const friendIdx = user.friends.indexOf(friendId);
+	if (friendIdx === -1) {
+		res.status(400).json({ error: 'already a not friend' });
+		return;
+	}
+
+	user.friends.splice(friendIdx, 1);
+	friend.friends.splice(userIdx, 1);
+	await Promise.all([user.save(), friend.save()]);
+	res.status(200).json({ succuss: 'friend removed' });
 };
 
-const getUsersUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUser = await UserModel.findById(res.locals.currentUserId);
-	const date = req.params.date;
-	const followings = currentUser?.followings ?? [];
+const getOnlineUserUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const currentUser = await UserModel.findById(req.currentUserId);
+	if (!currentUser) {
+		res.status(400).json({ error: 'auth error' });
+		return;
+	}
+	const onlineUsers = currentUser.friends.filter((friend) =>
+		socketConnections.get(friend)
+	);
+	res.status(200).json(onlineUsers);
+};
 
+const searchUsersByUserNameUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const currentUserId = req.currentUserId;
+	const { error, value: username } = Joi.string()
+		.min(3)
+		.max(18)
+		.required()
+		.validate(req.params.username);
+	if (error) {
+		res.status(400).json({ error: 'invalid username' });
+		return;
+	}
+	//todo use algolia or another fuzzy search method regex is expensive
+
+	const filteringIds = (
+		await FriendRequestsModel.find({
+			status: 'pending',
+			$or: [{ recipient: currentUserId }, { requester: currentUserId }],
+		})
+	).reduce<string[]>(
+		(prev, curr) =>
+			curr.recipient === currentUserId
+				? [...prev, curr.requester]
+				: [...prev, curr.recipient],
+		[]
+	);
+	filteringIds.push(currentUserId as string);
+
+	const regex = new RegExp(username, 'gi');
 	const users = await UserModel.find({
-		_id: { $nin: followings },
-		createdAt: { $lt: new Date(parseInt(date)) },
-	})
-		.sort({ createdAt: -1 })
-		.limit(16);
+		userName: regex,
+		_id: { $nin: filteringIds },
+	});
 
 	res.status(200).json(users);
 };
 
-const followUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const followedUserId = req.params.id;
-	const followerUserId = res.locals.currentUserId;
-
-	if (!isValidObjectId(followedUserId)) {
-		res.status(400).json({ error: 'invalid user id' });
+const getFriendsUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const currentUser = await UserModel.findById(req.currentUserId);
+	if (!currentUser) {
+		res.status(400).json({ error: 'auth error' });
 		return;
 	}
-
-	if (followedUserId === followerUserId) {
-		res.status(400).json({ error: 'a user can not follow himself' });
-		return;
-	}
-
-	const followedUserDoc = await UserModel.findById(followedUserId);
-	const followerUserDoc = await UserModel.findById(followerUserId);
-
-	if (!followedUserDoc || !followerUserDoc) {
-		res
-			.status(400)
-			.send({ error: 'wrong user id for the follower or followed' });
-		return;
-	}
-
-	if (followerUserDoc.followings.includes(followedUserId)) {
-		res.status(400).json({ error: 'user already followed' });
-		return;
-	}
-
-	followedUserDoc.followers.push(followerUserId);
-	followerUserDoc.followings.push(followedUserId);
-
-	await followerUserDoc.save();
-	await followedUserDoc.save();
-
-	res.status(200).json({
-		success: 'user followed',
-	});
+	res.status(200).json(currentUser.friends);
 };
 
-const unfollowUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const followedUserId = req.params.id;
-	const followerUserId = res.locals.currentUserId;
+export const signup = catchAsyncReqHandlerErr(signupUnsafe, signupErrorHandler);
+export const login = catchAsyncReqHandlerErr(loginUnsafe);
+export const updateUser = catchAsyncReqHandlerErr(updateUserUnsafe);
+export const deleteUser = catchAsyncReqHandlerErr(deleteUserUnsafe);
+export const getUserById = catchAsyncReqHandlerErr(getUserByIdUnsafe);
+export const getUsersByIds = catchAsyncReqHandlerErr(getUsersByIdsUnsafe);
 
-	if (!isValidObjectId(followedUserId)) {
-		res.status(400).json({ error: 'invalid user id' });
-		return;
-	}
-
-	if (followedUserId === followerUserId) {
-		res.status(400).json({ error: 'a user can not unfollow himself' });
-		return;
-	}
-
-	const followedUserDoc = await UserModel.findById(followedUserId);
-	const followerUserDoc = await UserModel.findById(followerUserId);
-
-	if (!followedUserDoc || !followerUserDoc) {
-		res
-			.status(400)
-			.send({ error: 'wrong user id for the follower or followed' });
-		return;
-	}
-
-	const followedUserIdIndex =
-		followerUserDoc.followings.indexOf(followedUserId);
-	const followerUserIdIndex = followedUserDoc.followers.indexOf(followerUserId);
-
-	if (followedUserIdIndex === -1 && followerUserIdIndex === -1) {
-		res.status(400).json({ error: 'user not followed' });
-		return;
-	}
-
-	followedUserDoc.followers.splice(followerUserIdIndex, 1);
-	followerUserDoc.followings.splice(followedUserIdIndex, 1);
-
-	await followerUserDoc.save();
-	await followedUserDoc.save();
-
-	res.status(200).json({
-		success: 'user unfollowed',
-	});
-};
-
-export const createUser = catchAsyncRequestHandlerError(
-	createUserUnsafe,
-	createUserErrorHandler
+export const removeFriend = catchAsyncReqHandlerErr(removeFriendUnsafe);
+export const getOnlineUser = catchAsyncReqHandlerErr(getOnlineUserUnsafe);
+export const searchUsersByUserName = catchAsyncReqHandlerErr(
+	searchUsersByUserNameUnsafe
 );
-export const login = catchAsyncRequestHandlerError(loginUnsafe);
-export const updateUser = catchAsyncRequestHandlerError(updateUserUnsafe);
-export const deleteUser = catchAsyncRequestHandlerError(deleteUserUnsafe);
-export const getUser = catchAsyncRequestHandlerError(getUserUnsafe);
-export const getUsers = catchAsyncRequestHandlerError(getUsersUnsafe);
-export const getUsersByIds = catchAsyncRequestHandlerError(getUsersByIdsUnsafe);
-export const follow = catchAsyncRequestHandlerError(followUnsafe);
-export const unfollow = catchAsyncRequestHandlerError(unfollowUnsafe);
+export const getFriends = catchAsyncReqHandlerErr(getFriendsUnsafe);

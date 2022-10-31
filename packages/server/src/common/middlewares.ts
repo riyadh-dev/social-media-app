@@ -3,11 +3,32 @@ import { ErrorRequestHandler, RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
+import { MESSAGE_INPUT } from '../DATA_SOURCES/MESSAGES/strings';
+import { POST_INPUT } from '../DATA_SOURCES/POST/strings';
+import { POST_COMMENT_INPUT } from '../DATA_SOURCES/POST_COMMENT/strings';
 import UserModel from '../DATA_SOURCES/USER/model';
+import {
+	LOGIN_INPUT,
+	SIGNUP_INPUT,
+	UPDATE_USER_INPUT,
+} from '../DATA_SOURCES/USER/strings';
 import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
+import { DB_DOC_IDS } from './strings';
+
+type TValidInputKeys =
+	| typeof LOGIN_INPUT
+	| typeof SIGNUP_INPUT
+	| typeof UPDATE_USER_INPUT
+	| typeof MESSAGE_INPUT
+	| typeof POST_INPUT
+	| typeof POST_COMMENT_INPUT
+	| typeof DB_DOC_IDS;
 
 export const validateInput =
-	(validationSchema: Joi.AnySchema): RequestHandler =>
+	(
+		validationSchema: Joi.AnySchema,
+		validInputKey: TValidInputKeys
+	): RequestHandler =>
 	(req, res, next) => {
 		const { error, value } = validationSchema.validate(req.body);
 		if (error) {
@@ -17,11 +38,11 @@ export const validateInput =
 			return;
 		}
 
-		res.locals.validatedBody = value;
+		req[validInputKey] = value;
 		next();
 	};
 
-export const catchAsyncRequestHandlerError =
+export const catchAsyncReqHandlerErr =
 	(
 		handler: IAsyncRequestHandler,
 		errorHandler?: ErrorRequestHandler
@@ -74,7 +95,8 @@ export const authenticate =
 			res.status(403).json({ error: 'invalid token' });
 		}
 	};
-export const handlePassedError: ErrorRequestHandler = (err, req, res, next) => {
+
+export const handleCsrfErr: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {
 		if (err.code === 'EBADCSRFTOKEN') {
 			res.clearCookie('token');

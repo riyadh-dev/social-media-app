@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { TMessageInput } from './messages.types';
+import { TMessageInput } from './types';
 
 export const createMessageValidationSchema = Joi.object<TMessageInput>({
 	targetId: Joi.string().required(),
