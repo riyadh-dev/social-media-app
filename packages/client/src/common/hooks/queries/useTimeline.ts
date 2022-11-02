@@ -1,5 +1,5 @@
-import axios from 'axios';
 import { useInfiniteQuery } from 'react-query';
+import { axiosInstance } from '../../../services/axios';
 import { IPost } from '../../interfaces';
 import useIntersectionObserver from '../useIntersectionObserver';
 
@@ -10,7 +10,7 @@ const getTimeline = async (
 	date: number = Date.now()
 ): Promise<IPost[]> => {
 	if (!userId) Promise.reject(new Error('Invalid id'));
-	const { data } = await axios.get(
+	const { data } = await axiosInstance.get(
 		`${server_domain}/posts/timeline/${userId}/${date}`,
 		{
 			withCredentials: true,
@@ -25,9 +25,7 @@ const useTimeline = (userId: string | undefined) => {
 		({ pageParam }) => getTimeline(userId, pageParam),
 		{
 			getNextPageParam: (lastPage) =>
-				lastPage.length
-					? Date.parse(lastPage[lastPage.length - 1].createdAt)
-					: undefined,
+				lastPage.length ? lastPage[lastPage.length - 1].createdAt : undefined,
 			enabled: Boolean(userId),
 		}
 	);

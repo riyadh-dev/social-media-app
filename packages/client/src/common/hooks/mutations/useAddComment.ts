@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { InfiniteData, useMutation } from 'react-query';
 import { queryClient } from '../../..';
+import { axiosInstance } from '../../../services/axios';
 import { IPostComment } from '../../interfaces';
 
 const server_domain = 'http://localhost:4000/api';
@@ -14,7 +14,7 @@ const addPostComment = async (
 	postId: string | undefined
 ): Promise<IPostComment> => {
 	if (!postId) Promise.reject(new Error('Invalid ids'));
-	const { data } = await axios.post(
+	const { data } = await axiosInstance.post(
 		`${server_domain}/posts/comments/${postId}`,
 		comment,
 		{ withCredentials: true }

@@ -8,42 +8,71 @@ import {
 import { dbDocIdsValidationSchema } from '../../common/validation';
 import {
 	deleteUser,
-	getUsers,
+	getFriends,
+	getOnlineUser,
+	getUserById,
 	getUsersByIds,
 	login,
 	logout,
+	removeFriend,
+	searchUsersByUserName,
 	signup,
 	updateUser,
 } from './controllers';
 import {
 	loginValidationSchema,
 	signupValidationSchema,
-	updateValidationSchema,
+	updateUserValidationSchema,
 } from './validation';
 
 const router = Router();
 
-router.post('/', validateInput(signupValidationSchema, 'signupInput'), signup);
+router.get('/online', authenticate, getOnlineUser);
+
+router.post(
+	'/list',
+	validateInput(dbDocIdsValidationSchema, 'dBDocIds'),
+	getUsersByIds
+);
+
+router.post(
+	'/signup',
+	validateInput(signupValidationSchema, 'signupInput'),
+	signup
+);
+
 router.post(
 	'/login',
 	validateInput(loginValidationSchema, 'loginInput'),
 	csrfLogin,
 	login
 );
-router.post('/logout', logout);
-router.post(
-	'/list',
-	validateInput(dbDocIdsValidationSchema, 'dBDocIds'),
-	getUsersByIds
-);
-router.get('/list/:date', authenticate(), getUsers);
+
+router.delete('/logout', authenticate, logout);
 
 router.use(csrfProtection);
 
 router.put(
+	'/update',
+	authenticate,
+	validateInput(updateUserValidationSchema, 'updateUserInput'),
+	updateUser
+);
+
+router.delete('/delete', authenticate, deleteUser);
+
+router.get('/friends', authenticate, getFriends);
+
+router.delete('/friend/:friendId', authenticate, removeFriend);
+
+router.get('/search/:username', authenticate, searchUsersByUserName);
+
+router.get('/:userId', getUserById);
+
+router.put(
 	'/:id',
 	authenticate(),
-	validateInput(updateValidationSchema, 'updateUserInput'),
+	validateInput(updateUserValidationSchema, 'updateUserInput'),
 	updateUser
 );
 

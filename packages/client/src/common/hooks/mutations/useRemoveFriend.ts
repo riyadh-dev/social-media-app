@@ -1,15 +1,15 @@
-import axios from 'axios';
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { queryClient } from '../../..';
 import { currentUserState } from '../../../recoil/states';
+import { axiosInstance } from '../../../services/axios';
 
 const server_domain = 'http://localhost:4000/api';
 
 const addRemove = async (userId: string | undefined): Promise<string> => {
 	if (!userId) Promise.reject(new Error('Invalid id'));
-	const { data } = await axios.put(
+	const { data } = await axiosInstance.put(
 		`${server_domain}/users/${userId}/unfollow`,
 		undefined,
 		{ withCredentials: true }

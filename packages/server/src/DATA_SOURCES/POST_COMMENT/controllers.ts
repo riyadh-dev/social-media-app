@@ -77,7 +77,7 @@ const deletePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const currentUserId = req.currentUserId;
 	const currentUserDoc = await UserModel.findById(currentUserId);
 
-	if (postCommentDoc.author !== currentUserId && !currentUserDoc?.isAdmin) {
+	if (postCommentDoc.author.id !== currentUserId && !currentUserDoc?.isAdmin) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -94,7 +94,7 @@ const likePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const currentUserId = req.currentUserId;
+	const currentUserId = req.currentUserId as string;
 	const currentUserDoc = await UserModel.findById(currentUserId);
 	const postCommentDoc = await PostCommentModel.findById(postCommentId);
 	if (!postCommentDoc || !currentUserDoc) {
@@ -120,7 +120,7 @@ const dislikePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const currentUserId = req.currentUserId;
+	const currentUserId = req.currentUserId as string;
 	const currentUserDoc = await UserModel.findById(currentUserId);
 	const postCommentDoc = await PostCommentModel.findById(postCommentId);
 

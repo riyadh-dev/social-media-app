@@ -13,7 +13,7 @@ export const loginValidationSchema = Joi.object<TLoginInput>({
 	password: Joi.string().min(8),
 });
 
-export const updateValidationSchema = Joi.object<TUpdateUser>({
+export const updateUserValidationSchema = Joi.object<TUpdateUser>({
 	userName: Joi.string().min(3),
 	email: Joi.string().trim().lowercase().email(),
 	avatar: Joi.string().uri(),

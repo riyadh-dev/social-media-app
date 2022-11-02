@@ -1,6 +1,6 @@
-import axios from 'axios';
 import { AtomEffect } from 'recoil';
 import { ICurrentUser, ITheme } from '../common/interfaces';
+import { axiosInstance } from '../services/axios';
 
 export const themePersistEffect: AtomEffect<ITheme> = ({ setSelf, onSet }) => {
 	const savedValue = localStorage.getItem('themeState');
@@ -22,7 +22,7 @@ export const currentUserPersistEffect: AtomEffect<ICurrentUser | null> = ({
 	const savedValue = localStorage.getItem('currentUserState');
 	if (savedValue != null) {
 		setSelf(JSON.parse(savedValue));
-		axios.defaults.headers.common['csrf-token'] =
+		axiosInstance.defaults.headers.common['csrf-token'] =
 			JSON.parse(savedValue).csrfToken;
 	}
 

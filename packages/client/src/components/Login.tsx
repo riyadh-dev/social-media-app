@@ -13,14 +13,15 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import axios, { AxiosError } from 'axios';
-import React, { useEffect, useState } from 'react';
+import { AxiosError } from 'axios';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { useRecoilState } from 'recoil';
 import { ILoginInput } from '../common/interfaces';
 import { loginReq } from '../common/requests';
 import { currentUserState } from '../recoil/states';
+import { axiosInstance } from '../services/axios';
 
 const Login = () => {
 	const {
@@ -30,7 +31,7 @@ const Login = () => {
 		setError,
 	} = useForm<ILoginInput>();
 
-	const onError = (err: AxiosError) => {
+	const onError = (err: AxiosError<{ error: string }>) => {
 		const errMsg = err?.response?.data.error;
 		setError('username', { message: errMsg });
 		setError('password', { message: errMsg });
@@ -49,7 +50,7 @@ const Login = () => {
 	useEffect(() => {
 		if (isSuccess && data) {
 			setCurrentUser(data);
-			axios.defaults.headers.common['csrf-token'] = data.csrfToken;
+			axiosInstance.defaults.headers.common['csrf-token'] = data.csrfToken;
 		}
 	}, [data, isSuccess, setCurrentUser]);
 

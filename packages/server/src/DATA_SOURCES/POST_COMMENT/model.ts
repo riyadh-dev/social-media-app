@@ -1,12 +1,12 @@
+import { IPostComment } from '@social-media-app/shared';
 import { model, Schema } from 'mongoose';
-import { TPostCommentDB } from './types';
 
-const UserSchema = new Schema<TPostCommentDB>(
+const UserSchema = new Schema<IPostComment>(
 	{
 		author: {
 			id: String,
-			profilePicture: String,
-			username: String,
+			avatar: String,
+			userName: String,
 		},
 		text: String,
 		likes: [String],
