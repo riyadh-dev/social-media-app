@@ -1,10 +1,10 @@
 import { useMutation } from 'react-query';
-import { axiosInstance } from '../../../services/axios';
-import { ICurrentUser, ILoginInput } from '../../interfaces';
+import { ILoginInput, TUiUser } from '../../common/interfaces';
+import { axiosInstance } from '../../services/axios';
 
 const server_domain = 'http://localhost:4000/api';
 
-const login = async (user: ILoginInput): Promise<ICurrentUser> => {
+const login = async (user: ILoginInput): Promise<TUiUser> => {
 	const { data } = await axiosInstance.post(
 		`${server_domain}/users/login`,
 		user,

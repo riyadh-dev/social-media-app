@@ -52,7 +52,7 @@ const RightSection = () => {
 		<Box>
 			<Button
 				component={RouterLink}
-				to={'/profile/' + currentUser?._id}
+				to={'/profile/' + currentUser?.id}
 				sx={{
 					mx: '5px',
 					borderRadius: '24px',
@@ -60,9 +60,9 @@ const RightSection = () => {
 					textTransform: 'none',
 				}}
 				variant='text'
-				startIcon={<Avatar alt='Avatar' src={currentUser?.profilePicture} />}
+				startIcon={<Avatar alt='Avatar' src={currentUser?.avatar} />}
 			>
-				{currentUser?.username}
+				{currentUser?.userName}
 			</Button>
 			<IconButton
 				sx={{

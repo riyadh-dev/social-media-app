@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
-import { axiosInstance } from '../../../services/axios';
-import { ICurrentUser as IUser } from '../../interfaces';
+import { TUiUser as IUser } from '../../common/interfaces';
+import { axiosInstance } from '../../services/axios';
 
 const server_domain = 'http://localhost:4000/api';
 

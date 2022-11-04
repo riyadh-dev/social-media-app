@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { TPostCommentInput } from './types';
+import { TPostCommentInput } from '@social-media-app/shared';
 
 export const createPostCommentValidationSchema = Joi.object<TPostCommentInput>({
 	text: Joi.string().required(),

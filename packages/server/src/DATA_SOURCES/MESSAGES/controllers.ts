@@ -9,8 +9,7 @@ const createMessageUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	const message = await messagesModel.create({
 		senderId,
-		targetId,
-		text: req.messageInput?.text,
+		...req.messageInput,
 	});
 
 	const targetClient = socketConnections.get(targetId);

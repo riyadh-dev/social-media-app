@@ -19,10 +19,9 @@ import {
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
-import React from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { ICurrentUser } from '../../common/interfaces';
+import { TUiUser } from '../../common/interfaces';
 import { chatBoxState } from '../../recoil/states';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
@@ -81,7 +80,7 @@ const ChatMsg = () => (
 export default function ChatBox({
 	user,
 }: {
-	user: Omit<ICurrentUser, 'csrfToken'>;
+	user: Omit<TUiUser, 'csrfToken'>;
 }) {
 	const arr = [1, 1, 1, 1, 1, 1, 1, 1, 1, 1, 1];
 
@@ -90,8 +89,8 @@ export default function ChatBox({
 		setChatBox((prev) => {
 			const { minimized, open } = prev;
 
-			open.delete(user._id);
-			minimized.set(user._id, user);
+			open.delete(user.id);
+			minimized.set(user.id, user);
 
 			const minKeys = Array.from(minimized.keys());
 			if (minKeys.length >= 7) {
@@ -108,7 +107,7 @@ export default function ChatBox({
 	const onClose = () => {
 		setChatBox((prev) => {
 			const { minimized, open } = prev;
-			open.delete(user._id);
+			open.delete(user.id);
 			return {
 				minimized,
 				open,
@@ -126,17 +125,17 @@ export default function ChatBox({
 			<Stack direction='row' justifyContent='space-between' alignItems='center'>
 				<Button
 					component={RouterLink}
-					to={'/profile/' + user._id}
+					to={'/profile/' + user.id}
 					sx={{
 						textTransform: 'none',
 						m: '2px',
 					}}
 					variant='text'
 					startIcon={
-						<Avatar src={user.profilePicture} sx={{ height: 32, width: 32 }} />
+						<Avatar src={user.avatar} sx={{ height: 32, width: 32 }} />
 					}
 				>
-					{user.username}
+					{user.userName}
 				</Button>
 				<Stack direction='row' spacing={1} sx={{ p: '8px' }}>
 					<IconButton

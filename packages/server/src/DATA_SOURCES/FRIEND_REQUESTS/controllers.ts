@@ -3,7 +3,7 @@ import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
 import userModel from '../USER/model';
 import friendRequestModel from './model';
-import { TFriendRequestInput } from './types';
+import { TFriendRequestInput } from '@social-media-app/shared';
 
 const sendFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;

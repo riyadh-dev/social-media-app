@@ -1,12 +1,11 @@
 import { Stack } from '@mui/material';
-import React from 'react';
-import { useRecoilState } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { chatBoxState } from '../../recoil/states';
 import ChatBox from './ChatBox';
 import MinimizedChatBox from './MinimizedChatBox';
 
 const Chat = () => {
-	const chatBox = useRecoilState(chatBoxState)[0];
+	const chatBox = useRecoilValue(chatBoxState);
 	const minimized = Array.from(chatBox.minimized.values());
 	const open = Array.from(chatBox.open.values());
 	return (
@@ -21,10 +20,7 @@ const Chat = () => {
 				}}
 			>
 				{minimized.map((user) => (
-					<MinimizedChatBox
-						key={'minimized-chat-box-' + user._id}
-						user={user}
-					/>
+					<MinimizedChatBox key={'minimized-chat-box-' + user.id} user={user} />
 				))}
 			</Stack>
 			<Stack
@@ -38,7 +34,7 @@ const Chat = () => {
 				}}
 			>
 				{open.map((user) => (
-					<ChatBox key={'chat-box-' + user._id} user={user} />
+					<ChatBox key={'chat-box-' + user.id} user={user} />
 				))}
 			</Stack>
 		</>

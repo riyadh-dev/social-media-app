@@ -1,5 +1,6 @@
 import { atom } from 'recoil';
-import { ICurrentUser, ITheme } from '../common/interfaces';
+import { ITheme } from '../common/interfaces';
+import { TUiUser } from '../common/types';
 import { currentUserPersistEffect, themePersistEffect } from './effects';
 
 export const themeState = atom<ITheme>({
@@ -11,7 +12,7 @@ export const themeState = atom<ITheme>({
 	effects_UNSTABLE: [themePersistEffect],
 });
 
-export const currentUserState = atom<ICurrentUser | null>({
+export const currentUserState = atom<TUiUser | null>({
 	key: 'currentUserState',
 	default: null,
 	effects_UNSTABLE: [currentUserPersistEffect],
@@ -25,7 +26,7 @@ export const sideBarOpenState = atom({
 export const chatBoxState = atom({
 	key: 'chatBoxState',
 	default: {
-		minimized: new Map<string, Omit<ICurrentUser, 'csrfToken'>>(),
-		open: new Map<string, Omit<ICurrentUser, 'csrfToken'>>(),
+		minimized: new Map<string, Omit<TUiUser, 'csrfToken'>>(),
+		open: new Map<string, Omit<TUiUser, 'csrfToken'>>(),
 	},
 });

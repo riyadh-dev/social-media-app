@@ -6,9 +6,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import { useRecoilState, useSetRecoilState } from 'recoil';
-import useUsers from '../../common/hooks/queries/useUsers';
-import { ICurrentUser as IUser } from '../../common/interfaces';
+import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import { TUiUser as IUser } from '../../common/interfaces';
+import useUsers from '../../hooks/queries/useUsers';
 import {
 	chatBoxState,
 	currentUserState,
@@ -63,8 +63,8 @@ const FriendsListItem = ({
 			const open = new Map(prev.open);
 			const minimized = new Map(prev.minimized);
 
-			open.set(user._id, user);
-			minimized.delete(user._id);
+			open.set(user.id, user);
+			minimized.delete(user.id);
 
 			return {
 				open,
@@ -77,9 +77,9 @@ const FriendsListItem = ({
 		return (
 			<ListItem button onClick={handleOpenChatBox}>
 				<ListItemAvatar>
-					<Avatar src={user.profilePicture} alt='Avatar' />
+					<Avatar src={user.avatar} alt='Avatar' />
 				</ListItemAvatar>
-				<ListItemText primary={user.username} />
+				<ListItemText primary={user.userName} />
 			</ListItem>
 		);
 
@@ -91,10 +91,10 @@ const FriendsListItem = ({
 					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
 					variant='dot'
 				>
-					<Avatar src={user.profilePicture} alt='Avatar' />
+					<Avatar src={user.avatar} alt='Avatar' />
 				</OnlineBadge>
 			</ListItemAvatar>
-			<ListItemText primary={user.username} />
+			<ListItemText primary={user.userName} />
 		</ListItem>
 	);
 };
@@ -107,8 +107,8 @@ const FriendsList = (props: Props) => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
-	const currentUser = useRecoilState(currentUserState)[0];
-	const { data } = useUsers(currentUser?.followings);
+	const currentUser = useRecoilValue(currentUserState);
+	const { data } = useUsers(currentUser?.friends);
 
 	const container =
 		window !== undefined ? () => window().document.body : undefined;
@@ -131,7 +131,7 @@ const FriendsList = (props: Props) => {
 			>
 				{data &&
 					data.map((user) => (
-						<FriendsListItem key={user._id} isOnline={true} user={user} />
+						<FriendsListItem key={user.id} isOnline={true} user={user} />
 					))}
 			</List>
 		</div>

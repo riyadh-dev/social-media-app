@@ -12,11 +12,10 @@ import {
 } from '@mui/material';
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
-import React from 'react';
 import { Link as RouterLink, useParams } from 'react-router-dom';
-import useTimeline from '../../common/hooks/queries/useTimeline';
-import useUser from '../../common/hooks/queries/useUser';
-import useUsers from '../../common/hooks/queries/useUsers';
+import useTimeline from '../../hooks/queries/useTimeline';
+import useUser from '../../hooks/queries/useUser';
+import useUsers from '../../hooks/queries/useUsers';
 import Post from '../Feed/Post';
 import PostForm from '../PostForm';
 
@@ -89,7 +88,7 @@ const TimeLine = () => {
 					<ImageList cols={3}>
 						{posts.map((post) =>
 							!post.img ? null : (
-								<ImageListItem key={post._id}>
+								<ImageListItem key={post.id}>
 									<img src={post.img} srcSet={post.img} loading='lazy' alt='' />
 								</ImageListItem>
 							)
@@ -111,17 +110,17 @@ const TimeLine = () => {
 							{friendsQuery.data?.map((friend) => (
 								<ImageListItem
 									component={RouterLink}
-									key={friend._id}
-									to={`/profile/${friend._id}`}
+									key={friend.id}
+									to={`/profile/${friend.id}`}
 									sx={{ textDecoration: 'none', color: 'inherit' }}
 								>
 									<img
-										src={friend.profilePicture}
-										alt={friend.username}
+										src={friend.avatar}
+										alt={friend.userName}
 										loading='lazy'
 										style={{ borderRadius: '8px' }}
 									/>
-									<ImageListItemBar title={friend.username} position='below' />
+									<ImageListItemBar title={friend.userName} position='below' />
 								</ImageListItem>
 							))}
 						</ImageList>
@@ -138,13 +137,9 @@ const TimeLine = () => {
 				<PostForm />
 				{posts.map((post, idx) =>
 					idx + 1 === posts.length ? (
-						<Post
-							key={post._id}
-							lastItemRef={intersectionItemRef}
-							post={post}
-						/>
+						<Post key={post.id} lastItemRef={intersectionItemRef} post={post} />
 					) : (
-						<Post key={post._id} post={post} />
+						<Post key={post.id} post={post} />
 					)
 				)}
 			</Stack>

@@ -8,21 +8,20 @@ import {
 	Stack,
 	TextField,
 } from '@mui/material';
-import React, { useEffect, useState } from 'react';
+import { TPostInput } from '@social-media-app/shared/src';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { useRecoilState } from 'recoil';
-import useAddPost from '../common/hooks/mutations/useAddPost';
-import { IAddPostInput } from '../common/interfaces';
+import { useRecoilValue } from 'recoil';
+import useAddPost from '../hooks/mutations/useAddPost';
 import { currentUserState } from '../recoil/states';
 
 const PostForm = () => {
-	const currentUser = useRecoilState(currentUserState)[0];
-	const { handleSubmit, register, reset, resetField } =
-		useForm<IAddPostInput>();
+	const currentUser = useRecoilValue(currentUserState);
+	const { handleSubmit, register, reset, resetField } = useForm<TPostInput>();
 
 	const { mutate, isSuccess, isError, status } = useAddPost();
 
-	const onSubmit = (post: IAddPostInput) => {
+	const onSubmit = (post: TPostInput) => {
 		mutate(post);
 	};
 
@@ -55,9 +54,9 @@ const PostForm = () => {
 		<Paper component='form' onSubmit={handleSubmit(onSubmit)}>
 			<Stack direction='column' sx={{ p: '12px' }} spacing={2}>
 				<Stack direction='row' spacing={2}>
-					<Avatar src={currentUser?.profilePicture} />
+					<Avatar src={currentUser?.avatar} />
 					<TextField
-						placeholder={`What's on your mind, ${currentUser?.username}?`}
+						placeholder={`What's on your mind, ${currentUser?.userName}?`}
 						size='small'
 						multiline
 						fullWidth

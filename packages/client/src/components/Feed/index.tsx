@@ -1,13 +1,12 @@
 import { Stack } from '@mui/material';
-import React from 'react';
-import { useRecoilState } from 'recoil';
-import useTimeline from '../../common/hooks/queries/useTimeline';
+import { useRecoilValue } from 'recoil';
+import useTimeline from '../../hooks/queries/useTimeline';
 import { currentUserState } from '../../recoil/states';
 import PostForm from '../PostForm';
 import Post from './Post';
 
 const Feed = () => {
-	const userId = useRecoilState(currentUserState)[0]?._id;
+	const userId = useRecoilValue(currentUserState)?.id;
 	const { intersectionItemRef, data } = useTimeline(userId);
 
 	const posts = data?.pages.flat();
@@ -25,13 +24,9 @@ const Feed = () => {
 			{posts &&
 				posts.map((post, idx) =>
 					idx + 1 === posts.length ? (
-						<Post
-							key={post._id}
-							lastItemRef={intersectionItemRef}
-							post={post}
-						/>
+						<Post key={post.id} lastItemRef={intersectionItemRef} post={post} />
 					) : (
-						<Post key={post._id} post={post} />
+						<Post key={post.id} post={post} />
 					)
 				)}
 		</Stack>

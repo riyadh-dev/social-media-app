@@ -1,6 +1,6 @@
 import { useQuery } from 'react-query';
-import { axiosInstance } from '../../../services/axios';
-import { IPostComment } from '../../interfaces';
+import { IPostComment } from '../../common/interfaces';
+import { axiosInstance } from '../../services/axios';
 
 const server_domain = 'http://localhost:4000/api/posts/comments';
 

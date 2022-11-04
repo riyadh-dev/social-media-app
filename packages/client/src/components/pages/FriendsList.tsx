@@ -7,21 +7,20 @@ import {
 	Grid,
 	Typography,
 } from '@mui/material';
-import React from 'react';
 import { Link } from 'react-router-dom';
-import useAddFriend from '../../common/hooks/mutations/useAddFriend';
-import useSuggestedFriends from '../../common/hooks/queries/useSuggestedFriends';
-import { ICurrentUser } from '../../common/interfaces';
+import { TUiUser } from '../../common/interfaces';
+import useAddFriend from '../../hooks/mutations/useAddFriend';
+import useSuggestedFriends from '../../hooks/queries/useSuggestedFriends';
 
 interface ISuggestedFriendCard {
-	user: ICurrentUser;
+	user: TUiUser;
 	lastItemRef?: (node: HTMLDivElement) => void;
 }
 
 const CardItem = ({ user, lastItemRef }: ISuggestedFriendCard) => {
-	const { mutate, isLoading } = useAddFriend(user._id);
+	const { mutate, isLoading } = useAddFriend(user.id);
 	const onAddFriend = () => {
-		mutate(user._id);
+		mutate(user.id);
 	};
 	return (
 		<Card sx={{ width: 200 }} ref={lastItemRef}>
@@ -29,14 +28,14 @@ const CardItem = ({ user, lastItemRef }: ISuggestedFriendCard) => {
 				<CardMedia
 					component='img'
 					height='194'
-					image={user.profilePicture}
+					image={user.avatar}
 					alt='user picture'
 				/>
 			</Link>
 
 			<CardContent>
 				<Typography gutterBottom variant='h5' component='div'>
-					{user.username}
+					{user.userName}
 				</Typography>
 			</CardContent>
 			<CardActions sx={{ flexDirection: 'column' }}>
@@ -67,7 +66,7 @@ const FriendsListPage = () => {
 		>
 			{suggestedFriends &&
 				suggestedFriends.map((suggestedFriend) => (
-					<Grid item key={suggestedFriend._id}>
+					<Grid item key={suggestedFriend.id}>
 						<CardItem
 							user={suggestedFriend}
 							lastItemRef={intersectionItemRef}

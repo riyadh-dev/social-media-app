@@ -1,13 +1,13 @@
 import { useInfiniteQuery } from 'react-query';
-import { axiosInstance } from '../../../services/axios';
-import { ICurrentUser } from '../../interfaces';
+import { TUiUser } from '../../common/interfaces';
+import { axiosInstance } from '../../services/axios';
 import useIntersectionObserver from '../useIntersectionObserver';
 
 const server_domain = 'http://localhost:4000/api';
 
 const getSuggestedFriends = async (
 	date: number = Date.now()
-): Promise<ICurrentUser[]> => {
+): Promise<TUiUser[]> => {
 	const { data } = await axiosInstance.get(
 		`${server_domain}/users/list/${date}`,
 		{

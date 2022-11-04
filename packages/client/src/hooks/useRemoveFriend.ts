@@ -1,9 +1,9 @@
 import { useMutation } from 'react-query';
 import { useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { queryClient } from '../../..';
-import { currentUserState } from '../../../recoil/states';
-import { axiosInstance } from '../../../services/axios';
+import { queryClient } from '../..';
+import { currentUserState } from '../../recoil/states';
+import { axiosInstance } from '../../services/axios';
 
 const server_domain = 'http://localhost:4000/api';
 

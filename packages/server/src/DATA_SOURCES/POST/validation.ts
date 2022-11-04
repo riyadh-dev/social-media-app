@@ -1,5 +1,5 @@
 import Joi from 'joi';
-import { TPostInput } from './types';
+import { TPostInput } from '@social-media-app/shared';
 
 export const createPostValidationSchema = Joi.object<TPostInput>({
 	description: Joi.string().required(),

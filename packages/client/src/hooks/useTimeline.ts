@@ -1,6 +1,6 @@
 import { useInfiniteQuery } from 'react-query';
-import { axiosInstance } from '../../../services/axios';
-import { IPost } from '../../interfaces';
+import { IPost } from '../../common/interfaces';
+import { axiosInstance } from '../../services/axios';
 import useIntersectionObserver from '../useIntersectionObserver';
 
 const server_domain = 'http://localhost:4000/api';

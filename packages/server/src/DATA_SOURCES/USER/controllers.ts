@@ -10,7 +10,7 @@ import { socketConnections } from '../../config/app';
 import { IS_PROD, JWT_SECRET } from '../../config/secrets';
 import FriendRequestsModel from '../../DATA_SOURCES/FRIEND_REQUESTS/model';
 import UserModel from './model';
-import { TLoginInput } from './types';
+import { TLoginInput } from '@social-media-app/shared';
 
 const signupErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
 	if (isErrorWithCode(err)) {

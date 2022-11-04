@@ -7,9 +7,9 @@ import {
 	Theme,
 	useMediaQuery,
 } from '@mui/material';
-import React, { useEffect, useMemo } from 'react';
+import { useEffect, useMemo } from 'react';
 import { Route, Routes } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useRecoilState, useRecoilValue } from 'recoil';
 import Chat from './components/Chat';
 import Feed from './components/Feed';
 import FriendsList from './components/FriendsList';
@@ -51,7 +51,7 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
-	const currentUser = useRecoilState(currentUserState)[0];
+	const currentUser = useRecoilValue(currentUserState);
 
 	return (
 		<ThemeProvider theme={muiTheme}>

@@ -84,11 +84,11 @@ const Login = () => {
 			</Box>
 			<Paper sx={{ p: '20px', width: '400px' }}>
 				<Stack spacing={2} component='form' onSubmit={handleSubmit(onSubmit)}>
-					<FormControl variant='outlined' error={Boolean(errors.username)}>
+					<FormControl variant='outlined' error={Boolean(errors.userName)}>
 						<InputLabel htmlFor='email'>Email</InputLabel>
 						<OutlinedInput id='email' label='Email' {...register('username')} />
 						<FormHelperText id='email'>
-							{errors.username?.message}
+							{errors.userName?.message}
 						</FormHelperText>
 					</FormControl>
 					<FormControl variant='outlined' error={Boolean(errors.password)}>

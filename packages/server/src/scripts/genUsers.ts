@@ -1,7 +1,7 @@
 import { faker } from '@faker-js/faker';
 import chalk from 'chalk';
 import UsersModel from '../DATA_SOURCES/USER/model';
-import { TSignUpInput } from '../DATA_SOURCES/USER/types';
+import { TSignUpInput } from '@social-media-app/shared';
 
 const getMail = (idx: number) => {
 	if (idx === 0) return 'test1@gmail.com';

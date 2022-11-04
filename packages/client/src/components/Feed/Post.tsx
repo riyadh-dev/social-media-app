@@ -13,15 +13,15 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import React, { useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { Link as RouterLink } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import useAddPostComment from '../../common/hooks/mutations/useAddComment';
-import useDislikePost from '../../common/hooks/mutations/useDislike';
-import useLikePost from '../../common/hooks/mutations/useLike';
-import useComments from '../../common/hooks/queries/useComments';
+import { useRecoilValue } from 'recoil';
 import { IPost } from '../../common/interfaces';
+import useDislikePost from '../../hooks/mutations/useDislike';
+import useLikePost from '../../hooks/mutations/useLike';
+import useComments from '../../hooks/queries/useComments';
+import useAddPostComment from '../../hooks/useAddPostComment';
 import { currentUserState } from '../../recoil/states';
 
 interface ExpandMoreProps extends IconButtonProps {
@@ -53,15 +53,15 @@ export default function Post({
 }) {
 	const [expanded, setExpanded] = useState(false);
 	const [showComments, setShowComments] = useState(false);
-	const currentUser = useRecoilState(currentUserState)[0];
+	const currentUser = useRecoilValue(currentUserState);
 
 	const { handleSubmit, register, reset } = useForm<{ text: string }>();
 
-	const commentsQuery = useComments(post.comments, post._id, showComments);
+	const commentsQuery = useComments(post.comments, post.id, showComments);
 
-	const addPostMutation = useAddPostComment(post._id);
-	const likeMutation = useLikePost(post._id);
-	const dislikeMutation = useDislikePost(post._id);
+	const addPostMutation = useAddPostComment(post.id);
+	const likeMutation = useLikePost(post.id);
+	const dislikeMutation = useDislikePost(post.id);
 
 	const onSubmit = (postComment: { text: string }) => {
 		addPostMutation.mutate(postComment);
@@ -85,10 +85,10 @@ export default function Post({
 			? post.description.substring(0, 160) + ' ...'
 			: post.description;
 
-	const thumbUpColor = post.likes.includes(currentUser?._id ?? '')
+	const thumbUpColor = post.likes.includes(currentUser?.id ?? '')
 		? 'primary'
 		: 'inherit';
-	const thumbDownColor = post.dislikes.includes(currentUser?._id ?? '')
+	const thumbDownColor = post.dislikes.includes(currentUser?.id ?? '')
 		? 'error'
 		: 'inherit';
 
@@ -98,7 +98,7 @@ export default function Post({
 			<CardHeader
 				avatar={
 					<Avatar
-						src={post.author.profilePicture}
+						src={post.author.avatar}
 						aria-label='avatar'
 						component={RouterLink}
 						to={'/profile/' + post.author.id}
@@ -109,7 +109,7 @@ export default function Post({
 						<MoreVertIcon />
 					</IconButton>
 				}
-				title={post.author.username}
+				title={post.author.userName}
 				subheader={postDate}
 			/>
 			{post.img && (
@@ -176,7 +176,7 @@ export default function Post({
 				component='form'
 				onSubmit={handleSubmit(onSubmit)}
 			>
-				<Avatar src={currentUser?.profilePicture} />
+				<Avatar src={currentUser?.avatar} />
 				<TextField
 					placeholder='Write a comment...'
 					size='small'
@@ -190,8 +190,8 @@ export default function Post({
 			{showComments && (
 				<Stack direction='column' spacing={3} sx={{ m: 3 }}>
 					{commentsQuery.data?.map((comment) => (
-						<Stack key={comment._id} direction='row' spacing={2}>
-							<Avatar src={comment.author.profilePicture} />
+						<Stack key={comment.id} direction='row' spacing={2}>
+							<Avatar src={comment.author.avatar} />
 							<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
 								<Typography>{comment.text}</Typography>
 							</CommentText>

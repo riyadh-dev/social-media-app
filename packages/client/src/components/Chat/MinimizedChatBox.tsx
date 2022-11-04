@@ -1,8 +1,8 @@
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Avatar, Badge, styled } from '@mui/material';
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { ICurrentUser } from '../../common/interfaces';
+import { TUiUser } from '../../common/types';
 import { chatBoxState } from '../../recoil/states';
 
 const CloseAvatar = styled(Avatar)(({ theme }) => ({
@@ -12,11 +12,7 @@ const CloseAvatar = styled(Avatar)(({ theme }) => ({
 	cursor: 'pointer',
 }));
 
-const MinimizedChatBox = ({
-	user,
-}: {
-	user: Omit<ICurrentUser, 'csrfToken'>;
-}) => {
+const MinimizedChatBox = ({ user }: { user: Omit<TUiUser, 'csrfToken'> }) => {
 	const [isMouseOver, setIsMouseOver] = useState(false);
 
 	const setChatBox = useRecoilState(chatBoxState)[1];
@@ -24,7 +20,7 @@ const MinimizedChatBox = ({
 	const onRemoveMinimizedChat = () => {
 		setChatBox((prev) => {
 			const { minimized, open } = prev;
-			minimized.delete(user._id);
+			minimized.delete(user.id);
 			return {
 				minimized,
 				open,
@@ -35,7 +31,7 @@ const MinimizedChatBox = ({
 	const onOpenMinimizedChat = () => {
 		setChatBox((prev) => {
 			const { minimized, open } = prev;
-			minimized.delete(user._id);
+			minimized.delete(user.id);
 
 			const openKeys = Array.from(open.keys());
 			if (openKeys.length >= 3) {
@@ -44,7 +40,7 @@ const MinimizedChatBox = ({
 				open.delete(openKeys[0]);
 			}
 
-			open.set(user._id, user);
+			open.set(user.id, user);
 			return {
 				minimized,
 				open,
@@ -70,7 +66,7 @@ const MinimizedChatBox = ({
 			}
 		>
 			<Avatar
-				src={user.profilePicture}
+				src={user.avatar}
 				sx={{ height: '48px', width: '48px', cursor: 'pointer' }}
 				onClick={onOpenMinimizedChat}
 			/>

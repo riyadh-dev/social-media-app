@@ -1,5 +1,6 @@
 import { AtomEffect } from 'recoil';
-import { ICurrentUser, ITheme } from '../common/interfaces';
+import { ITheme } from '../common/interfaces';
+import { TUiUser } from '../common/types';
 import { axiosInstance } from '../services/axios';
 
 export const themePersistEffect: AtomEffect<ITheme> = ({ setSelf, onSet }) => {
@@ -15,7 +16,7 @@ export const themePersistEffect: AtomEffect<ITheme> = ({ setSelf, onSet }) => {
 	});
 };
 
-export const currentUserPersistEffect: AtomEffect<ICurrentUser | null> = ({
+export const currentUserPersistEffect: AtomEffect<TUiUser | null> = ({
 	setSelf,
 	onSet,
 }) => {

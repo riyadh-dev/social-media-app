@@ -1,5 +1,9 @@
 import Joi from 'joi';
-import { TLoginInput, TSignUpInput, TUpdateUser } from './types';
+import {
+	TLoginInput,
+	TSignUpInput,
+	TUpdateUserInput,
+} from '@social-media-app/shared';
 
 export const signupValidationSchema = Joi.object<TSignUpInput>({
 	userName: Joi.string(),
@@ -13,7 +17,7 @@ export const loginValidationSchema = Joi.object<TLoginInput>({
 	password: Joi.string().min(8),
 });
 
-export const updateUserValidationSchema = Joi.object<TUpdateUser>({
+export const updateUserValidationSchema = Joi.object<TUpdateUserInput>({
 	userName: Joi.string().min(3),
 	email: Joi.string().trim().lowercase().email(),
 	avatar: Joi.string().uri(),

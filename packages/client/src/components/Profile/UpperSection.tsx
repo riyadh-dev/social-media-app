@@ -3,12 +3,11 @@ import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
-import React from 'react';
 import { useParams } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
-import useAddFriend from '../../common/hooks/mutations/useAddFriend';
-import useRemoveFriend from '../../common/hooks/mutations/useRemoveFriend';
-import useUser from '../../common/hooks/queries/useUser';
+import { useRecoilValue } from 'recoil';
+import useAddFriend from '../../hooks/mutations/useAddFriend';
+import useRemoveFriend from '../../hooks/mutations/useRemoveFriend';
+import useUser from '../../hooks/queries/useUser';
 import { currentUserState } from '../../recoil/states';
 
 const COVER_IMG =
@@ -26,8 +25,8 @@ const AvatarBox = styled(Box)(({ theme }) => ({
 const UpperSection = () => {
 	const userId = useParams<{ id: string }>().id;
 	const { data } = useUser(userId);
-	const currentUser = useRecoilState(currentUserState)[0];
-	const isFriend = Boolean(currentUser?.followings.includes(userId as string));
+	const currentUser = useRecoilValue(currentUserState);
+	const isFriend = Boolean(currentUser?.friends.includes(userId as string));
 
 	const addFriendMutation = useAddFriend();
 	const removeFriendMutation = useRemoveFriend();
@@ -87,7 +86,7 @@ const UpperSection = () => {
 						>
 							<Avatar
 								alt='Avatar'
-								src={data?.profilePicture}
+								src={data?.avatar}
 								sx={{
 									width: '100%',
 									height: '100%',
@@ -104,7 +103,7 @@ const UpperSection = () => {
 							color='#1976d2'
 							gutterBottom
 						>
-							{data?.username}
+							{data?.userName}
 						</Typography>
 					</Stack>
 					<Stack
