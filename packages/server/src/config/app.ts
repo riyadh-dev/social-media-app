@@ -7,7 +7,7 @@ import hpp from 'hpp';
 import morgan from 'morgan';
 import path from 'path';
 import WebSocket from 'ws';
-import { handleCsrfErr } from '../common/middlewares';
+import { errorRequestHandler } from '../common/middlewares';
 import router from './router';
 import { CLIENT_ORIGIN, COOKIE_SECRET, IS_PROD } from './secrets';
 
@@ -57,7 +57,7 @@ if (IS_PROD) {
 	});
 }
 
-//set csurf error
-app.use(handleCsrfErr);
+//set error handler
+app.use(errorRequestHandler);
 
 export default app;

@@ -1,24 +1,20 @@
 import React from 'react';
-import ReactDOM from 'react-dom';
+import { createRoot } from 'react-dom/client';
 import { QueryClient, QueryClientProvider } from 'react-query';
-import { BrowserRouter } from 'react-router-dom';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { RecoilRoot } from 'recoil';
 import App from './App';
-import './index.css';
-import { ReactQueryDevtools } from 'react-query/devtools';
 
 export const queryClient = new QueryClient();
 
-ReactDOM.render(
+const root = createRoot(document.getElementById('root') as HTMLElement);
+root.render(
 	<React.StrictMode>
 		<RecoilRoot>
-			<BrowserRouter>
-				<QueryClientProvider client={queryClient}>
-					<App />
-					<ReactQueryDevtools initialIsOpen={false} />
-				</QueryClientProvider>
-			</BrowserRouter>
+			<QueryClientProvider client={queryClient}>
+				<App />
+				<ReactQueryDevtools initialIsOpen={false} />
+			</QueryClientProvider>
 		</RecoilRoot>
-	</React.StrictMode>,
-	document.getElementById('root')
+	</React.StrictMode>
 );

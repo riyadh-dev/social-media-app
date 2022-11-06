@@ -2,8 +2,8 @@ import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import { Avatar, Badge, styled } from '@mui/material';
 import { useState } from 'react';
 import { useRecoilState } from 'recoil';
-import { TUiUser } from '../../common/types';
-import { chatBoxState } from '../../recoil/states';
+import { TUiUser } from '../../packages/client/src/common/types';
+import { chatBoxState } from '../../packages/client/src/recoil/states';
 
 const CloseAvatar = styled(Avatar)(({ theme }) => ({
 	width: '20px',

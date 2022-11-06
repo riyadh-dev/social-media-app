@@ -1,38 +1,25 @@
 import bcrypt from 'bcryptjs';
-import { ErrorRequestHandler, RequestHandler } from 'express';
+import { RequestHandler } from 'express';
 import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { isValidObjectId } from 'mongoose';
-import { IAsyncRequestHandler, isErrorWithCode } from '../../common/interfaces';
+import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
 import { dbDocIdValidationSchema } from '../../common/validation';
 import { socketConnections } from '../../config/app';
 import { IS_PROD, JWT_SECRET } from '../../config/secrets';
 import FriendRequestsModel from '../../DATA_SOURCES/FRIEND_REQUESTS/model';
 import UserModel from './model';
-import { TLoginInput } from '@social-media-app/shared';
-
-const signupErrorHandler: ErrorRequestHandler = (err, req, res, next) => {
-	if (isErrorWithCode(err)) {
-		if (err.code === 11000) {
-			res.status(500).json({
-				error: 'username already used',
-			});
-			return;
-		}
-	}
-	next(err);
-};
 
 const signupUnsafe: IAsyncRequestHandler = async (req, res) => {
-	await UserModel.create(res.locals.validatedBody);
+	await UserModel.create(req.signupInput);
 	res.status(200).json({
 		success: 'user created successfully',
 	});
 };
 
 const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const loginInput: TLoginInput = res.locals.validatedBody;
+	const loginInput = req.loginInput;
 	const userDoc = await UserModel.findOne({ email: loginInput.email });
 	if (!userDoc) {
 		res.status(400).json({ error: 'wrong password or email' });
@@ -247,7 +234,7 @@ const getFriendsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(currentUser.friends);
 };
 
-export const signup = catchAsyncReqHandlerErr(signupUnsafe, signupErrorHandler);
+export const signup = catchAsyncReqHandlerErr(signupUnsafe);
 export const login = catchAsyncReqHandlerErr(loginUnsafe);
 export const updateUser = catchAsyncReqHandlerErr(updateUserUnsafe);
 export const deleteUser = catchAsyncReqHandlerErr(deleteUserUnsafe);

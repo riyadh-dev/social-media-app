@@ -12,8 +12,13 @@ import {
 	SIGNUP_INPUT,
 	UPDATE_USER_INPUT,
 } from '../DATA_SOURCES/USER/strings';
-import { IAsyncRequestHandler, isErrorWithCode } from './interfaces';
+import {
+	IAsyncRequestHandler,
+	IDuplicationError,
+	isErrorWithCode,
+} from './interfaces';
 import { DB_DOC_IDS } from './strings';
+import { isMongoServerError } from './utils';
 
 type TValidInputKeys =
 	| typeof LOGIN_INPUT
@@ -43,14 +48,9 @@ export const validateInput =
 	};
 
 export const catchAsyncReqHandlerErr =
-	(
-		handler: IAsyncRequestHandler,
-		errorHandler?: ErrorRequestHandler
-	): IAsyncRequestHandler =>
+	(handler: IAsyncRequestHandler): IAsyncRequestHandler =>
 	(req, res, next) =>
-		handler(req, res, next).catch((err) =>
-			errorHandler ? errorHandler(err, req, res, next) : next(err)
-		);
+		handler(req, res, next).catch((err) => next(err));
 
 export const csrfLogin = csurf({
 	ignoreMethods: ['POST'],
@@ -96,16 +96,31 @@ export const authenticate =
 		}
 	};
 
-export const handleCsrfErr: ErrorRequestHandler = (err, req, res, next) => {
-	if (isErrorWithCode(err)) {
-		if (err.code === 'EBADCSRFTOKEN') {
-			res.clearCookie('token');
-			res.status(403).json({ error: 'form tampered with' });
-			return;
-		}
+export const errorRequestHandler: ErrorRequestHandler = (
+	err,
+	req,
+	res,
+	next
+) => {
+	//catch mongodb duplication error
+	if (isMongoServerError(err) && err.code === 11000) {
+		const duplicationError: IDuplicationError = {};
+		Object.keys(err.keyPattern).forEach((key) => {
+			duplicationError[key] = `This ${key} is already used`;
+		});
+		res.status(500).json(duplicationError);
+		return;
 	}
 
-	if (err instanceof Error) {
+	//catch CSRF error
+	else if (isErrorWithCode(err) && err.code === 'EBADCSRFTOKEN') {
+		res.clearCookie('token');
+		res.status(403).json({ error: 'form tampered with' });
+		return;
+	}
+
+	//catch any other errors
+	else {
 		res.status(500).json({
 			error: 'internal server error',
 		});

@@ -21,8 +21,8 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import { TUiUser } from '../../common/interfaces';
-import { chatBoxState } from '../../recoil/states';
+import { TUiUser } from '../../packages/client/src/common/interfaces';
+import { chatBoxState } from '../../packages/client/src/recoil/states';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',

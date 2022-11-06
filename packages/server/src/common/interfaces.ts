@@ -4,6 +4,12 @@ import WebSocket from 'ws';
 export interface IErrorWithCode extends Error {
 	code?: string | number;
 }
+
+export interface IDuplicationError {
+	[key: string]: string;
+}
+
+//TODO move typechecker to a different file
 export const isErrorWithCode = (
 	error: IErrorWithCode
 ): error is IErrorWithCode => error.code !== undefined;

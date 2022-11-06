@@ -4,7 +4,6 @@ import { AxiosError } from 'axios';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
-import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { TCurrentUser } from '../common/types';
 import { loginValidationSchema } from '../common/validation';
@@ -25,17 +24,14 @@ const useLogin = () => {
 	);
 
 	const setCurrentUser = useSetRecoilState(currentUserState);
-	const navigate = useNavigate();
-	const from = useLocation().state?.from?.pathname ?? '/';
 
-	const { data, isSuccess } = useMutationResult;
 	useEffect(() => {
-		if (isSuccess) {
-			setCurrentUser(data);
-			axiosInstance.defaults.headers.common['csrf-token'] = data.csrfToken;
-			navigate(from, { replace: true });
+		if (useMutationResult.isSuccess) {
+			setCurrentUser(useMutationResult.data);
+			axiosInstance.defaults.headers.common['csrf-token'] =
+				useMutationResult.data.csrfToken;
 		}
-	}, [data, from, isSuccess, navigate, setCurrentUser]);
+	}, [setCurrentUser, useMutationResult.data, useMutationResult.isSuccess]);
 
 	return { useFormReturn, useMutationResult, onSubmit };
 };

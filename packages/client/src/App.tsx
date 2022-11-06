@@ -3,22 +3,14 @@ import {
 	createTheme,
 	CssBaseline,
 	PaletteMode,
-	Stack,
 	Theme,
 	useMediaQuery,
 } from '@mui/material';
 import { useEffect, useMemo } from 'react';
-import { Route, Routes } from 'react-router-dom';
-import { useRecoilState, useRecoilValue } from 'recoil';
-import Chat from './components/Chat';
-import Feed from './components/Feed';
-import FriendsList from './components/FriendsList';
-import Login from './components/Login';
-import FriendsListPage from './components/pages/FriendsList';
-import Profile from './components/Profile';
-import SideBar from './components/SideBar';
-import TopBar from './components/TopBar';
-import { currentUserState, themeState } from './recoil/states';
+import { RouterProvider } from 'react-router-dom';
+import { useRecoilState } from 'recoil';
+import { themeState } from './recoil/states';
+import router from './router';
 
 const getTheme = (mode: PaletteMode): Theme =>
 	createTheme({
@@ -51,12 +43,14 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
-	const currentUser = useRecoilValue(currentUserState);
+	//const currentUser = useRecoilValue(currentUserState);
 
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />
-			{!currentUser ? (
+			<RouterProvider router={router} />
+
+			{/* 			{!currentUser ? (
 				<Login />
 			) : (
 				<>
@@ -77,7 +71,7 @@ function App() {
 						<Route path='/friends' element={<FriendsListPage />} />
 					</Routes>
 				</>
-			)}
+			)} */}
 		</ThemeProvider>
 	);
 }

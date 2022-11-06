@@ -1,6 +1,6 @@
 import { IUser } from '@social-media-app/shared';
 import { TLoginInput } from '@social-media-app/shared/';
-import { TUiSignUpInput, TUiUser } from '../common/types';
+import { TCurrentUser, TUiSignUpInput, TUiUser } from '../common/types';
 import { axiosInstance } from '../services/axios';
 
 export const signUp = async (signUpInput: TUiSignUpInput): Promise<unknown> => {
@@ -11,7 +11,7 @@ export const signUp = async (signUpInput: TUiSignUpInput): Promise<unknown> => {
 	return data;
 };
 
-export const login = async (user: TLoginInput): Promise<TUiUser> => {
+export const login = async (user: TLoginInput): Promise<TCurrentUser> => {
 	const { data } = await axiosInstance.post(`/users/login`, user, {
 		withCredentials: true,
 	});

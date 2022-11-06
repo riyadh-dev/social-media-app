@@ -1,6 +1,7 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
 	Button,
+	ButtonTypeMap,
 	Divider,
 	FormControl,
 	FormHelperText,
@@ -13,50 +14,46 @@ import {
 	Typography,
 } from '@mui/material';
 import { Box } from '@mui/system';
-import { AxiosError } from 'axios';
-import { useEffect, useState } from 'react';
-import { useForm } from 'react-hook-form';
-import { useMutation } from 'react-query';
-import { useRecoilState } from 'recoil';
-import { ILoginInput } from '../common/interfaces';
-import { loginReq } from '../common/requests';
-import { currentUserState } from '../recoil/states';
-import { axiosInstance } from '../services/axios';
+import { lazy, useState } from 'react';
+import useLogin from '../../hooks/useLogin';
 
-const Login = () => {
+const SignUpForm = lazy(() => import('./SignUpForm'));
+
+const LoginForm = () => {
 	const {
-		register,
-		handleSubmit,
-		formState: { errors },
-		setError,
-	} = useForm<ILoginInput>();
-
-	const onError = (err: AxiosError<{ error: string }>) => {
-		const errMsg = err?.response?.data.error;
-		setError('username', { message: errMsg });
-		setError('password', { message: errMsg });
-	};
-
-	const { data, mutate, isLoading, isSuccess } = useMutation(loginReq, {
-		onError,
-	});
-
-	const onSubmit = (user: ILoginInput) => {
-		mutate(user);
-	};
-
-	const setCurrentUser = useRecoilState(currentUserState)[1];
-
-	useEffect(() => {
-		if (isSuccess && data) {
-			setCurrentUser(data);
-			axiosInstance.defaults.headers.common['csrf-token'] = data.csrfToken;
-		}
-	}, [data, isSuccess, setCurrentUser]);
+		useFormReturn: {
+			register,
+			formState: { errors },
+		},
+		useMutationResult: { isLoading, status },
+		onSubmit,
+	} = useLogin();
 
 	const [showPassword, setShowPassword] = useState(false);
-
 	const handleToggleShowPassword = () => setShowPassword((prev) => !prev);
+
+	const [openSignUpForm, setOpenSignUpForm] = useState(false);
+	const handleOpenSignUpForm = () => setOpenSignUpForm(true);
+	const handleCloseSignUpForm = () => setOpenSignUpForm(false);
+
+	let LoginBtnText = 'login';
+	let loginBtnColor: ButtonTypeMap['props']['color'] = 'primary';
+
+	switch (status) {
+		case 'idle':
+			loginBtnColor = 'primary';
+			LoginBtnText = 'login';
+			break;
+		case 'loading':
+			LoginBtnText = 'login in...';
+			break;
+		case 'error':
+			LoginBtnText = 'something went wrong';
+			loginBtnColor = 'error';
+			break;
+		default:
+			break;
+	}
 
 	return (
 		<Stack
@@ -83,13 +80,11 @@ const Login = () => {
 				</Typography>
 			</Box>
 			<Paper sx={{ p: '20px', width: '400px' }}>
-				<Stack spacing={2} component='form' onSubmit={handleSubmit(onSubmit)}>
-					<FormControl variant='outlined' error={Boolean(errors.userName)}>
+				<Stack spacing={2} component='form' onSubmit={onSubmit}>
+					<FormControl variant='outlined' error={Boolean(errors.email)}>
 						<InputLabel htmlFor='email'>Email</InputLabel>
-						<OutlinedInput id='email' label='Email' {...register('username')} />
-						<FormHelperText id='email'>
-							{errors.userName?.message}
-						</FormHelperText>
+						<OutlinedInput id='email' label='Email' {...register('email')} />
+						<FormHelperText id='email'>{errors.email?.message}</FormHelperText>
 					</FormControl>
 					<FormControl variant='outlined' error={Boolean(errors.password)}>
 						<InputLabel htmlFor='password'>Password</InputLabel>
@@ -120,20 +115,29 @@ const Login = () => {
 						size='large'
 						type='submit'
 						disabled={isLoading}
+						color={loginBtnColor}
 					>
-						{isLoading ? 'in progress' : 'log in'}
+						{LoginBtnText}
 					</Button>
 					<Button variant='text' size='small'>
 						Forget password?
 					</Button>
 					<Divider variant='middle' />
-					<Button color='success' variant='contained'>
+					<Button
+						color='success'
+						variant='contained'
+						onClick={handleOpenSignUpForm}
+					>
 						Create new account
 					</Button>
 				</Stack>
 			</Paper>
+			<SignUpForm
+				handleCloseSignUpForm={handleCloseSignUpForm}
+				openSignUpForm={openSignUpForm}
+			/>
 		</Stack>
 	);
 };
 
-export default Login;
+export default LoginForm;

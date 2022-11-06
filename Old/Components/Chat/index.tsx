@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 import { useRecoilValue } from 'recoil';
-import { chatBoxState } from '../../recoil/states';
+import { chatBoxState } from '../../packages/client/src/recoil/states';
 import ChatBox from './ChatBox';
 import MinimizedChatBox from './MinimizedChatBox';
 
