@@ -1,0 +1,28 @@
+[
+  {
+    "_id": "72dd1558-ac03-4ce9-9f04-87c6300565e2",
+    "name": "SocialApp",
+    "default": true,
+    "sortNum": 10000,
+    "created": "2021-12-28T08:47:16.393Z",
+    "modified": "2021-12-29T13:24:11.225Z",
+    "data": [
+      {
+        "name": "USER_ID",
+        "value": "61cc60d166b9b4ada3f4ae15"
+      },
+      {
+        "name": "CSRF_TOKEN",
+        "value": "TPfM7c0l-S6VMDtC_WvT_9ZoTZkOHjfi_59Y"
+      },
+      {
+        "name": "POST_ID",
+        "value": "61cc617b5d600ec804066f52"
+      },
+      {
+        "name": "error",
+        "value": "username already used"
+      }
+    ]
+  }
+]

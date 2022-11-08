@@ -26,14 +26,14 @@ const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const { password, ...payload } = userDoc.toObject({ versionKey: false });
+	const { password, ...payload } = userDoc.toObject();
 	const isPasswordCorrect = bcrypt.compareSync(loginInput.password, password);
 	if (!isPasswordCorrect) {
 		res.status(400).json({ error: 'wrong password or username' });
 		return;
 	}
 
-	const jwtToken = jwt.sign(payload._id.toString(), JWT_SECRET);
+	const jwtToken = jwt.sign(payload.id, JWT_SECRET);
 	res.cookie('cookieToken', jwtToken, {
 		httpOnly: true,
 		signed: true,

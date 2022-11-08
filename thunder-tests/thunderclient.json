@@ -1,0 +1,333 @@
+[
+  {
+    "_id": "310a28c0-3ac9-40bd-b7ec-ce4f1bc9cded",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "sign up",
+    "url": "http://localhost:4000/api/users",
+    "method": "POST",
+    "sortNum": 5000,
+    "created": "2021-12-28T08:45:43.050Z",
+    "modified": "2021-12-28T08:48:24.096Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "0e248c0b-db4e-4409-b063-f0911e0df29b",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "login",
+    "url": "http://localhost:4000/api/users/login",
+    "method": "POST",
+    "sortNum": 7500,
+    "created": "2021-12-28T08:45:43.051Z",
+    "modified": "2021-12-28T11:53:53.685Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json._id",
+        "action": "setto",
+        "value": "{{USER_ID}}"
+      },
+      {
+        "type": "set-env-var",
+        "custom": "json.csrfToken",
+        "action": "setto",
+        "value": "{{CSRF_TOKEN}}"
+      },
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "0e58cd6f-58f4-42b7-9fe6-0f68ffcaaf6a",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "add Post",
+    "url": "http://localhost:4000/api/posts",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2021-12-28T08:45:43.051Z",
+    "modified": "2021-12-29T13:24:05.490Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"description\":\"test post3\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json._id",
+        "action": "setto",
+        "value": "{{POST_ID}}"
+      },
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "53864f64-734b-4b4e-9bd5-1ad4b927e1af",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "Update Post",
+    "url": "http://localhost:4000/api/posts/{{POST_ID}}",
+    "method": "PUT",
+    "sortNum": 25000,
+    "created": "2021-12-28T08:45:43.051Z",
+    "modified": "2021-12-29T13:34:56.538Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"description\":\"updated test post\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "aff6edd7-6b1c-4d19-9970-41bce132261e",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "Get Post",
+    "url": "http://localhost:4000/api/posts/{{POST_ID}}",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2021-12-28T08:45:43.051Z",
+    "modified": "2021-12-28T08:45:43.051Z",
+    "headers": [],
+    "params": [],
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "e9a2e26f-1287-4436-862c-e493a3600d2b",
+    "colId": "ba5c92bf-225a-4b59-a935-cf0994d3e921",
+    "containerId": "",
+    "name": "Delete Post",
+    "url": "http://localhost:4000/api/posts/{{POST_ID}}",
+    "method": "DELETE",
+    "sortNum": 30000,
+    "created": "2021-12-28T08:45:43.051Z",
+    "modified": "2021-12-28T08:45:43.051Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "b2eefa66-ecaf-4f3e-9838-610b6316d910",
+    "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
+    "containerId": "",
+    "name": "sign up user1",
+    "url": "http://localhost:4000/api/users",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2021-12-28T09:02:49.155Z",
+    "modified": "2021-12-28T09:02:54.662Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "1598448a-8894-487e-bf25-79d1437e8d96",
+    "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
+    "containerId": "",
+    "name": "sign up user2",
+    "url": "http://localhost:4000/api/users",
+    "method": "POST",
+    "sortNum": 20000,
+    "created": "2021-12-28T09:03:01.835Z",
+    "modified": "2021-12-28T11:06:41.433Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user2\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "fc7656c4-50d7-40d9-9251-fa5575659f27",
+    "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
+    "containerId": "",
+    "name": "login",
+    "url": "http://localhost:4000/api/users/login",
+    "method": "POST",
+    "sortNum": 22500,
+    "created": "2021-12-28T09:03:10.292Z",
+    "modified": "2021-12-29T10:42:33.653Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user1\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json._id",
+        "action": "setto",
+        "value": "{{USER_ID}}"
+      },
+      {
+        "type": "set-env-var",
+        "custom": "json.csrfToken",
+        "action": "setto",
+        "value": "{{CSRF_TOKEN}}"
+      },
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "4a6bc82a-5275-4602-b662-9c7fa1515e88",
+    "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
+    "containerId": "",
+    "name": "Like Post",
+    "url": "http://localhost:4000/api/posts/{{POST_ID}}/like",
+    "method": "PUT",
+    "sortNum": 25000,
+    "created": "2021-12-28T11:07:53.110Z",
+    "modified": "2021-12-28T11:12:00.441Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user2\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "809e4b61-c452-43f5-b3f6-bc7f3a47abc5",
+    "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
+    "containerId": "",
+    "name": "Timeline",
+    "url": "http://localhost:4000/api/posts/timeline",
+    "method": "GET",
+    "sortNum": 40000,
+    "created": "2021-12-29T09:22:45.623Z",
+    "modified": "2021-12-29T13:50:13.552Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  }
+]

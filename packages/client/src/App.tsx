@@ -7,10 +7,13 @@ import {
 	useMediaQuery,
 } from '@mui/material';
 import { useEffect, useMemo } from 'react';
+import { ReactQueryDevtools } from 'react-query/devtools';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
+import RecoilDebugButton from './components/RecoilDebugButton';
+import TimeTravelObserver from './components/TimeTravelObserver';
 import { themeState } from './recoil/states';
-import router from './router';
+import router from './Router';
 
 const getTheme = (mode: PaletteMode): Theme =>
 	createTheme({
@@ -49,29 +52,9 @@ function App() {
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />
 			<RouterProvider router={router} />
-
-			{/* 			{!currentUser ? (
-				<Login />
-			) : (
-				<>
-					<TopBar />
-					<Routes>
-						<Route
-							path='/'
-							element={
-								<Stack direction='row' justifyContent='space-between'>
-									<SideBar />
-									<Feed />
-									<FriendsList />
-									<Chat />
-								</Stack>
-							}
-						/>
-						<Route path='/profile/:id' element={<Profile />} />
-						<Route path='/friends' element={<FriendsListPage />} />
-					</Routes>
-				</>
-			)} */}
+			<ReactQueryDevtools initialIsOpen={false} />
+			<TimeTravelObserver />
+			<RecoilDebugButton />
 		</ThemeProvider>
 	);
 }

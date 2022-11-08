@@ -18,7 +18,7 @@ export const login = async (user: TLoginInput): Promise<TCurrentUser> => {
 	return data;
 };
 
-export const logout = async () =>
+export const logoutQuery = async () =>
 	await axiosInstance.delete('/users/logout', {
 		withCredentials: true,
 	});
