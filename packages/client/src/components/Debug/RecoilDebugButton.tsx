@@ -1,4 +1,4 @@
-import { Avatar } from '@mui/material';
+import { Avatar, Tooltip } from '@mui/material';
 import { useRecoilCallback } from 'recoil';
 
 const RecoilDebugButton = () => {
@@ -15,18 +15,20 @@ const RecoilDebugButton = () => {
 	);
 
 	return (
-		<Avatar
-			sx={{
-				position: 'fixed',
-				cursor: 'pointer',
-				left: 64,
-				bottom: 12,
-				zIndex: 99999,
-				opacity: 0.5,
-			}}
-			src='https://recoiljs.org/img/favicon.png'
-			onClick={onClick}
-		/>
+		<Tooltip title='Print current snapshot to console'>
+			<Avatar
+				sx={{
+					position: 'fixed',
+					cursor: 'pointer',
+					left: 64,
+					bottom: 12,
+					zIndex: 99999,
+					opacity: 0.5,
+				}}
+				src='https://recoiljs.org/img/favicon.png'
+				onClick={onClick}
+			/>
+		</Tooltip>
 	);
 };
 

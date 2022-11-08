@@ -2,6 +2,7 @@ import { Stack } from '@mui/material';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Home from './components/Pages/Home';
+import Main from './components/Pages/Main';
 import RequireAuth from './components/RequireAuth';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
@@ -17,11 +18,11 @@ const router = createBrowserRouter([
 		path: '/',
 		element: (
 			<RequireAuth>
-				<Home />
+				<Main />
 			</RequireAuth>
 		),
 		children: [
-			{ path: '/', element: <PlaceHolderComp compName='root' /> },
+			{ path: '/', element: <Home /> },
 			{ path: 'favorites', element: <PlaceHolderComp compName='favorites' /> },
 			{ path: 'friends', element: <PlaceHolderComp compName='friends' /> },
 		],

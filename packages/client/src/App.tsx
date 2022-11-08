@@ -10,10 +10,12 @@ import { useEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from 'react-query/devtools';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
-import RecoilDebugButton from './components/RecoilDebugButton';
-import TimeTravelObserver from './components/TimeTravelObserver';
+import RecoilDebugButton from './components/Debug/RecoilDebugButton';
+import RecoilTimeTravelObserver from './components/Debug/RecoilTimeTravelObserver';
 import { themeState } from './recoil/states';
 import router from './Router';
+
+const IS_DEV = process.env.NODE_ENV === 'development';
 
 const getTheme = (mode: PaletteMode): Theme =>
 	createTheme({
@@ -46,15 +48,17 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
-	//const currentUser = useRecoilValue(currentUserState);
-
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />
 			<RouterProvider router={router} />
-			<ReactQueryDevtools initialIsOpen={false} />
-			<TimeTravelObserver />
-			<RecoilDebugButton />
+			{IS_DEV && (
+				<>
+					<ReactQueryDevtools initialIsOpen={false} />
+					<RecoilTimeTravelObserver />
+					<RecoilDebugButton />
+				</>
+			)}
 		</ThemeProvider>
 	);
 }

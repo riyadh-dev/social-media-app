@@ -1,8 +1,7 @@
 import MenuIcon from '@mui/icons-material/MenuRounded';
 import SearchIcon from '@mui/icons-material/SearchRounded';
-import { alpha, InputBase, styled } from '@mui/material';
+import { alpha, InputBase, Stack, styled } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import React from 'react';
 import { Link } from 'react-router-dom';
@@ -59,18 +58,12 @@ const LeftSection = () => {
 	};
 
 	return (
-		<Box
-			sx={{
-				display: 'flex',
-				alignItems: 'center',
-				width: { md: '245px', lg: '342px' },
-			}}
-		>
+		<Stack direction='row' alignItems='center' spacing={1}>
 			<Link to='/'>
 				<img
 					src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
 					alt='Logo'
-					style={{ width: '40px', marginInline: '5px' }}
+					style={{ width: '40px', height: '40px' }}
 				/>
 			</Link>
 
@@ -84,29 +77,24 @@ const LeftSection = () => {
 				/>
 			</Search>
 
-			<IconButton
-				sx={{
-					p: 0,
-					mx: '5px',
-					display: { md: 'none' },
-				}}
-			>
+			<IconButton sx={{ display: { md: 'none' }, p: 0 }}>
 				<Avatar>
 					<SearchIcon />
 				</Avatar>
 			</IconButton>
 
-			<Box
+			<IconButton
 				sx={{
-					mx: '5px',
 					display: { xs: 'flex', md: 'none' },
+					p: 0,
 				}}
+				onClick={handleOpenSideBar}
 			>
-				<IconButton size='large' onClick={handleOpenSideBar} color='inherit'>
+				<Avatar>
 					<MenuIcon />
-				</IconButton>
-			</Box>
-		</Box>
+				</Avatar>
+			</IconButton>
+		</Stack>
 	);
 };
 export default LeftSection;
