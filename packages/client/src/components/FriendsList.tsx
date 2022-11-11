@@ -6,14 +6,14 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import Toolbar from '@mui/material/Toolbar';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
-import { TUiUser as IUser } from '../../common/interfaces';
-import useUsers from '../../hooks/queries/useUsers';
-import {
-	chatBoxState,
-	currentUserState,
-	sideBarOpenState,
-} from '../../recoil/states';
+import { useRecoilState, useRecoilValue } from 'recoil';
+import { TUiUser } from '../common/types';
+import queryKeys from '../constants/reactQueryKeys';
+import useChatBox from '../hooks/useChatBox';
+import useGetOnlineUsersIds from '../hooks/useGetOnlineUsers';
+import useGetUsersById from '../hooks/useGetUsersById';
+import { currentUserState, sideBarOpenState } from '../recoil/states';
+import Chat from './Chat';
 
 const DRAWER_WIDTH = 300;
 
@@ -54,28 +54,14 @@ const FriendsListItem = ({
 	user,
 	isOnline,
 }: {
-	user: Omit<IUser, 'csrfToken'>;
+	user: TUiUser;
 	isOnline: boolean;
 }) => {
-	const setChatBox = useSetRecoilState(chatBoxState);
-	const handleOpenChatBox = () => {
-		setChatBox((prev) => {
-			const open = new Map(prev.open);
-			const minimized = new Map(prev.minimized);
-
-			open.set(user.id, user);
-			minimized.delete(user.id);
-
-			return {
-				open,
-				minimized,
-			};
-		});
-	};
+	const { onOpen } = useChatBox(user);
 
 	if (!isOnline)
 		return (
-			<ListItem button onClick={handleOpenChatBox}>
+			<ListItem button onClick={onOpen}>
 				<ListItemAvatar>
 					<Avatar src={user.avatar} alt='Avatar' />
 				</ListItemAvatar>
@@ -84,7 +70,7 @@ const FriendsListItem = ({
 		);
 
 	return (
-		<ListItem button onClick={handleOpenChatBox}>
+		<ListItem button onClick={onOpen}>
 			<ListItemAvatar>
 				<OnlineBadge
 					overlap='circular'
@@ -108,7 +94,13 @@ const FriendsList = (props: Props) => {
 	};
 
 	const currentUser = useRecoilValue(currentUserState);
-	const { data } = useUsers(currentUser?.friends);
+	const { data: friends } = useGetUsersById(
+		currentUser?.friends,
+		queryKeys.friends
+	);
+
+	//TODO try and use a map instead
+	const { data: onlineUsersIds } = useGetOnlineUsersIds();
 
 	const container =
 		window !== undefined ? () => window().document.body : undefined;
@@ -129,9 +121,13 @@ const FriendsList = (props: Props) => {
 					},
 				}}
 			>
-				{data &&
-					data.map((user) => (
-						<FriendsListItem key={user.id} isOnline={true} user={user} />
+				{friends &&
+					friends.map((friend) => (
+						<FriendsListItem
+							key={friend.id}
+							isOnline={onlineUsersIds?.includes(friend.id) ?? false}
+							user={friend}
+						/>
 					))}
 			</List>
 		</div>
@@ -162,7 +158,6 @@ const FriendsList = (props: Props) => {
 			>
 				{drawer}
 			</Drawer>
-
 			<Drawer
 				variant='permanent'
 				anchor='right'
@@ -179,6 +174,7 @@ const FriendsList = (props: Props) => {
 			>
 				{drawer}
 			</Drawer>
+			<Chat />
 		</Box>
 	);
 };

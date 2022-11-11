@@ -3,9 +3,8 @@ import SearchIcon from '@mui/icons-material/SearchRounded';
 import { alpha, InputBase, Stack, styled } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
-import React from 'react';
 import { Link } from 'react-router-dom';
-import { useRecoilState } from 'recoil';
+import { useSetRecoilState } from 'recoil';
 import { sideBarOpenState } from '../../recoil/states';
 
 const Search = styled('div')(({ theme }) => ({
@@ -51,11 +50,8 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const LeftSection = () => {
-	const setSideBarOpen = useRecoilState(sideBarOpenState)[1];
-
-	const handleOpenSideBar = (event: React.MouseEvent<HTMLElement>) => {
-		setSideBarOpen((currVal) => !currVal);
-	};
+	const setSideBarOpen = useSetRecoilState(sideBarOpenState);
+	const handleOpenSideBar = () => setSideBarOpen((currVal) => !currVal);
 
 	return (
 		<Stack direction='row' alignItems='center' spacing={1}>

@@ -19,7 +19,7 @@ const router = Router();
 //create post
 router.post(
 	'/',
-	authenticate(),
+	authenticate,
 	validateInput(createPostValidationSchema, 'postInput'),
 	createPost
 );
@@ -33,18 +33,18 @@ router.get('/:id', getPost);
 //update posts
 router.put(
 	'/:id',
-	authenticate(),
+	authenticate,
 	validateInput(updatePostValidationSchema, 'postInput'),
 	updatePost
 );
 
 //delete post
-router.delete('/:id', authenticate(), deletePost);
+router.delete('/:id', authenticate, deletePost);
 
 //like post
-router.put('/:id/like', authenticate(), likePost);
+router.put('/:id/like', authenticate, likePost);
 
 //dislike post
-router.put('/:id/dislike', authenticate(), dislikePost);
+router.put('/:id/dislike', authenticate, dislikePost);
 
 export default router;

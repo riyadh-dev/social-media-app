@@ -5,7 +5,7 @@ import { useForm } from 'react-hook-form';
 import { useMutation } from 'react-query';
 import { TUiSignUpInput } from '../common/types';
 import { signUpValidationSchema } from '../common/validation';
-import { signUp } from '../queries/users';
+import { signUpQuery } from '../queries/users';
 
 const useSignUp = () => {
 	const useFormReturn = useForm<TUiSignUpInput>({
@@ -16,7 +16,7 @@ const useSignUp = () => {
 		//TODO move type def elsewhere
 		AxiosError<{ userName?: string; email?: string }>,
 		TUiSignUpInput
-	>(signUp);
+	>(signUpQuery);
 
 	useEffect(() => {
 		if (useMutationReturn.isSuccess) useFormReturn.reset();

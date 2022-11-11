@@ -1,7 +1,7 @@
 import { IPostComment, TPostCommentInput } from '@social-media-app/shared';
 import { axiosInstance } from '../services/axios';
 
-export const addPostComment = async (
+export const addPostCommentQuery = async (
 	comment: TPostCommentInput,
 	postId: string | undefined
 ): Promise<IPostComment> => {

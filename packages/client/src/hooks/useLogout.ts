@@ -1,8 +1,8 @@
 import { logoutQuery } from '../queries/users';
 
 const useLogout = () => {
-	const logout = () => {
-		logoutQuery();
+	const logout = async () => {
+		await logoutQuery();
 		localStorage.clear();
 		window.location.reload();
 	};

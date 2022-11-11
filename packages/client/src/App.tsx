@@ -11,7 +11,7 @@ import { ReactQueryDevtools } from 'react-query/devtools';
 import { RouterProvider } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import RecoilDebugButton from './components/Debug/RecoilDebugButton';
-import RecoilTimeTravelObserver from './components/Debug/RecoilTimeTravelObserver';
+import { useWebSocketInit } from './hooks/useWebSocketInit';
 import { themeState } from './recoil/states';
 import router from './Router';
 
@@ -48,6 +48,8 @@ function App() {
 		});
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
+	useWebSocketInit();
+
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />
@@ -55,7 +57,7 @@ function App() {
 			{IS_DEV && (
 				<>
 					<ReactQueryDevtools initialIsOpen={false} />
-					<RecoilTimeTravelObserver />
+					{/* <RecoilTimeTravelObserver /> */}
 					<RecoilDebugButton />
 				</>
 			)}

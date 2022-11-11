@@ -4,7 +4,7 @@ import { axiosInstance } from '../services/axios';
 export const sendChatMessage = async (
 	chatMessageInput: TChatMessageInput
 ): Promise<unknown> => {
-	const { data } = await axiosInstance.post(`/messages`, chatMessageInput, {
+	const { data } = await axiosInstance.post('/messages', chatMessageInput, {
 		withCredentials: true,
 	});
 	return data;
@@ -17,7 +17,7 @@ export const getConversationMessages = async (
 		Promise.reject(new Error('Invalid body'));
 
 	const { data } = await axiosInstance.post(
-		`/messages/conversation`,
+		'/messages/conversation',
 		conversationMembers,
 		{ withCredentials: true }
 	);

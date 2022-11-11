@@ -6,8 +6,8 @@ import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { MESSAGE_INPUT } from '../DATA_SOURCES/MESSAGES/strings';
 import { POST_INPUT } from '../DATA_SOURCES/POST/strings';
 import { POST_COMMENT_INPUT } from '../DATA_SOURCES/POST_COMMENT/strings';
-import UserModel from '../DATA_SOURCES/USER/model';
 import {
+	COOKIE_NAME,
 	LOGIN_INPUT,
 	SIGNUP_INPUT,
 	UPDATE_USER_INPUT,
@@ -71,30 +71,18 @@ export const csrfProtection = csurf({
 	},
 });
 
-export const authenticate =
-	(options?: { isAdmin?: boolean }): RequestHandler =>
-	async (req, res, next) => {
-		try {
-			const currentUserId = jwt.verify(
-				req.signedCookies.cookieToken,
-				JWT_SECRET
-			);
-
-			if (options?.isAdmin) {
-				const currentUser = await UserModel.findById(currentUserId);
-				if (!currentUser?.isAdmin) {
-					res.status(403).json({ error: 'not authorized' });
-					return;
-				}
-			}
-
-			res.locals = { currentUserId };
-			next();
-		} catch (_error) {
-			res.clearCookie('token');
-			res.status(403).json({ error: 'invalid token' });
-		}
-	};
+export const authenticate: RequestHandler = async (req, res, next) => {
+	try {
+		const currentUserId = jwt
+			.verify(req.signedCookies[COOKIE_NAME], JWT_SECRET)
+			.toString();
+		req.currentUserId = currentUserId;
+		next();
+	} catch (_error) {
+		res.clearCookie(COOKIE_NAME);
+		res.status(403).json({ error: 'invalid cookie' });
+	}
+};
 
 export const errorRequestHandler: ErrorRequestHandler = (
 	err,

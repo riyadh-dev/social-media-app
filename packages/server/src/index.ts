@@ -4,7 +4,7 @@ import { IS_PROD, PORT } from './config/secrets';
 //must be set before server import
 setMongoosePlugin();
 
-import server from './config/app';
+import server from './config/server';
 
 const main = async () => {
 	const mode = IS_PROD

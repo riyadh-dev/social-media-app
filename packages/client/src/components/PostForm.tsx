@@ -21,9 +21,9 @@ const PostForm = () => {
 
 	const { mutate, isSuccess, isError, status } = useAddPost();
 
-	const onSubmit = (post: TPostInput) => {
+	const onSubmit = handleSubmit((post: TPostInput) => {
 		mutate(post);
-	};
+	});
 
 	useEffect(() => {
 		if (isSuccess) reset();
@@ -51,7 +51,7 @@ const PostForm = () => {
 	}
 
 	return (
-		<Paper component='form' onSubmit={handleSubmit(onSubmit)}>
+		<Paper component='form' onSubmit={onSubmit} sx={{ width: '590px' }}>
 			<Stack direction='column' sx={{ p: '12px' }} spacing={2}>
 				<Stack direction='row' spacing={2}>
 					<Avatar src={currentUser?.avatar} />

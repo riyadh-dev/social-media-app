@@ -9,13 +9,13 @@ export const themeState = atom<ITheme>({
 		mode: 'light',
 		isUserPicked: false,
 	},
-	effects_UNSTABLE: [themePersistEffect],
+	effects: [themePersistEffect],
 });
 
 export const currentUserState = atom<TUiUser | null>({
 	key: 'currentUserState',
 	default: null,
-	effects_UNSTABLE: [currentUserPersistEffect],
+	effects: [currentUserPersistEffect],
 });
 
 export const sideBarOpenState = atom({
@@ -23,10 +23,20 @@ export const sideBarOpenState = atom({
 	default: false,
 });
 
-export const chatBoxState = atom({
-	key: 'chatBoxState',
+export const webSocketState = atom<WebSocket | null>({
+	key: 'webSocketState',
+	default: null,
+});
+
+export const typingIndicatorMapState = atom<Map<string, boolean>>({
+	key: 'typingIndicatorMapState',
+	default: new Map(),
+});
+
+export const chatBoxesState = atom({
+	key: 'chatBoxesState',
 	default: {
-		minimized: new Map<string, Omit<TUiUser, 'csrfToken'>>(),
-		open: new Map<string, Omit<TUiUser, 'csrfToken'>>(),
+		minimized: new Map<string, TUiUser>(),
+		open: new Map<string, TUiUser>(),
 	},
 });

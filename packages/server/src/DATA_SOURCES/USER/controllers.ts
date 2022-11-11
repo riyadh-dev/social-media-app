@@ -10,6 +10,7 @@ import { socketConnections } from '../../config/app';
 import { IS_PROD, JWT_SECRET } from '../../config/secrets';
 import FriendRequestsModel from '../../DATA_SOURCES/FRIEND_REQUESTS/model';
 import UserModel from './model';
+import { COOKIE_NAME } from './strings';
 
 const signupUnsafe: IAsyncRequestHandler = async (req, res) => {
 	await UserModel.create(req.signupInput);
@@ -34,7 +35,7 @@ const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const jwtToken = jwt.sign(payload.id, JWT_SECRET);
-	res.cookie('cookieToken', jwtToken, {
+	res.cookie(COOKIE_NAME, jwtToken, {
 		httpOnly: true,
 		signed: true,
 		secure: IS_PROD,
@@ -49,7 +50,7 @@ const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 export const logout: RequestHandler = (req, res) => {
-	res.clearCookie('cookieToken');
+	res.clearCookie(COOKIE_NAME);
 	res.status(200).json({ success: 'logout successful' });
 };
 
@@ -177,16 +178,16 @@ const removeFriendUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json({ succuss: 'friend removed' });
 };
 
-const getOnlineUserUnsafe: IAsyncRequestHandler = async (req, res) => {
+const getOnlineUsersIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const currentUser = await UserModel.findById(req.currentUserId);
 	if (!currentUser) {
 		res.status(400).json({ error: 'auth error' });
 		return;
 	}
-	const onlineUsers = currentUser.friends.filter((friend) =>
-		socketConnections.get(friend)
+	const onlineUsersIds = currentUser.friends.filter((friendId) =>
+		socketConnections.get(friendId)
 	);
-	res.status(200).json(onlineUsers);
+	res.status(200).json(onlineUsersIds);
 };
 
 const searchUsersByUserNameUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -225,15 +226,6 @@ const searchUsersByUserNameUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(users);
 };
 
-const getFriendsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUser = await UserModel.findById(req.currentUserId);
-	if (!currentUser) {
-		res.status(400).json({ error: 'auth error' });
-		return;
-	}
-	res.status(200).json(currentUser.friends);
-};
-
 export const signup = catchAsyncReqHandlerErr(signupUnsafe);
 export const login = catchAsyncReqHandlerErr(loginUnsafe);
 export const updateUser = catchAsyncReqHandlerErr(updateUserUnsafe);
@@ -242,8 +234,9 @@ export const getUserById = catchAsyncReqHandlerErr(getUserByIdUnsafe);
 export const getUsersByIds = catchAsyncReqHandlerErr(getUsersByIdsUnsafe);
 
 export const removeFriend = catchAsyncReqHandlerErr(removeFriendUnsafe);
-export const getOnlineUser = catchAsyncReqHandlerErr(getOnlineUserUnsafe);
+export const getOnlineUsersIds = catchAsyncReqHandlerErr(
+	getOnlineUsersIdsUnsafe
+);
 export const searchUsersByUserName = catchAsyncReqHandlerErr(
 	searchUsersByUserNameUnsafe
 );
-export const getFriends = catchAsyncReqHandlerErr(getFriendsUnsafe);

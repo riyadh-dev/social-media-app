@@ -38,7 +38,7 @@ export const rejectFriendRequest = async (
 };
 
 export const getSentFriendRequests = async (): Promise<IFriendRequest[]> => {
-	const { data } = await axiosInstance.get(`/friend-requests/sent`, {
+	const { data } = await axiosInstance.get('/friend-requests/sent', {
 		withCredentials: true,
 	});
 	return data;
@@ -47,7 +47,7 @@ export const getSentFriendRequests = async (): Promise<IFriendRequest[]> => {
 export const getReceivedFriendRequests = async (): Promise<
 	IFriendRequest[]
 > => {
-	const { data } = await axiosInstance.get(`/friend-requests/received`, {
+	const { data } = await axiosInstance.get('/friend-requests/received', {
 		withCredentials: true,
 	});
 	return data;

@@ -26,7 +26,7 @@ router.post(
 //create post comment
 router.post(
 	'/:postId',
-	authenticate(),
+	authenticate,
 	validateInput(createPostCommentValidationSchema, 'postCommentInput'),
 	createPostComment
 );
@@ -34,18 +34,18 @@ router.post(
 //update post
 router.put(
 	'/:id',
-	authenticate(),
+	authenticate,
 	validateInput(updatePostCommentValidationSchema, 'postInput'),
 	updatePostComment
 );
 
 //delete post
-router.delete('/:id', authenticate(), deletePostComment);
+router.delete('/:id', authenticate, deletePostComment);
 
 //like post
-router.put('/:id/like', authenticate(), likePostComment);
+router.put('/:id/like', authenticate, likePostComment);
 
 //dislike post
-router.put('/:id/dislike', authenticate(), dislikePostComment);
+router.put('/:id/dislike', authenticate, dislikePostComment);
 
 export default router;

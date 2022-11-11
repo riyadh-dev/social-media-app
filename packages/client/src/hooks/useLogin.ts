@@ -8,7 +8,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { TCurrentUser } from '../common/types';
 import { loginValidationSchema } from '../common/validation';
-import { login } from '../queries/users';
+import { loginQuery } from '../queries/users';
 import { currentUserState } from '../recoil/states';
 import { axiosInstance } from '../services/axios';
 
@@ -17,7 +17,7 @@ const useLogin = () => {
 		resolver: yupResolver(loginValidationSchema),
 	});
 	const useMutationResult = useMutation<TCurrentUser, AxiosError, TLoginInput>(
-		login
+		loginQuery
 	);
 
 	const onSubmit = useFormReturn.handleSubmit((loginInput) =>

@@ -2,7 +2,7 @@ import { IPost, TPostInput } from '@social-media-app/shared';
 import { axiosInstance } from '../services/axios';
 
 export const addPostQuery = async (postInput: TPostInput): Promise<IPost> => {
-	const { data } = await axiosInstance.post(`/posts`, postInput, {
+	const { data } = await axiosInstance.post('/posts', postInput, {
 		withCredentials: true,
 	});
 	return data;
