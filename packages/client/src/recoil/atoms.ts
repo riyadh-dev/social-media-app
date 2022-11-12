@@ -18,8 +18,13 @@ export const currentUserState = atom<TUiUser | null>({
 	effects: [currentUserPersistEffect],
 });
 
-export const sideBarOpenState = atom({
-	key: 'sideBarOpenState',
+export const leftSideBarOpenState = atom({
+	key: 'leftSideBarOpenState',
+	default: false,
+});
+
+export const rightSideBarOpenState = atom({
+	key: 'rightSideBarOpenState',
 	default: false,
 });
 

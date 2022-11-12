@@ -5,7 +5,7 @@ import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
-import { sideBarOpenState } from '../../recoil/states';
+import { leftSideBarOpenState } from '../../recoil/atoms';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -50,12 +50,12 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const LeftSection = () => {
-	const setSideBarOpen = useSetRecoilState(sideBarOpenState);
-	const handleOpenSideBar = () => setSideBarOpen((currVal) => !currVal);
+	const setLeftSideBarOpen = useSetRecoilState(leftSideBarOpenState);
+	const handleOpenSideBar = () => setLeftSideBarOpen((prev) => !prev);
 
 	return (
 		<Stack direction='row' alignItems='center' spacing={1}>
-			<Link to='/'>
+			<Link style={{ marginBottom: '-6.4px' }} to='/'>
 				<img
 					src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
 					alt='Logo'
@@ -63,7 +63,7 @@ const LeftSection = () => {
 				/>
 			</Link>
 
-			<Search sx={{ display: { xs: 'none', md: 'inline' } }}>
+			<Search sx={{ display: { xs: 'none', lg: 'inline' } }}>
 				<SearchIconWrapper>
 					<SearchIcon />
 				</SearchIconWrapper>
@@ -73,7 +73,7 @@ const LeftSection = () => {
 				/>
 			</Search>
 
-			<IconButton sx={{ display: { md: 'none' }, p: 0 }}>
+			<IconButton sx={{ display: { lg: 'none' }, p: 0 }}>
 				<Avatar>
 					<SearchIcon />
 				</Avatar>
@@ -81,7 +81,7 @@ const LeftSection = () => {
 
 			<IconButton
 				sx={{
-					display: { xs: 'flex', md: 'none' },
+					display: { lg: 'none' },
 					p: 0,
 				}}
 				onClick={handleOpenSideBar}

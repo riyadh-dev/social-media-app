@@ -1,19 +1,15 @@
 import { Avatar, Badge, ListItemAvatar, styled } from '@mui/material';
-import Box from '@mui/material/Box';
-import Divider from '@mui/material/Divider';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import Toolbar from '@mui/material/Toolbar';
-import { useRecoilState, useRecoilValue } from 'recoil';
+import { useRecoilValue } from 'recoil';
 import { TUiUser } from '../common/types';
 import queryKeys from '../constants/reactQueryKeys';
 import useChatBox from '../hooks/useChatBox';
 import useGetOnlineUsersIds from '../hooks/useGetOnlineUsers';
 import useGetUsersById from '../hooks/useGetUsersById';
-import { currentUserState, sideBarOpenState } from '../recoil/states';
-import Chat from './Chat';
+import { currentUserState } from '../recoil/atoms';
 import ConditionalWrapper from './ConditionalWrapper';
 
 const DRAWER_WIDTH = 300;
@@ -79,29 +75,31 @@ const FriendsListItem = ({
 };
 
 const FriendsList = () => {
-	const [sideBarOpen, setSideBarOpen] = useRecoilState(sideBarOpenState);
-
-	const handleDrawerToggle = () => {
-		setSideBarOpen(!sideBarOpen);
-	};
-
 	const currentUser = useRecoilValue(currentUserState);
 	const { data: friends } = useGetUsersById(
 		currentUser?.friends,
 		queryKeys.friends
 	);
 
-	//TODO try and use a map instead
 	const { data: onlineUsersIds } = useGetOnlineUsersIds();
 
-	const drawer = (
-		<>
-			<Toolbar />
-			<Divider />
+	return (
+		<Drawer
+			variant='permanent'
+			anchor='right'
+			sx={{
+				display: { xs: 'none', md: 'block' },
+				width: DRAWER_WIDTH,
+				[`& .MuiDrawer-paper`]: {
+					width: DRAWER_WIDTH,
+					border: 'none',
+				},
+			}}
+		>
 			<List
 				sx={{
 					mx: '8px',
-					mt: '12px',
+					mt: '76px',
 					'& .MuiButtonBase-root': {
 						borderRadius: '8px',
 						':hover': {
@@ -118,51 +116,7 @@ const FriendsList = () => {
 					/>
 				))}
 			</List>
-		</>
-	);
-
-	return (
-		<Box
-			component='nav'
-			sx={{ width: { md: DRAWER_WIDTH }, flexShrink: { xm: 0 } }}
-			aria-label='mailbox folders'
-		>
-			<Drawer
-				anchor='right'
-				variant='temporary'
-				open={sideBarOpen}
-				onClose={handleDrawerToggle}
-				ModalProps={{
-					keepMounted: true,
-				}}
-				sx={{
-					display: { xs: 'block', md: 'none' },
-					'& .MuiDrawer-paper': {
-						boxSizing: 'border-box',
-						width: DRAWER_WIDTH,
-					},
-				}}
-			>
-				{drawer}
-			</Drawer>
-			<Drawer
-				variant='permanent'
-				anchor='right'
-				sx={{
-					display: { xs: 'none', md: 'block' },
-					width: DRAWER_WIDTH,
-					flexShrink: 0,
-					[`& .MuiDrawer-paper`]: {
-						width: DRAWER_WIDTH,
-						boxSizing: 'border-box',
-						border: 'none',
-					},
-				}}
-			>
-				{drawer}
-			</Drawer>
-			<Chat />
-		</Box>
+		</Drawer>
 	);
 };
 

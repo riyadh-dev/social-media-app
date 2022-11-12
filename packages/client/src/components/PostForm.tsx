@@ -13,7 +13,7 @@ import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
 import useAddPost from '../hooks/useAddPost';
-import { currentUserState } from '../recoil/states';
+import { currentUserState } from '../recoil/atoms';
 
 const PostForm = () => {
 	const currentUser = useRecoilValue(currentUserState);

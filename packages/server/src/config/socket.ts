@@ -1,12 +1,13 @@
 import {
 	IChatMessageTypingAction,
+	IUserConnectionAction,
 	TWebSocketAction,
 } from '@social-media-app/shared';
 import { Request } from 'express';
 import WebSocket from 'ws';
 import { IListener } from '../common/interfaces';
+import UserModel from '../DATA_SOURCES/USER/model';
 import { socketConnections } from './app';
-
 const wss = new WebSocket.Server({ noServer: true });
 
 const messageListener =
@@ -43,17 +44,36 @@ const messageListener =
 		}
 	};
 
-wss.on('connection', (ws, request) => {
+wss.on('connection', async (ws, request) => {
 	const req = request as Request;
 	const userId = req.currentUserId as string;
-
 	socketConnections.set(userId, ws);
 
 	ws.on('message', messageListener(userId));
 
-	ws.on('close', () => {
+	const friends = (await UserModel.findById(userId))?.friends;
+	friends?.forEach((friendId) =>
+		sendUserConnectionAction(userId, friendId, 'user-connected')
+	);
+
+	ws.on('close', async () => {
 		socketConnections.delete(userId);
+		friends?.forEach((friendId) =>
+			sendUserConnectionAction(userId, friendId, 'user-disconnected')
+		);
 	});
 });
+
+const sendUserConnectionAction = (
+	userId: string,
+	friendId: string,
+	type: IUserConnectionAction['type']
+) => {
+	const userConnectedAction: IUserConnectionAction = {
+		type,
+		payload: { userId },
+	};
+	socketConnections.get(friendId)?.send(JSON.stringify(userConnectedAction));
+};
 
 export default wss;

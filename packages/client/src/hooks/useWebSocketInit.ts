@@ -1,6 +1,17 @@
-import { IChatMessage, TWebSocketAction } from '@social-media-app/shared/src';
+import {
+	IChatMessage,
+	IChatMessageAction,
+	IChatMessageTypingAction,
+	IUserConnectionAction,
+	TWebSocketAction,
+} from '@social-media-app/shared/src';
 import { useEffect } from 'react';
-import { useRecoilState, useRecoilValue, useSetRecoilState } from 'recoil';
+import {
+	SetterOrUpdater,
+	useRecoilState,
+	useRecoilValue,
+	useSetRecoilState,
+} from 'recoil';
 import { queryClient } from '..';
 import { WS_ORIGIN } from '../constants/envVars';
 import queryKeys from '../constants/reactQueryKeys';
@@ -8,7 +19,7 @@ import {
 	currentUserState,
 	typingIndicatorMapState,
 	webSocketState,
-} from '../recoil/states';
+} from '../recoil/atoms';
 
 export const useWebSocketInit = () => {
 	const [socket, setSocket] = useRecoilState(webSocketState);
@@ -36,29 +47,30 @@ export const useWebSocketInit = () => {
 	const onMessageEffectCallback = () => {
 		if (!socket) return;
 		socket.onmessage = (e) => {
-			const message: TWebSocketAction = JSON.parse(e.data);
-			switch (message.type) {
+			const action: TWebSocketAction = JSON.parse(e.data);
+			switch (action.type) {
 				case 'chat-message':
-					setTypingIndicatorMap((prev) =>
-						new Map(prev).set(message.payload.senderId, false)
-					);
-					setTimeout(() => chatMessageHandler(message.payload), 200);
+					handleChatMessageAction(setTypingIndicatorMap, action);
 					break;
 
 				case 'chat-typing-started':
-					setTypingIndicatorMap((prev) =>
-						new Map(prev).set(message.payload.userId, true)
-					);
+					handleTypingNotificationAction(setTypingIndicatorMap, action);
 					break;
 
 				case 'chat-typing-stopped':
-					setTypingIndicatorMap((prev) =>
-						new Map(prev).set(message.payload.userId, false)
-					);
+					handleTypingNotificationAction(setTypingIndicatorMap, action);
+					break;
+
+				case 'user-connected':
+					handleUserConnectionAction(action);
+					break;
+
+				case 'user-disconnected':
+					handleUserConnectionAction(action);
 					break;
 
 				default:
-					console.log(message);
+					console.log(action);
 					break;
 			}
 		};
@@ -70,10 +82,46 @@ export const useWebSocketInit = () => {
 	useEffect(onMessageEffectCallback, [setTypingIndicatorMap, socket]);
 };
 
-const chatMessageHandler = async (chatMessage: IChatMessage) => {
-	await queryClient.cancelQueries(queryKeys.conversation);
-	queryClient.setQueryData<IChatMessage[] | undefined>(
-		[queryKeys.conversation, chatMessage.senderId],
-		(old) => old?.concat(chatMessage)
+const handleUserConnectionAction = async (action: IUserConnectionAction) => {
+	await queryClient.cancelQueries(queryKeys.activeFriends);
+
+	if (action.type === 'user-connected')
+		queryClient.setQueryData<string[] | undefined>(
+			queryKeys.activeFriends,
+			(activeFriends) => activeFriends?.concat(action.payload.userId)
+		);
+	else
+		queryClient.setQueryData<string[] | undefined>(
+			queryKeys.activeFriends,
+			(activeFriends) =>
+				activeFriends?.filter((friendId) => friendId !== action.payload.userId)
+		);
+};
+
+const handleTypingNotificationAction = (
+	setTypingIndicatorMap: SetterOrUpdater<Map<string, boolean>>,
+	action: IChatMessageTypingAction
+) =>
+	setTypingIndicatorMap((prev) =>
+		new Map(prev).set(
+			action.payload.userId,
+			action.type === 'chat-typing-started'
+		)
 	);
+
+const handleChatMessageAction = (
+	setTypingIndicatorMap: SetterOrUpdater<Map<string, boolean>>,
+	action: IChatMessageAction
+) => {
+	setTypingIndicatorMap((prev) =>
+		new Map(prev).set(action.payload.senderId, false)
+	);
+
+	setTimeout(async () => {
+		await queryClient.cancelQueries(queryKeys.conversation);
+		queryClient.setQueryData<IChatMessage[] | undefined>(
+			[queryKeys.conversation, action.payload.senderId],
+			(old) => old?.concat(action.payload)
+		);
+	}, 150);
 };

@@ -4,7 +4,7 @@ import { useRecoilValue } from 'recoil';
 import { queryClient } from '../..';
 import { TUiUser } from '../../common/types';
 import queryKeys from '../../constants/reactQueryKeys';
-import { currentUserState } from '../../recoil/states';
+import { currentUserState } from '../../recoil/atoms';
 
 const ChatMsgPaper = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',

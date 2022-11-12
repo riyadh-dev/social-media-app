@@ -1,12 +1,16 @@
 import { Stack } from '@mui/material';
 import FriendsList from '../FriendsList';
+import LeftSideBar from '../LeftSideBar';
 import PostForm from '../PostForm';
-import RightSideBar from '../RightSideBar';
 
 const Home = () => {
 	return (
-		<Stack direction='row' justifyContent='space-between' sx={{ mt: '78px' }}>
-			<RightSideBar />
+		<Stack
+			direction='row'
+			justifyContent={{ xs: 'center', lg: 'space-between' }}
+			sx={{ mt: '78px' }}
+		>
+			<LeftSideBar />
 			<PostForm />
 			<FriendsList />
 		</Stack>

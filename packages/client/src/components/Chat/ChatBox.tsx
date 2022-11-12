@@ -24,7 +24,7 @@ import useChatBox from '../../hooks/useChatBox';
 import useGetConversation from '../../hooks/useGetConversation';
 import useSendMessage from '../../hooks/useSendMessage';
 import { useTypingNotification } from '../../hooks/useTypingNotification';
-import { typingIndicatorMapState } from '../../recoil/states';
+import { typingIndicatorMapState } from '../../recoil/atoms';
 import ChatMessage from './ChatMessage';
 import TypingIndicator from './TypingIndicator';
 

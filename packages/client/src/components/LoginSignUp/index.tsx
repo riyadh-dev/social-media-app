@@ -1,6 +1,6 @@
 import { Navigate } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { currentUserState } from '../../recoil/states';
+import { currentUserState } from '../../recoil/atoms';
 import LoginForm from './LoginForm';
 
 const LoginSignUp = () => {

@@ -67,3 +67,8 @@ export interface IChatMessageAction {
 	type: 'chat-message';
 	payload: IChatMessage;
 }
+
+export interface IUserConnectionAction {
+	type: 'user-connected' | 'user-disconnected';
+	payload: { userId: string };
+}

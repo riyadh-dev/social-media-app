@@ -4,7 +4,7 @@ import { useEffect } from 'react';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '..';
 import queryKeys from '../constants/reactQueryKeys';
-import { webSocketState } from '../recoil/states';
+import { webSocketState } from '../recoil/atoms';
 
 export const useTypingNotification = (friendId: string) => {
 	const socket = useRecoilValue(webSocketState);

@@ -2,7 +2,7 @@ import { useQuery } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import queryKeys from '../constants/reactQueryKeys';
 import { getConversationQuery } from '../queries/messages';
-import { currentUserState } from '../recoil/states';
+import { currentUserState } from '../recoil/atoms';
 
 const useGetConversation = (friendId: string | undefined) => {
 	const currentUserId = useRecoilValue(currentUserState)?.id;

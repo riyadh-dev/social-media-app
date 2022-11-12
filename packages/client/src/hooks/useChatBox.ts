@@ -1,6 +1,6 @@
 import { useRecoilState } from 'recoil';
 import { TUiUser } from '../common/types';
-import { chatBoxesState } from '../recoil/states';
+import { chatBoxesState } from '../recoil/atoms';
 
 const useChatBox = (user: TUiUser) => {
 	const [chatBoxes, setChatBoxes] = useRecoilState(chatBoxesState);

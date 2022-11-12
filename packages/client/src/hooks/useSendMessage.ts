@@ -7,7 +7,7 @@ import { queryClient } from '..';
 import { chatMessageSchema } from '../common/validation';
 import queryKeys from '../constants/reactQueryKeys';
 import { sendChatMessagesQuery } from '../queries/messages';
-import { currentUserState } from '../recoil/states';
+import { currentUserState } from '../recoil/atoms';
 
 const useSendMessage = (targetId: string) => {
 	const useMutationResult = useMutation(sendChatMessagesQuery, {

@@ -14,10 +14,10 @@ import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
 import React from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
 import useLogout from '../../hooks/useLogout';
-import { currentUserState, themeState } from '../../recoil/states';
+import { currentUserState, themeState } from '../../recoil/atoms';
 
 const RightSection = () => {
 	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
@@ -44,6 +44,8 @@ const RightSection = () => {
 
 	const logout = useLogout();
 	const handleLogout = () => logout();
+
+	const navigate = useNavigate();
 
 	return (
 		<Box>
@@ -76,7 +78,9 @@ const RightSection = () => {
 				sx={{
 					p: 0,
 					mx: '5px',
+					display: { xs: 'initial', md: 'none' },
 				}}
+				onClick={() => navigate('/messenger')}
 			>
 				<Avatar>
 					<MessageIcon />

@@ -6,11 +6,15 @@ import {
 	IPost,
 	IPostComment,
 	IUser,
+	IUserConnectionAction,
 } from './interfaces';
 
 export type TChatMessageStatus = 'pending' | 'sent' | 'received' | 'viewed';
 export type TFriendRequestStatus = 'pending' | 'accepted' | 'rejected';
-export type TWebSocketAction = IChatMessageAction | IChatMessageTypingAction;
+export type TWebSocketAction =
+	| IChatMessageAction
+	| IChatMessageTypingAction
+	| IUserConnectionAction;
 
 export type TUpdateUserInput = Pick<
 	IUser,

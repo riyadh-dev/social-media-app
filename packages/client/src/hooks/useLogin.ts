@@ -9,7 +9,7 @@ import { useSetRecoilState } from 'recoil';
 import { TCurrentUser } from '../common/types';
 import { loginValidationSchema } from '../common/validation';
 import { loginQuery } from '../queries/users';
-import { currentUserState } from '../recoil/states';
+import { currentUserState } from '../recoil/atoms';
 import { axiosInstance } from '../services/axios';
 
 const useLogin = () => {
