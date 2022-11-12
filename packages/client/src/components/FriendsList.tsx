@@ -14,12 +14,9 @@ import useGetOnlineUsersIds from '../hooks/useGetOnlineUsers';
 import useGetUsersById from '../hooks/useGetUsersById';
 import { currentUserState, sideBarOpenState } from '../recoil/states';
 import Chat from './Chat';
+import ConditionalWrapper from './ConditionalWrapper';
 
 const DRAWER_WIDTH = 300;
-
-interface Props {
-	window?: () => Window;
-}
 
 const OnlineBadge = styled(Badge)(({ theme }) => ({
 	'& .MuiBadge-badge': {
@@ -50,6 +47,16 @@ const OnlineBadge = styled(Badge)(({ theme }) => ({
 	},
 }));
 
+const OnlineBadgeWrapper = ({ children }: { children?: React.ReactNode }) => (
+	<OnlineBadge
+		overlap='circular'
+		anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
+		variant='dot'
+	>
+		{children}
+	</OnlineBadge>
+);
+
 const FriendsListItem = ({
 	user,
 	isOnline,
@@ -59,34 +66,19 @@ const FriendsListItem = ({
 }) => {
 	const { onOpen } = useChatBox(user);
 
-	if (!isOnline)
-		return (
-			<ListItem button onClick={onOpen}>
-				<ListItemAvatar>
-					<Avatar src={user.avatar} alt='Avatar' />
-				</ListItemAvatar>
-				<ListItemText primary={user.userName} />
-			</ListItem>
-		);
-
 	return (
 		<ListItem button onClick={onOpen}>
 			<ListItemAvatar>
-				<OnlineBadge
-					overlap='circular'
-					anchorOrigin={{ vertical: 'bottom', horizontal: 'right' }}
-					variant='dot'
-				>
+				<ConditionalWrapper condition={isOnline} wrapper={OnlineBadgeWrapper}>
 					<Avatar src={user.avatar} alt='Avatar' />
-				</OnlineBadge>
+				</ConditionalWrapper>
 			</ListItemAvatar>
 			<ListItemText primary={user.userName} />
 		</ListItem>
 	);
 };
 
-const FriendsList = (props: Props) => {
-	const { window } = props;
+const FriendsList = () => {
 	const [sideBarOpen, setSideBarOpen] = useRecoilState(sideBarOpenState);
 
 	const handleDrawerToggle = () => {
@@ -102,11 +94,8 @@ const FriendsList = (props: Props) => {
 	//TODO try and use a map instead
 	const { data: onlineUsersIds } = useGetOnlineUsersIds();
 
-	const container =
-		window !== undefined ? () => window().document.body : undefined;
-
 	const drawer = (
-		<div>
+		<>
 			<Toolbar />
 			<Divider />
 			<List
@@ -121,16 +110,15 @@ const FriendsList = (props: Props) => {
 					},
 				}}
 			>
-				{friends &&
-					friends.map((friend) => (
-						<FriendsListItem
-							key={friend.id}
-							isOnline={onlineUsersIds?.includes(friend.id) ?? false}
-							user={friend}
-						/>
-					))}
+				{friends?.map((friend) => (
+					<FriendsListItem
+						key={friend.id}
+						isOnline={onlineUsersIds?.includes(friend.id) ?? false}
+						user={friend}
+					/>
+				))}
 			</List>
-		</div>
+		</>
 	);
 
 	return (
@@ -141,7 +129,6 @@ const FriendsList = (props: Props) => {
 		>
 			<Drawer
 				anchor='right'
-				container={container}
 				variant='temporary'
 				open={sideBarOpen}
 				onClose={handleDrawerToggle}

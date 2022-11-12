@@ -22,10 +22,10 @@ export const loginValidationSchema = object({
 	password: string().required(),
 }).required();
 
-export const chatMsgSchema = object({
+export const chatMessageSchema = object({
 	text: string().required('cant sent empty chat message'),
 }).required();
 
 export const searchUserInputSchema = object({
-	text: string().min(3).required('cant sent empty chat message'),
+	text: string().min(3).required('cant search an empty string'),
 }).required();

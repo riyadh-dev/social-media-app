@@ -15,11 +15,7 @@ import { sideBarOpenState } from '../recoil/states';
 
 const DRAWER_WIDTH = 300;
 
-interface Props {
-	window?: () => Window;
-}
-const RightSideBar = (props: Props) => {
-	const { window } = props;
+const RightSideBar = () => {
 	const [sideBarOpen, setSideBarOpen] = useRecoilState(sideBarOpenState);
 
 	const handleDrawerToggle = () => {
@@ -27,7 +23,7 @@ const RightSideBar = (props: Props) => {
 	};
 
 	const drawer = (
-		<div>
+		<>
 			<Toolbar />
 			<Divider />
 			<List
@@ -61,11 +57,8 @@ const RightSideBar = (props: Props) => {
 					<ListItemText>Friends</ListItemText>
 				</ListItem>
 			</List>
-		</div>
+		</>
 	);
-
-	const container =
-		window !== undefined ? () => window().document.body : undefined;
 
 	return (
 		<Box
@@ -74,7 +67,6 @@ const RightSideBar = (props: Props) => {
 			aria-label='mailbox folders'
 		>
 			<Drawer
-				container={container}
 				variant='temporary'
 				open={sideBarOpen}
 				onClose={handleDrawerToggle}

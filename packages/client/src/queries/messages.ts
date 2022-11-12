@@ -1,7 +1,7 @@
 import { IChatMessage, TChatMessageInput } from '@social-media-app/shared';
 import { axiosInstance } from '../services/axios';
 
-export const sendChatMessage = async (
+export const sendChatMessagesQuery = async (
 	chatMessageInput: TChatMessageInput
 ): Promise<unknown> => {
 	const { data } = await axiosInstance.post('/messages', chatMessageInput, {
@@ -10,7 +10,7 @@ export const sendChatMessage = async (
 	return data;
 };
 
-export const getConversationMessages = async (
+export const getConversationQuery = async (
 	conversationMembers: string[]
 ): Promise<IChatMessage[]> => {
 	if (conversationMembers.length <= 0)
