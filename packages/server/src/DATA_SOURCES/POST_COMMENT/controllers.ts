@@ -142,22 +142,15 @@ const dislikePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const getPostCommentsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postCommentsIds = req.dBDocIds;
-	const filteredIds = postCommentsIds?.filter(
-		(postId, idx, arr) => arr.indexOf(postId) === idx && isValidObjectId(postId)
-	);
 
-	if (filteredIds && !filteredIds.length) {
+	if (!postCommentsIds?.length) {
 		res.status(200).json([]);
 		return;
 	}
 
-	const date = req.params.date;
 	const postComments = await PostCommentModel.find({
-		_id: { $in: filteredIds },
-		createdAt: { $lt: new Date(parseInt(date)) },
-	})
-		.sort({ createdAt: -1 })
-		.limit(10);
+		_id: { $in: postCommentsIds },
+	}).sort({ createdAt: -1 });
 
 	res.status(200).json(postComments);
 };

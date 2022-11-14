@@ -36,6 +36,14 @@ const router = createBrowserRouter([
 		),
 	},
 	{
+		path: '/profile/:userId',
+		element: (
+			<RequireAuth>
+				<PlaceHolderComp compName='User profile' />
+			</RequireAuth>
+		),
+	},
+	{
 		path: '*',
 		element: (
 			<RequireAuth>

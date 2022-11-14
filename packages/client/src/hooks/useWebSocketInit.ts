@@ -121,7 +121,7 @@ const handleChatMessageAction = (
 		await queryClient.cancelQueries(queryKeys.conversation);
 		queryClient.setQueryData<IChatMessage[] | undefined>(
 			[queryKeys.conversation, action.payload.senderId],
-			(old) => old?.concat(action.payload)
+			(old) => (old ? old.concat(action.payload) : [action.payload])
 		);
 	}, 150);
 };

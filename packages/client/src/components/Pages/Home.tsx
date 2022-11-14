@@ -1,9 +1,12 @@
 import { Stack } from '@mui/material';
+import { useRecoilValue } from 'recoil';
+import { currentUserState } from '../../recoil/atoms';
 import FriendsList from '../FriendsList';
 import LeftSideBar from '../LeftSideBar';
-import PostForm from '../PostForm';
+import Timeline from '../Posts/Timeline';
 
 const Home = () => {
+	const currentUserId = useRecoilValue(currentUserState)?.id;
 	return (
 		<Stack
 			direction='row'
@@ -11,7 +14,7 @@ const Home = () => {
 			sx={{ mt: '78px' }}
 		>
 			<LeftSideBar />
-			<PostForm />
+			<Timeline userId={currentUserId} />
 			<FriendsList />
 		</Stack>
 	);

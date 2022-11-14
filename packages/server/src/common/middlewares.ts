@@ -88,6 +88,8 @@ export const errorRequestHandler: ErrorRequestHandler = (
 	err,
 	req,
 	res,
+	//HACK does not work without it don't know why
+	// eslint-disable-next-line @typescript-eslint/no-unused-vars
 	next
 ) => {
 	//catch mongodb duplication error
@@ -112,6 +114,6 @@ export const errorRequestHandler: ErrorRequestHandler = (
 		res.status(500).json({
 			error: 'internal server error',
 		});
-		next(err);
+		return;
 	}
 };

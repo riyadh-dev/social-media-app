@@ -13,8 +13,8 @@ const useSendMessage = (targetId: string) => {
 	const useMutationResult = useMutation(sendChatMessagesQuery, {
 		// When mutate is called:
 
-		onMutate: async (newMessage) => {
-			const queryKey = [queryKeys.conversation, newMessage.targetId];
+		onMutate: async (newMessageInput) => {
+			const queryKey = [queryKeys.conversation, newMessageInput.targetId];
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)
 
 			await queryClient.cancelQueries(queryKey);
@@ -27,14 +27,16 @@ const useSendMessage = (targetId: string) => {
 			// Optimistically update to the new value
 
 			const date = new Date();
-			queryClient.setQueryData<IChatMessage[] | undefined>(queryKey, (old) =>
-				old?.concat({
-					...newMessage,
-					id: Math.random().toString(),
-					status: 'pending',
-					createdAt: date,
-					updatedAt: date,
-				})
+			const newMessage: IChatMessage = {
+				...newMessageInput,
+				id: Math.random().toString(),
+				status: 'pending',
+				createdAt: date,
+				updatedAt: date,
+			};
+
+			queryClient.setQueryData<IChatMessage[]>(queryKey, (old) =>
+				old ? old.concat(newMessage) : [newMessage]
 			);
 
 			// Return a context object with the snapshot value

@@ -30,6 +30,7 @@ export const getTimelinePostsQuery = async (
 	userId: string | undefined,
 	date: number = Date.now()
 ): Promise<IPost[]> => {
+	console.log(userId, date);
 	if (!userId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(
 		`/posts/timeline/${userId}/${date}`,

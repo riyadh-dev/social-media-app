@@ -2,13 +2,25 @@ import { IPostComment, TPostCommentInput } from '@social-media-app/shared';
 import { axiosInstance } from '../services/axios';
 
 export const addPostCommentQuery = async (
-	comment: TPostCommentInput,
+	commentInput: TPostCommentInput,
 	postId: string | undefined
 ): Promise<IPostComment> => {
 	if (!postId) Promise.reject(new Error('Invalid ids'));
 	const { data } = await axiosInstance.post(
 		`/posts/comments/${postId}`,
-		comment,
+		commentInput,
+		{ withCredentials: true }
+	);
+	return data;
+};
+
+export const getPostCommentQuery = async (
+	commentIds: string[] | undefined
+): Promise<IPostComment[]> => {
+	if (!commentIds) Promise.reject(new Error('Invalid ids'));
+	const { data } = await axiosInstance.post(
+		'/posts/comments/list/',
+		commentIds,
 		{ withCredentials: true }
 	);
 	return data;

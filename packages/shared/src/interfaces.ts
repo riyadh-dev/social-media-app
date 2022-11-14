@@ -53,7 +53,6 @@ export interface IPostComment {
 	text: string;
 	likes: string[];
 	dislikes: string[];
-	comments: string[];
 	createdAt: Date;
 	updatedAt: Date;
 }

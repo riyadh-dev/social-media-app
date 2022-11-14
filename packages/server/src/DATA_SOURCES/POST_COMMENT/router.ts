@@ -18,7 +18,7 @@ const router = Router();
 
 //get post comments
 router.post(
-	'/list/:date',
+	'/list',
 	validateInput(getPostCommentsValidationSchema, 'dBDocIds'),
 	getPostComments
 );

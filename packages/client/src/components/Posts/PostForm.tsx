@@ -12,8 +12,8 @@ import { TPostInput } from '@social-media-app/shared/src';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import useAddPost from '../hooks/useAddPost';
-import { currentUserState } from '../recoil/atoms';
+import useAddPost from '../../hooks/useAddPost';
+import { currentUserState } from '../../recoil/atoms';
 
 const PostForm = () => {
 	const currentUser = useRecoilValue(currentUserState);
@@ -51,11 +51,12 @@ const PostForm = () => {
 	}
 
 	return (
-		<Paper component='form' onSubmit={onSubmit} sx={{ width: '590px' }}>
+		<Paper component='form' onSubmit={onSubmit}>
 			<Stack direction='column' sx={{ p: '12px' }} spacing={2}>
 				<Stack direction='row' spacing={2}>
 					<Avatar src={currentUser?.avatar} />
 					<TextField
+						autoComplete='off'
 						placeholder={`What's on your mind, ${currentUser?.userName}?`}
 						size='small'
 						multiline
@@ -66,6 +67,7 @@ const PostForm = () => {
 				</Stack>
 				{photoEnabled && (
 					<TextField
+						autoComplete='off'
 						placeholder='Paste a photo url'
 						size='small'
 						fullWidth

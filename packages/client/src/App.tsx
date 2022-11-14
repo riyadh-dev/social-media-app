@@ -8,7 +8,7 @@ import {
 } from '@mui/material';
 import { useEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { RouterProvider } from 'react-router-dom';
+import { RouterProvider, useParams } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import RecoilDebugButton from './components/Debug/RecoilDebugButton';
 import { useWebSocketInit } from './hooks/useWebSocketInit';
@@ -49,7 +49,8 @@ function App() {
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
 	useWebSocketInit();
-
+	const params = useParams();
+	console.log(params.userId);
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />

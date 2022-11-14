@@ -187,7 +187,7 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const posts = await PostModel.find({
-		'author.id': { $in: [...userDoc.friends, userDoc.id.toString()] },
+		'author.id': { $in: [...userDoc.friends, userDoc.id] },
 		createdAt: { $lt: new Date(parseInt(date)) },
 	})
 		.sort({ createdAt: -1 })
