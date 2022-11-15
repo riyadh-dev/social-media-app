@@ -19,7 +19,7 @@ import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import useDislikePost from '../../hooks/useDislike';
 import useLikePost from '../../hooks/useLike';
-import usePostComments from '../../hooks/usePostComments';
+import useGetPostComments from '../../hooks/usePostComments';
 import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from './PostCommentForm';
 
@@ -61,7 +61,7 @@ const Post = ({
 			? post.description.substring(0, 160) + ' ...'
 			: post.description;
 
-	const { data: comments, isLoading: areCommentsLoading } = usePostComments(
+	const { data: comments, isLoading: areCommentsLoading } = useGetPostComments(
 		post.comments,
 		post.id,
 		showComments

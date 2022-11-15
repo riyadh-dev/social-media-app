@@ -85,16 +85,15 @@ export const useWebSocketInit = () => {
 const handleUserConnectionAction = async (action: IUserConnectionAction) => {
 	await queryClient.cancelQueries(queryKeys.activeFriends);
 
+	const userId = action.payload.userId;
 	if (action.type === 'user-connected')
-		queryClient.setQueryData<string[] | undefined>(
-			queryKeys.activeFriends,
-			(activeFriends) => activeFriends?.concat(action.payload.userId)
+		queryClient.setQueryData<string[]>(queryKeys.activeFriends, (old) =>
+			old ? [userId].concat(old) : [userId]
 		);
 	else
 		queryClient.setQueryData<string[] | undefined>(
 			queryKeys.activeFriends,
-			(activeFriends) =>
-				activeFriends?.filter((friendId) => friendId !== action.payload.userId)
+			(old) => old?.filter((friendId) => friendId !== userId)
 		);
 };
 
@@ -118,9 +117,9 @@ const handleChatMessageAction = (
 	);
 
 	setTimeout(async () => {
-		await queryClient.cancelQueries(queryKeys.conversation);
-		queryClient.setQueryData<IChatMessage[] | undefined>(
-			[queryKeys.conversation, action.payload.senderId],
+		await queryClient.cancelQueries(queryKeys.conversation());
+		queryClient.setQueryData<IChatMessage[]>(
+			queryKeys.conversation(action.payload.senderId),
 			(old) => (old ? old.concat(action.payload) : [action.payload])
 		);
 	}, 150);

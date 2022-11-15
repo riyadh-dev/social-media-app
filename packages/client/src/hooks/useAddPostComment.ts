@@ -12,7 +12,7 @@ import { addPostCommentQuery } from '../queries/postComments';
 import { currentUserState } from '../recoil/atoms';
 
 //TODO fix optimistic updates
-const useAddPostComment = (postId: string | undefined) => {
+const useAddPostComment = (postId?: string) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('current user not found');
 
@@ -66,7 +66,7 @@ const useAddPostComment = (postId: string | undefined) => {
 		//add the comment id to the post
 		onSuccess: ({ id: postCommentId }) => {
 			queryClient.setQueryData<InfiniteData<IPost[]> | undefined>(
-				[...queryKeys.timeline, timelineOwnerId],
+				queryKeys.timeline(timelineOwnerId),
 				(old) => {
 					old?.pages.every((page) =>
 						page.every((post) =>

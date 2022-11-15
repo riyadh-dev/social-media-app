@@ -25,8 +25,16 @@ export const logoutQuery = async () =>
 		withCredentials: true,
 	});
 
+export const getUserByIdsQuery = async (userId?: string): Promise<TUiUser> => {
+	if (!userId) Promise.reject(new Error('Invalid id'));
+	const { data } = await axiosInstance.get(`/users/${userId}`, {
+		withCredentials: true,
+	});
+	return data;
+};
+
 export const getUsersByIdsQuery = async (
-	userIds: string[] | undefined
+	userIds?: string[]
 ): Promise<TUiUser[]> => {
 	if (!userIds) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.post('/users/list', userIds, {
@@ -43,7 +51,7 @@ export const getOnlineUsersIdsQuery = async (): Promise<string[]> => {
 };
 
 export const searchUsersByUserNameQuery = async (
-	userName: string | undefined
+	userName?: string
 ): Promise<IUser[]> => {
 	if (!userName) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(`/users/search/${userName}`, {

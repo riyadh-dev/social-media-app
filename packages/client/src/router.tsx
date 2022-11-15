@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Home from './components/Pages/Home';
 import Main from './components/Pages/Main';
+import Profile from './components/Pages/Profile';
 import RequireAuth from './components/RequireAuth';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
@@ -25,6 +26,7 @@ const router = createBrowserRouter([
 			{ path: '/', element: <Home /> },
 			{ path: 'favorites', element: <PlaceHolderComp compName='favorites' /> },
 			{ path: 'friends', element: <PlaceHolderComp compName='friends' /> },
+			{ path: '/profile/:userId', element: <Profile /> },
 		],
 	},
 	{
@@ -33,14 +35,6 @@ const router = createBrowserRouter([
 			<Suspense fallback={<h1>loading...</h1>}>
 				<LoginSignUp />
 			</Suspense>
-		),
-	},
-	{
-		path: '/profile/:userId',
-		element: (
-			<RequireAuth>
-				<PlaceHolderComp compName='User profile' />
-			</RequireAuth>
 		),
 	},
 	{

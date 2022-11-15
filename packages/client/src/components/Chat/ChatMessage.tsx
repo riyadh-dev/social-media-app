@@ -17,9 +17,9 @@ const OwmChatMsgPaper = styled(Paper)(({ theme }) => ({
 	borderRadius: '16px',
 }));
 
-const getFriendQueryCache = (friendId: string) =>
+const getFriendFromQueryCache = (friendId: string, userId?: string) =>
 	queryClient
-		.getQueryData<TUiUser[]>(queryKeys.friends)
+		.getQueryData<TUiUser[]>(queryKeys.friends(userId))
 		?.reduce((prev, curr) => {
 			if (prev) return prev;
 			if (curr.id === friendId) return curr;
@@ -32,7 +32,7 @@ const ChatMessage = ({ chatMessage }: { chatMessage: IChatMessage }) => {
 	const isSenderCurrentUser = senderId === currentUser?.id;
 	const sender = isSenderCurrentUser
 		? currentUser
-		: getFriendQueryCache(senderId);
+		: getFriendFromQueryCache(senderId, currentUser?.id);
 
 	if (isSenderCurrentUser)
 		return (

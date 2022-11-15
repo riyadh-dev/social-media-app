@@ -1,7 +1,6 @@
 import AppBar from '@mui/material/AppBar';
 import Container from '@mui/material/Container';
 import Toolbar from '@mui/material/Toolbar';
-import React from 'react';
 import LeftSection from './LeftSection';
 import MiddleSection from './MiddleSection';
 import RightSection from './RightSection';

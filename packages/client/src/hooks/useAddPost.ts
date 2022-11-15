@@ -11,7 +11,7 @@ const useAddPost = () => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('current user not found');
 
-	const queryKey = [...queryKeys.timeline, currentUser.id];
+	const queryKey = queryKeys.timeline(currentUser.id);
 	return useMutation(addPostQuery, {
 		// When mutate is called:
 		onMutate: async (newPostInput) => {

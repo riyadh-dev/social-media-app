@@ -191,7 +191,7 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 		createdAt: { $lt: new Date(parseInt(date)) },
 	})
 		.sort({ createdAt: -1 })
-		.limit(10);
+		.limit(15);
 
 	res.status(200).json(posts);
 };

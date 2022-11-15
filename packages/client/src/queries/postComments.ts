@@ -3,7 +3,7 @@ import { axiosInstance } from '../services/axios';
 
 export const addPostCommentQuery = async (
 	commentInput: TPostCommentInput,
-	postId: string | undefined
+	postId?: string
 ): Promise<IPostComment> => {
 	if (!postId) Promise.reject(new Error('Invalid ids'));
 	const { data } = await axiosInstance.post(
@@ -15,7 +15,7 @@ export const addPostCommentQuery = async (
 };
 
 export const getPostCommentQuery = async (
-	commentIds: string[] | undefined
+	commentIds?: string[]
 ): Promise<IPostComment[]> => {
 	if (!commentIds) Promise.reject(new Error('Invalid ids'));
 	const { data } = await axiosInstance.post(

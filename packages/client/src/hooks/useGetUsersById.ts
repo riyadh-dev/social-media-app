@@ -1,7 +1,10 @@
 import { useQuery } from 'react-query';
 import { getUsersByIdsQuery } from '../queries/users';
 
-const useGetUsersById = (userIds: string[] = [], queryKey: string | string[]) =>
+const useGetUsersById = (
+	userIds: string[] = [],
+	queryKey: string | (string | undefined)[]
+) =>
 	useQuery(queryKey, () => getUsersByIdsQuery(userIds), {
 		enabled: Boolean(userIds.length > 0),
 	});

@@ -1,9 +1,7 @@
 import { IFriendRequest } from '@social-media-app/shared/src';
 import { axiosInstance } from '../services/axios';
 
-export const sendFriendRequest = async (
-	userId: string | undefined
-): Promise<string> => {
+export const sendFriendRequest = async (userId?: string): Promise<string> => {
 	if (!userId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.post(
 		`/friend-requests/send/${userId}`,
@@ -14,7 +12,7 @@ export const sendFriendRequest = async (
 };
 
 export const acceptFriendRequest = async (
-	requestId: string | undefined
+	requestId?: string
 ): Promise<string> => {
 	if (!requestId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.put(
@@ -26,7 +24,7 @@ export const acceptFriendRequest = async (
 };
 
 export const rejectFriendRequest = async (
-	requestId: string | undefined
+	requestId?: string
 ): Promise<string> => {
 	if (!requestId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.put(

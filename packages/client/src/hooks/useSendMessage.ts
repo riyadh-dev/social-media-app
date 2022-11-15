@@ -10,11 +10,11 @@ import { sendChatMessagesQuery } from '../queries/messages';
 import { currentUserState } from '../recoil/atoms';
 
 const useSendMessage = (targetId: string) => {
+	const queryKey = queryKeys.conversation(targetId);
+
 	const useMutationResult = useMutation(sendChatMessagesQuery, {
 		// When mutate is called:
-
 		onMutate: async (newMessageInput) => {
-			const queryKey = [queryKeys.conversation, newMessageInput.targetId];
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)
 
 			await queryClient.cancelQueries(queryKey);
@@ -47,19 +47,13 @@ const useSendMessage = (targetId: string) => {
 		// If the mutation fails, use the context returned from onMutate to roll back
 
 		onError: (err, newMessage, context) => {
-			queryClient.setQueryData(
-				[queryKeys.conversation, newMessage.targetId],
-				context?.previousConversation
-			);
+			queryClient.setQueryData(queryKey, context?.previousConversation);
 		},
 
 		// Always refetch after error or success:
 
 		onSettled: (data, err, newMessage) => {
-			queryClient.invalidateQueries([
-				queryKeys.conversation,
-				newMessage.targetId,
-			]);
+			queryClient.invalidateQueries(queryKey);
 		},
 	});
 

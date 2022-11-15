@@ -4,13 +4,13 @@ import queryKeys from '../constants/reactQueryKeys';
 import { getConversationQuery } from '../queries/messages';
 import { currentUserState } from '../recoil/atoms';
 
-const useGetConversation = (friendId: string | undefined) => {
+const useGetConversation = (friendId?: string) => {
 	const currentUserId = useRecoilValue(currentUserState)?.id;
 	const conversationMembers =
 		friendId && currentUserId ? [friendId, currentUserId] : [];
 
 	return useQuery(
-		[queryKeys.conversation, friendId],
+		queryKeys.conversation(friendId),
 		() => getConversationQuery(conversationMembers),
 		{ enabled: Boolean(friendId && currentUserId) }
 	);

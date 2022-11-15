@@ -27,7 +27,7 @@ export const dislikePostQuery = async (postId: string) => {
 };
 
 export const getTimelinePostsQuery = async (
-	userId: string | undefined,
+	userId?: string,
 	date: number = Date.now()
 ): Promise<IPost[]> => {
 	console.log(userId, date);

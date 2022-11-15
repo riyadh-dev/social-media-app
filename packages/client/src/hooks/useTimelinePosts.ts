@@ -3,9 +3,9 @@ import queryKeys from '../constants/reactQueryKeys';
 import { getTimelinePostsQuery } from '../queries/posts';
 import useIntersectionObserver from './useIntersectionObserver';
 
-const useTimelinePosts = (userId: string | undefined) => {
+const useTimelinePosts = (userId?: string) => {
 	const postInfiniteQuery = useInfiniteQuery(
-		[...queryKeys.timeline, userId],
+		queryKeys.timeline(userId),
 		({ pageParam }) => getTimelinePostsQuery(userId, pageParam),
 		{ getNextPageParam: (lastPage) => lastPage[lastPage.length - 1]?.createdAt }
 	);

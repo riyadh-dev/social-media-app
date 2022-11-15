@@ -13,11 +13,6 @@ import {
 import ImageList from '@mui/material/ImageList';
 import ImageListItem from '@mui/material/ImageListItem';
 import { Link as RouterLink, useParams } from 'react-router-dom';
-import useTimeline from '../../hooks/queries/useTimeline';
-import useUser from '../../hooks/queries/useUser';
-import useUsers from '../../hooks/queries/useUsers';
-import Post from '../Feed/Post';
-import PostForm from '../PostForm';
 
 const TimeLine = () => {
 	const id = useParams<{ id: string }>().id;
@@ -85,15 +80,7 @@ const TimeLine = () => {
 							See All Photos
 						</Button>
 					</Stack>
-					<ImageList cols={3}>
-						{posts.map((post) =>
-							!post.img ? null : (
-								<ImageListItem key={post.id}>
-									<img src={post.img} srcSet={post.img} loading='lazy' alt='' />
-								</ImageListItem>
-							)
-						)}
-					</ImageList>
+					<ImageList cols={3}></ImageList>
 				</Paper>
 
 				<Paper sx={{ p: '20px', maxWidth: { xs: '680px', md: '400px' } }}>
@@ -126,22 +113,6 @@ const TimeLine = () => {
 						</ImageList>
 					)}
 				</Paper>
-			</Stack>
-			<Stack
-				spacing={2.5}
-				sx={{
-					maxWidth: { xs: '680px', md: '500px' },
-					width: '100%',
-				}}
-			>
-				<PostForm />
-				{posts.map((post, idx) =>
-					idx + 1 === posts.length ? (
-						<Post key={post.id} lastItemRef={intersectionItemRef} post={post} />
-					) : (
-						<Post key={post.id} post={post} />
-					)
-				)}
 			</Stack>
 		</Stack>
 	);

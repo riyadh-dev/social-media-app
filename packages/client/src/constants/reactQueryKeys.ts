@@ -1,16 +1,16 @@
 const queryKeys = {
-	friendsIds: ['user-ids', 'friends'],
-	friends: ['users', 'friends'],
+	friends: (friendsOfId?: string) => ['users', 'friends', friendsOfId],
 	receivedFriendRequests: ['friend-requests', 'received'],
 	sentFriendRequests: ['friend-requests', 'sent'],
 	activeFriends: ['users', 'friends', 'active'],
-	conversation: 'conversation',
-	post: 'post',
-	timeline: ['posts', 'timeline'],
-	postComments: 'post-comments',
+	conversation: (targetId?: string) => ['conversation', targetId],
+	post: (postId?: string) => ['post', postId],
+	user: (userId?: string) => ['user', userId],
+	timeline: (userId?: string) => ['posts', 'timeline', userId],
+	postComments: (postId?: string) => ['post-comments', postId],
 	friendRequestReceivers: ['users', 'friend-request-receiver'],
 	friendRequesters: ['users', 'friend-requesters'],
-	searchUsers: ['users', 'search'],
+	searchUsers: (searchTerm?: string) => ['users', 'search', searchTerm],
 };
 
 export default queryKeys;

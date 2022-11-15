@@ -78,7 +78,7 @@ const FriendsList = () => {
 	const currentUser = useRecoilValue(currentUserState);
 	const { data: friends } = useGetUsersById(
 		currentUser?.friends,
-		queryKeys.friends
+		queryKeys.friends(currentUser?.id)
 	);
 
 	const { data: onlineUsersIds } = useGetOnlineUsersIds();
