@@ -42,7 +42,10 @@ const LeftSection = () => {
 			spacing={2.5}
 			sx={{
 				maxWidth: { xs: '680px', md: '425px' },
-				width: { xs: '100%', md: '360' },
+				width: { xs: '95%', md: '360' },
+				position: { xs: 'initial', md: 'sticky' },
+				//TODO need to be dynamically calculated
+				top: { xs: 'initial', md: 'calc(100vh - 1355px)' },
 			}}
 		>
 			<Paper

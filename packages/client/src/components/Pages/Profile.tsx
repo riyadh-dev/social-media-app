@@ -11,10 +11,10 @@ const Profile = () => {
 			<UpperSection />
 			<Stack
 				justifyContent='center'
-				alignItems='flex-start'
+				alignItems={{ xs: 'center', md: 'flex-start' }}
 				spacing={3}
 				sx={{ mt: '20px' }}
-				direction='row'
+				direction={{ xs: 'column', md: 'row' }}
 			>
 				<LeftSection />
 				<Timeline userId={userId} />
