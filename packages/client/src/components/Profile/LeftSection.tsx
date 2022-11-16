@@ -13,6 +13,8 @@ import {
 	Typography,
 } from '@mui/material';
 import { IPost } from '@social-media-app/shared/src';
+import { debounce } from 'lodash';
+import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
 import { Link as RouterLink, useParams } from 'react-router-dom';
 import { queryClient } from '../..';
@@ -37,15 +39,34 @@ const LeftSection = () => {
 			return prev.concat({ id, img });
 		}, []);
 
+	const [top, setTop] = useState(0);
+	const containerRef = useRef<HTMLDivElement>(null);
+
+	useCallback(() => {
+		const containerElement = containerRef.current;
+		const debouncedSetTop = debounce(
+			() => setTop(containerElement ? containerElement.clientHeight + 16 : 0),
+			100
+		);
+
+		const resizeObserver = new ResizeObserver(debouncedSetTop);
+		if (containerElement) resizeObserver.observe(containerElement);
+
+		return () => {
+			resizeObserver.disconnect();
+			debouncedSetTop.cancel();
+		};
+	}, [])();
+
 	return (
 		<Stack
+			ref={containerRef}
 			spacing={2.5}
 			sx={{
 				maxWidth: { xs: '680px', md: '425px' },
 				width: { xs: '95%', md: '360' },
 				position: { xs: 'initial', md: 'sticky' },
-				//TODO need to be dynamically calculated
-				top: { xs: 'initial', md: 'calc(100vh - 1355px)' },
+				top: { xs: 'initial', md: `calc(100vh - ${top}px)` },
 			}}
 		>
 			<Paper
