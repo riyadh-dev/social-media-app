@@ -1,11 +1,11 @@
 import MenuIcon from '@mui/icons-material/MenuRounded';
-import SearchIcon from '@mui/icons-material/SearchRounded';
 import { alpha, InputBase, Stack, styled } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import IconButton from '@mui/material/IconButton';
 import { Link } from 'react-router-dom';
 import { useSetRecoilState } from 'recoil';
 import { leftSideBarOpenState } from '../../recoil/atoms';
+import UserSearch from './UserSearch';
 
 const Search = styled('div')(({ theme }) => ({
 	position: 'relative',
@@ -41,10 +41,7 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 		transition: theme.transitions.create('width'),
 		width: '100%',
 		[theme.breakpoints.up('sm')]: {
-			width: '12ch',
-			'&:focus': {
-				width: '20ch',
-			},
+			width: '200px',
 		},
 	},
 }));
@@ -63,21 +60,7 @@ const LeftSection = () => {
 				/>
 			</Link>
 
-			<Search sx={{ display: { xs: 'none', lg: 'inline' } }}>
-				<SearchIconWrapper>
-					<SearchIcon />
-				</SearchIconWrapper>
-				<StyledInputBase
-					placeholder='Search…'
-					inputProps={{ 'aria-label': 'search' }}
-				/>
-			</Search>
-
-			<IconButton sx={{ display: { lg: 'none' }, p: 0 }}>
-				<Avatar>
-					<SearchIcon />
-				</Avatar>
-			</IconButton>
+			<UserSearch />
 
 			<IconButton
 				sx={{
@@ -93,4 +76,5 @@ const LeftSection = () => {
 		</Stack>
 	);
 };
+
 export default LeftSection;

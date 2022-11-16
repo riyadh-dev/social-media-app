@@ -8,6 +8,7 @@ import RightSection from './RightSection';
 const TopBar = () => {
 	return (
 		<AppBar
+			id='top-bar'
 			position='fixed'
 			color='inherit'
 			sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}

@@ -1,4 +1,3 @@
-import { IUser } from '@social-media-app/shared';
 import { TLoginInput } from '@social-media-app/shared/';
 import { TCurrentUser, TUiSignUpInput, TUiUser } from '../common/types';
 import { axiosInstance } from '../services/axios';
@@ -52,7 +51,7 @@ export const getOnlineUsersIdsQuery = async (): Promise<string[]> => {
 
 export const searchUsersByUserNameQuery = async (
 	userName?: string
-): Promise<IUser[]> => {
+): Promise<TUiUser[]> => {
 	if (!userName) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(`/users/search/${userName}`, {
 		withCredentials: true,

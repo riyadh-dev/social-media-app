@@ -96,18 +96,7 @@ const FriendsList = () => {
 				},
 			}}
 		>
-			<List
-				sx={{
-					mx: '8px',
-					mt: '76px',
-					'& .MuiButtonBase-root': {
-						borderRadius: '8px',
-						':hover': {
-							borderRadius: '8px',
-						},
-					},
-				}}
-			>
+			<List sx={{ mx: '8px', mt: '76px' }}>
 				{friends?.map((friend) => (
 					<FriendsListItem
 						key={friend.id}

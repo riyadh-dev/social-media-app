@@ -25,6 +25,18 @@ const getTheme = (mode: PaletteMode): Theme =>
 				default: mode === 'light' ? '#F0F2F5' : '#18191A',
 			},
 		},
+		components: {
+			MuiListItem: {
+				styleOverrides: {
+					button: {
+						borderRadius: '8px',
+						':hover': {
+							borderRadius: '8px',
+						},
+					},
+				},
+			},
+		},
 	});
 
 function App() {
