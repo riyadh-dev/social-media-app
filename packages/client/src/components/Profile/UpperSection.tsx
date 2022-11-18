@@ -1,3 +1,4 @@
+import { PersonRemove as PersonRemoveIcon } from '@mui/icons-material';
 import ChatIcon from '@mui/icons-material/Chat';
 import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
@@ -5,7 +6,17 @@ import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
 import { useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { TUiUser } from '../../common/types';
+import {
+	useAcceptFriendRequest,
+	useGetReceivedFriendRequests,
+	useGetSentFriendRequests,
+	useSendFriendRequest,
+} from '../../hooks/friendRequestsHooks';
+import useChatBox from '../../hooks/useChatBox';
+import { useGetCurrentUserFriendsIds } from '../../hooks/useGetFriends';
 import useGetUserById from '../../hooks/useGetUserById';
+import useUnfriend from '../../hooks/useUnfriend';
 import { currentUserState } from '../../recoil/atoms';
 
 const COVER_IMG =
@@ -24,19 +35,7 @@ const UpperSection = () => {
 	const { userId } = useParams();
 	const { data: user } = useGetUserById(userId);
 	const currentUser = useRecoilValue(currentUserState);
-	const isFriend = Boolean(currentUser?.friends.includes(userId as string));
-
-	/* 	const addFriendMutation = useAddFriend();
-	const removeFriendMutation = useRemoveFriend();
-
-	const onAddRemoveFriend = () => {
-		isFriend
-			? removeFriendMutation.mutate(userId)
-			: addFriendMutation.mutate(userId);
-	};
-
-	const isAddRemoveFriendLoading =
-		addFriendMutation.isLoading || removeFriendMutation.isLoading; */
+	const isCurrentUser = user?.id === currentUser?.id;
 
 	return (
 		<StyledBox
@@ -104,29 +103,76 @@ const UpperSection = () => {
 							{user?.userName}
 						</Typography>
 					</Stack>
-					<Stack
-						alignSelf={{ xs: 'center', md: 'flex-end' }}
-						direction={{ xs: 'column', sm: 'row' }}
-						spacing={2}
-					>
-						<Button
-							startIcon={isFriend ? <PersonIcon /> : <PersonAddIcon />}
-							variant={isFriend ? 'outlined' : 'contained'}
-							/* 	onClick={onAddRemoveFriend}
-							disabled={isAddRemoveFriendLoading} */
-						>
-							{isFriend ? 'Remove Friends' : 'Add Friends'}
-						</Button>
-						<Button
-							startIcon={<ChatIcon />}
-							variant={isFriend ? 'contained' : 'outlined'}
-						>
-							Message
-						</Button>
-					</Stack>
+					{user && !isCurrentUser && <UpperSectionActions user={user} />}
 				</Stack>
 			</Box>
 		</StyledBox>
+	);
+};
+
+const UpperSectionActions = ({ user }: { user: TUiUser }) => {
+	const { data: friendsIds } = useGetCurrentUserFriendsIds();
+	const isFriend = Boolean(friendsIds?.includes(user.id));
+
+	const sentFriendRequest = useGetSentFriendRequests().data?.find(
+		(request) => request.recipient === user.id
+	);
+
+	const receivedFriendRequest = useGetReceivedFriendRequests().data?.find(
+		(request) => request.requester === user.id
+	);
+
+	const useSendFriendRequestResults = useSendFriendRequest(user);
+	const useAcceptFriendRequestResults = useAcceptFriendRequest(user);
+	const useUnfriendResults = useUnfriend();
+
+	const handleLeftButtonClick = () => {
+		if (isFriend) return useUnfriendResults.mutate(user.id);
+		//TODO redundant parameter id is passed to the hook no need to pass it again to the mutate func
+		else if (receivedFriendRequest)
+			return useAcceptFriendRequestResults.mutate(receivedFriendRequest.id);
+		else return useSendFriendRequestResults.mutate(user.id);
+	};
+
+	const LeftButtonDisabled =
+		useUnfriendResults.isLoading ||
+		useSendFriendRequestResults.isLoading ||
+		useAcceptFriendRequestResults.isLoading ||
+		Boolean(sentFriendRequest);
+
+	const leftButtonText = () => {
+		if (isFriend) return 'unfriend';
+		else if (receivedFriendRequest) return 'Accept friend request';
+		else if (sentFriendRequest) return 'Friend request sent';
+		else return 'Send friend request';
+	};
+
+	const { onOpen } = useChatBox(user);
+
+	return (
+		<Stack
+			alignSelf={{ xs: 'center', md: 'flex-end' }}
+			direction={{ xs: 'column', sm: 'row' }}
+			spacing={2}
+		>
+			<Button
+				startIcon={isFriend ? <PersonRemoveIcon /> : <PersonAddIcon />}
+				variant={isFriend ? 'outlined' : 'contained'}
+				color={isFriend ? 'error' : 'primary'}
+				onClick={handleLeftButtonClick}
+				disabled={LeftButtonDisabled}
+			>
+				{leftButtonText()}
+			</Button>
+			<Button
+				startIcon={<ChatIcon />}
+				variant={isFriend ? 'contained' : 'outlined'}
+				disabled={!isFriend}
+				onClick={onOpen}
+			>
+				Message
+			</Button>
+		</Stack>
 	);
 };
 

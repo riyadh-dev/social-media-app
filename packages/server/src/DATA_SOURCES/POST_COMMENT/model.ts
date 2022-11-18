@@ -10,7 +10,6 @@ const UserSchema = new Schema<IPostComment>({
 	text: String,
 	likes: [String],
 	dislikes: [String],
-	comments: [String],
 });
 
 export default model('PostComment', UserSchema);

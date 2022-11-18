@@ -1,5 +1,6 @@
 const queryKeys = {
 	friends: (friendsOfId?: string) => ['users', 'friends', friendsOfId],
+	friendsIds: 'friends-Ids',
 	receivedFriendRequests: ['friend-requests', 'received'],
 	sentFriendRequests: ['friend-requests', 'sent'],
 	activeFriends: ['users', 'friends', 'active'],

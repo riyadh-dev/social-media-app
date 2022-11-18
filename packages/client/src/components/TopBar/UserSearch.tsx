@@ -14,7 +14,7 @@ import InputBase from '@mui/material/InputBase';
 import Popper from '@mui/material/Popper';
 import { alpha, styled } from '@mui/material/styles';
 import { debounce } from 'lodash';
-import { useEffect, useMemo, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useSearchUsersByUserName from '../../hooks/useSearchUsersByUserName';
 
@@ -90,12 +90,14 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const UserSearch = () => {
-	const [open, setOpen] = useState(false);
-	const handleClick = () => setOpen(true);
-	const handleClose = () => setOpen(false);
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
-	//TODO change later
-	const anchorEl = useMemo(() => document.body, []);
+	const handleClose = () => setAnchorEl(null);
+	const handleClick: React.MouseEventHandler<HTMLElement> = (e) =>
+		setAnchorEl(e.currentTarget);
+
+	const open = Boolean(anchorEl);
+	const id = open ? 'search-users' : undefined;
 
 	const [searchTerm, setSearchTerm] = useState('');
 	const [delayedSearchTerm, setDelayedSearchTerm] = useState(searchTerm);
@@ -103,10 +105,7 @@ const UserSearch = () => {
 	const debounceSearch = debounce(
 		() => setDelayedSearchTerm(searchTerm),
 		1000,
-		{
-			leading: false,
-			trailing: true,
-		}
+		{ leading: false, trailing: true }
 	);
 
 	useEffect(() => {
@@ -117,26 +116,39 @@ const UserSearch = () => {
 	const { data: searchResults, isLoading } =
 		useSearchUsersByUserName(delayedSearchTerm);
 
-	const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) => {
+	const onChange: React.ChangeEventHandler<HTMLInputElement> = (e) =>
 		setSearchTerm(e.target.value);
-		console.log(e.target.value);
-	};
+
 	return (
 		<>
 			<Search sx={{ display: { xs: 'none', lg: 'inline' } }}>
 				<SearchIconWrapper>
 					<SearchIcon />
 				</SearchIconWrapper>
-				<StyledInputBase value='' onClick={handleClick} placeholder='Search…' />
+				<StyledInputBase
+					aria-describedby={id}
+					value=''
+					onClick={handleClick}
+					placeholder='Search…'
+				/>
 			</Search>
 
-			<IconButton onClick={handleClick} sx={{ display: { lg: 'none' }, p: 0 }}>
+			<IconButton
+				aria-describedby={id}
+				onClick={handleClick}
+				sx={{ display: { lg: 'none' }, p: 0 }}
+			>
 				<Avatar>
 					<SearchIcon />
 				</Avatar>
 			</IconButton>
 
-			<StyledPopper anchorEl={anchorEl} open={open} placement='top-start'>
+			<StyledPopper
+				id={id}
+				anchorEl={anchorEl}
+				open={open}
+				placement='top-start'
+			>
 				<ClickAwayListener onClickAway={handleClose}>
 					<Autocomplete
 						open

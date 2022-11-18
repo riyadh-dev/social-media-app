@@ -3,13 +3,10 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { useRecoilValue } from 'recoil';
 import { TUiUser } from '../common/types';
-import queryKeys from '../constants/reactQueryKeys';
 import useChatBox from '../hooks/useChatBox';
+import useGetCurrentUserFriends from '../hooks/useGetFriends';
 import useGetOnlineUsersIds from '../hooks/useGetOnlineUsers';
-import useGetUsersById from '../hooks/useGetUsersById';
-import { currentUserState } from '../recoil/atoms';
 import ConditionalWrapper from './ConditionalWrapper';
 
 const DRAWER_WIDTH = 300;
@@ -75,12 +72,7 @@ const FriendsListItem = ({
 };
 
 const FriendsList = () => {
-	const currentUser = useRecoilValue(currentUserState);
-	const { data: friends } = useGetUsersById(
-		currentUser?.friends,
-		queryKeys.friends(currentUser?.id)
-	);
-
+	const { data: friends } = useGetCurrentUserFriends();
 	const { data: onlineUsersIds } = useGetOnlineUsersIds();
 
 	return (

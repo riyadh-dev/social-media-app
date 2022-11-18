@@ -1,48 +1,52 @@
 import { IFriendRequest } from '@social-media-app/shared/src';
 import { axiosInstance } from '../services/axios';
 
-export const sendFriendRequest = async (userId?: string): Promise<string> => {
-	if (!userId) Promise.reject(new Error('Invalid id'));
+export const sendFriendRequestQuery = async (
+	targetId?: string
+): Promise<string> => {
+	if (!targetId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.post(
-		`/friend-requests/send/${userId}`,
-		{},
+		`/friend-requests/send/${targetId}`,
+		null,
 		{ withCredentials: true }
 	);
 	return data;
 };
 
-export const acceptFriendRequest = async (
+export const acceptFriendRequestQuery = async (
 	requestId?: string
 ): Promise<string> => {
 	if (!requestId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.put(
 		`/friend-requests/accept/${requestId}`,
-		{},
+		null,
 		{ withCredentials: true }
 	);
 	return data;
 };
 
-export const rejectFriendRequest = async (
+export const rejectFriendRequestQuery = async (
 	requestId?: string
 ): Promise<string> => {
 	if (!requestId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.put(
 		`/friend-requests/reject/${requestId}`,
-		{},
+		null,
 		{ withCredentials: true }
 	);
 	return data;
 };
 
-export const getSentFriendRequests = async (): Promise<IFriendRequest[]> => {
+export const getSentFriendRequestsQuery = async (): Promise<
+	IFriendRequest[]
+> => {
 	const { data } = await axiosInstance.get('/friend-requests/sent', {
 		withCredentials: true,
 	});
 	return data;
 };
 
-export const getReceivedFriendRequests = async (): Promise<
+export const getReceivedFriendRequestsQuery = async (): Promise<
 	IFriendRequest[]
 > => {
 	const { data } = await axiosInstance.get('/friend-requests/received', {

@@ -149,7 +149,7 @@ const getUsersByIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(users);
 };
 
-const removeFriendUnsafe: IAsyncRequestHandler = async (req, res) => {
+const unfriendUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;
 	const { value: friendId, error } = dbDocIdValidationSchema.validate(
 		req.params.friendId
@@ -226,14 +226,24 @@ const searchUsersByUserNameUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(users);
 };
 
+const getFriendsIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const currentUser = await UserModel.findById(req.currentUserId);
+	if (!currentUser) {
+		res.status(400).json({ error: 'auth error' });
+		return;
+	}
+	res.status(200).json(currentUser.friends);
+};
+
 export const signup = catchAsyncReqHandlerErr(signupUnsafe);
 export const login = catchAsyncReqHandlerErr(loginUnsafe);
 export const updateUser = catchAsyncReqHandlerErr(updateUserUnsafe);
 export const deleteUser = catchAsyncReqHandlerErr(deleteUserUnsafe);
 export const getUserById = catchAsyncReqHandlerErr(getUserByIdUnsafe);
 export const getUsersByIds = catchAsyncReqHandlerErr(getUsersByIdsUnsafe);
+export const getFriendsIds = catchAsyncReqHandlerErr(getFriendsIdsUnsafe);
 
-export const removeFriend = catchAsyncReqHandlerErr(removeFriendUnsafe);
+export const removeFriend = catchAsyncReqHandlerErr(unfriendUnsafe);
 export const getOnlineUsersIds = catchAsyncReqHandlerErr(
 	getOnlineUsersIdsUnsafe
 );

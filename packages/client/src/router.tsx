@@ -1,6 +1,7 @@
 import { Stack } from '@mui/material';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
+import Friends from './components/Pages/Friends';
 import Home from './components/Pages/Home';
 import Main from './components/Pages/Main';
 import Profile from './components/Pages/Profile';
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
 		children: [
 			{ path: '/', element: <Home /> },
 			{ path: 'favorites', element: <PlaceHolderComp compName='favorites' /> },
-			{ path: 'friends', element: <PlaceHolderComp compName='friends' /> },
+			{ path: 'friends', element: <Friends /> },
 			{ path: '/profile/:userId', element: <Profile /> },
 		],
 	},

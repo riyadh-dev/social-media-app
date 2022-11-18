@@ -8,6 +8,7 @@ import {
 import { dbDocIdsValidationSchema } from '../../common/validation';
 import {
 	deleteUser,
+	getFriendsIds,
 	getOnlineUsersIds,
 	getUserById,
 	getUsersByIds,
@@ -60,9 +61,11 @@ router.put(
 
 router.delete('/delete', authenticate, deleteUser);
 
-router.delete('/friend/:friendId', authenticate, removeFriend);
+router.get('/friends/ids', authenticate, getFriendsIds);
 
 router.get('/search/:username', authenticate, searchUsersByUserName);
+
+router.put('/:friendId/unfriend', authenticate, removeFriend);
 
 router.get('/:userId', getUserById);
 

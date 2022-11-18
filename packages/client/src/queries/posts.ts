@@ -9,20 +9,16 @@ export const addPostQuery = async (postInput: TPostInput): Promise<IPost> => {
 };
 
 export const likePostQuery = async (postId: string): Promise<IPost> => {
-	const { data } = await axiosInstance.put(
-		`/posts/${postId}/like`,
-		{},
-		{ withCredentials: true }
-	);
+	const { data } = await axiosInstance.put(`/posts/${postId}/like`, null, {
+		withCredentials: true,
+	});
 	return data;
 };
 
 export const dislikePostQuery = async (postId: string) => {
-	const { data } = await axiosInstance.put(
-		`/posts/${postId}/dislike`,
-		{},
-		{ withCredentials: true }
-	);
+	const { data } = await axiosInstance.put(`/posts/${postId}/dislike`, null, {
+		withCredentials: true,
+	});
 	return data;
 };
 

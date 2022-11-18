@@ -42,6 +42,13 @@ export const getUsersByIdsQuery = async (
 	return data;
 };
 
+export const getFriendsIdsQuery = async (): Promise<string[]> => {
+	const { data } = await axiosInstance.get('/users/friends/ids', {
+		withCredentials: true,
+	});
+	return data;
+};
+
 export const getOnlineUsersIdsQuery = async (): Promise<string[]> => {
 	const { data } = await axiosInstance.get('/users/online', {
 		withCredentials: true,

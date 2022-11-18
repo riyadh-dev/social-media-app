@@ -119,7 +119,6 @@ const LeftSection = () => {
 							component={RouterLink}
 							key={'post-image-' + image.id}
 							to={image.img}
-							sx={{}}
 						>
 							<img src={image.img} alt='post' loading='lazy' />
 						</ImageListItem>
