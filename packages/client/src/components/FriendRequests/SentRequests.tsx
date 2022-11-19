@@ -19,7 +19,7 @@ const SentRequests = () => {
 		<>
 			<Typography variant='h6' sx={{ mx: '18px', mt: '18px' }}>
 				Sent Friend Requests
-			</Typography>{' '}
+			</Typography>
 			<Grid
 				container
 				direction='row'

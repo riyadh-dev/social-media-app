@@ -94,7 +94,7 @@ const UserCard = (props: TUserCardProps) => {
 								<Button
 									variant='outlined'
 									fullWidth
-									onClick={() => sendFriendRequest(user.id)}
+									onClick={() => sendFriendRequest()}
 								>
 									add friend
 								</Button>

@@ -6,3 +6,4 @@ import { signUpValidationSchema } from './validation';
 export type TUiUser = Omit<MapDatesToString<IUser>, 'password'>;
 export type TCurrentUser = TUiUser & { csrfToken: string };
 export type TUiSignUpInput = InferType<typeof signUpValidationSchema>;
+export type TInfinitePostsQueryType = 'liked-posts' | 'timeline-posts';

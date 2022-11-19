@@ -3,7 +3,7 @@ import { useRecoilValue } from 'recoil';
 import { currentUserState } from '../../recoil/atoms';
 import FriendsList from '../FriendsList';
 import LeftSideBar from '../LeftSideBar';
-import Timeline from '../Posts/Timeline';
+import PostsInfiniteList from '../Posts/PostsInfiniteList';
 
 const Home = () => {
 	const currentUserId = useRecoilValue(currentUserState)?.id;
@@ -14,7 +14,7 @@ const Home = () => {
 			sx={{ mt: '78px' }}
 		>
 			<LeftSideBar />
-			<Timeline userId={currentUserId} />
+			<PostsInfiniteList listType='timeline-posts' userId={currentUserId} />
 			<FriendsList />
 		</Stack>
 	);

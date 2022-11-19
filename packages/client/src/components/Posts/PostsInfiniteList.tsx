@@ -1,12 +1,19 @@
 import { Stack } from '@mui/material';
-import useTimelinePosts from '../../hooks/useTimelinePosts';
+import { TInfinitePostsQueryType } from '../../common/types';
+import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import JumpToTopButton from '../JumpToTopButton';
 import Post from './Post';
 import PostForm from './PostForm';
 
 //TODO pass down userId to post comp
-const Timeline = ({ userId }: { userId?: string }) => {
-	const { intersectionItemRef, data } = useTimelinePosts(userId);
+const PostsInfiniteList = ({
+	listType,
+	userId,
+}: {
+	userId?: string;
+	listType: TInfinitePostsQueryType;
+}) => {
+	const { intersectionItemRef, data } = useGetInfinitePosts(listType, userId);
 	const posts = data?.pages.flat();
 
 	return (
@@ -26,10 +33,10 @@ const Timeline = ({ userId }: { userId?: string }) => {
 						<Post key={post.id} post={post} />
 					)
 				)}
-			</Stack>{' '}
+			</Stack>
 			<JumpToTopButton />
 		</>
 	);
 };
 
-export default Timeline;
+export default PostsInfiniteList;

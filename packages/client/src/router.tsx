@@ -3,6 +3,7 @@ import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Friends from './components/Pages/Friends';
 import Home from './components/Pages/Home';
+import LikedPosts from './components/Pages/LikedPosts';
 import Main from './components/Pages/Main';
 import Profile from './components/Pages/Profile';
 import RequireAuth from './components/RequireAuth';
@@ -25,7 +26,7 @@ const router = createBrowserRouter([
 		),
 		children: [
 			{ path: '/', element: <Home /> },
-			{ path: 'favorites', element: <PlaceHolderComp compName='favorites' /> },
+			{ path: 'favorites', element: <LikedPosts /> },
 			{ path: 'friends', element: <Friends /> },
 			{ path: '/profile/:userId', element: <Profile /> },
 		],

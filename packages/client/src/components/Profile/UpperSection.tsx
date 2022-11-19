@@ -131,7 +131,7 @@ const UpperSectionActions = ({ user }: { user: TUiUser }) => {
 		//TODO redundant parameter id is passed to the hook no need to pass it again to the mutate func
 		else if (receivedFriendRequest)
 			return useAcceptFriendRequestResults.mutate(receivedFriendRequest.id);
-		else return useSendFriendRequestResults.mutate(user.id);
+		else return useSendFriendRequestResults.mutate();
 	};
 
 	const LeftButtonDisabled =

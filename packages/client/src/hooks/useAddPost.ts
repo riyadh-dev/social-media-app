@@ -41,7 +41,7 @@ const useAddPost = () => {
 
 			//TODO account for the case where old is empty
 			queryClient.setQueryData<InfiniteData<IPost[]>>(queryKey, (old) => ({
-				pages: old ? [[newPost]].concat(old.pages) : [[newPost]],
+				pages: old?.pages ? [[newPost]].concat(old.pages) : [[newPost]],
 				pageParams: old?.pageParams ?? [],
 			}));
 

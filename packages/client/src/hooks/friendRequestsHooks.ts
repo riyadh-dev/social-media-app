@@ -113,9 +113,9 @@ export const useSendFriendRequest = (target?: TUiUser) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 
-	return useMutation(sendFriendRequestQuery, {
+	return useMutation(() => sendFriendRequestQuery(target?.id), {
 		// When mutate is called:
-		onMutate: async (targetId) => {
+		onMutate: async () => {
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)
 			await queryClient.cancelQueries(['friend-requests']);
 			await queryClient.cancelQueries(['users']);
@@ -132,7 +132,7 @@ export const useSendFriendRequest = (target?: TUiUser) => {
 			const date = new Date();
 			const newReq: IFriendRequest = {
 				id: Math.random().toString(),
-				recipient: targetId ?? '',
+				recipient: target?.id ?? '',
 				requester: currentUser.id,
 				createdAt: date,
 				updatedAt: date,

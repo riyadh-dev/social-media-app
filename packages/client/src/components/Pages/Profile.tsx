@@ -1,6 +1,6 @@
 import { Box, Stack } from '@mui/material';
 import { useParams } from 'react-router-dom';
-import Timeline from '../Posts/Timeline';
+import PostsInfiniteList from '../Posts/PostsInfiniteList';
 import LeftSection from '../Profile/LeftSection';
 import UpperSection from '../Profile/UpperSection';
 
@@ -17,7 +17,7 @@ const Profile = () => {
 				direction={{ xs: 'column', md: 'row' }}
 			>
 				<LeftSection />
-				<Timeline userId={userId} />
+				<PostsInfiniteList listType='timeline-posts' userId={userId} />
 			</Stack>
 		</Box>
 	);

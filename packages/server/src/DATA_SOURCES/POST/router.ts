@@ -4,6 +4,7 @@ import {
 	createPost,
 	deletePost,
 	dislikePost,
+	getLikedPosts,
 	getPost,
 	getTimelinePosts,
 	likePost,
@@ -26,6 +27,7 @@ router.post(
 
 //get timeline post
 router.get('/timeline/:userId/:date', getTimelinePosts);
+router.get('/liked/:userId/:date', getLikedPosts);
 
 //read post
 router.get('/:id', getPost);

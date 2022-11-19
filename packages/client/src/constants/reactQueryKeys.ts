@@ -8,6 +8,7 @@ const queryKeys = {
 	post: (postId?: string) => ['post', postId],
 	user: (userId?: string) => ['user', userId],
 	timeline: (userId?: string) => ['posts', 'timeline', userId],
+	likedPosts: (userId?: string) => ['posts', 'liked', userId],
 	postComments: (postId?: string) => ['post-comments', postId],
 	friendRequestReceivers: ['users', 'friend-request-receiver'],
 	friendRequesters: ['users', 'friend-requesters'],

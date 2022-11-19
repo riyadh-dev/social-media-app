@@ -74,10 +74,10 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const currentUserId = res.locals.currentUserId;
+	const currentUserId = req.currentUserId;
 	const currentUserDoc = await UserModel.findById(currentUserId);
 
-	if (postDoc.author !== currentUserId && !currentUserDoc?.isAdmin) {
+	if (postDoc.author.id !== currentUserId && !currentUserDoc?.isAdmin) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -89,7 +89,7 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postId = req.params.id;
-	const currentUserId = res.locals.currentUserId;
+	const currentUserId = req.currentUserId as string;
 
 	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid user id' });
@@ -131,7 +131,7 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postId = req.params.id;
-	const currentUserId = res.locals.currentUserId;
+	const currentUserId = req.currentUserId as string;
 
 	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid user id' });
@@ -195,6 +195,32 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	res.status(200).json(posts);
 };
+
+const getLikedPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const userId = req.params.userId;
+	const date = req.params.date;
+
+	const userDoc = await UserModel.findById(userId);
+	if (!userDoc) {
+		res.status(404).json({ error: 'no such user' });
+		return;
+	}
+
+	if (!userDoc.friends.length) {
+		res.status(200).json([]);
+		return;
+	}
+
+	const posts = await PostModel.find({
+		likes: userDoc.id,
+		createdAt: { $lt: new Date(parseInt(date)) },
+	})
+		.sort({ createdAt: -1 })
+		.limit(15);
+
+	res.status(200).json(posts);
+};
+
 export const createPost = catchAsyncReqHandlerErr(createPostUnsafe);
 export const getPost = catchAsyncReqHandlerErr(getPostUnsafe);
 export const updatePost = catchAsyncReqHandlerErr(updatePostUnsafe);
@@ -202,3 +228,4 @@ export const deletePost = catchAsyncReqHandlerErr(deletePostUnsafe);
 export const likePost = catchAsyncReqHandlerErr(likePostUnsafe);
 export const dislikePost = catchAsyncReqHandlerErr(dislikePostUnsafe);
 export const getTimelinePosts = catchAsyncReqHandlerErr(getTimelinePostsUnsafe);
+export const getLikedPosts = catchAsyncReqHandlerErr(getLikedPostsUnsafe);
