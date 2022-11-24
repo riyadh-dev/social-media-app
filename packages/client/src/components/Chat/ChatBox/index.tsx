@@ -19,14 +19,14 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { TUiUser } from '../../common/types';
-import useChatBox from '../../hooks/useChatBox';
-import useGetConversation from '../../hooks/useGetConversation';
-import useSendMessage from '../../hooks/useSendMessage';
-import { useTypingNotification } from '../../hooks/useTypingNotification';
-import { typingIndicatorMapState } from '../../recoil/atoms';
-import ChatMessage from './ChatMessage';
-import TypingIndicator from './TypingIndicator';
+import { TUiUser } from '../../../common/types';
+import useChatBox from '../../../hooks/useChatBox';
+import useGetConversation from '../../../hooks/useGetConversation';
+import useSendMessage from '../../../hooks/useSendMessage';
+import { useTypingNotification } from '../../../hooks/useTypingNotification';
+import { typingIndicatorMapState } from '../../../recoil/atoms';
+import ChatMessage from '../ChatMessage';
+import TypingIndicator from '../TypingIndicator';
 
 const CustomInput = styled(InputBase)(({ theme }) => ({
 	position: 'relative',
@@ -98,6 +98,7 @@ const ChatBox = ({ user }: { user: TUiUser }) => {
 					overflowY: 'auto',
 					display: 'flex',
 					flexDirection: 'column-reverse',
+					gap: '12px',
 				}}
 			>
 				{typingIndicatorMap.get(user.id) && (

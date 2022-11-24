@@ -3,13 +3,11 @@ import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
-import { TUiUser } from '../common/types';
-import useChatBox from '../hooks/useChatBox';
-import useGetCurrentUserFriends from '../hooks/useGetFriends';
-import useGetOnlineUsersIds from '../hooks/useGetOnlineUsers';
-import ConditionalWrapper from './ConditionalWrapper';
-
-const DRAWER_WIDTH = 300;
+import { TUiUser } from '../../common/types';
+import useChatBox from '../../hooks/useChatBox';
+import useGetCurrentUserFriends from '../../hooks/useGetFriends';
+import useGetOnlineUsersIds from '../../hooks/useGetOnlineUsers';
+import ConditionalWrapper from '../ConditionalWrapper';
 
 const OnlineBadge = styled(Badge)(({ theme }) => ({
 	'& .MuiBadge-badge': {
@@ -81,9 +79,9 @@ const FriendsList = () => {
 			anchor='right'
 			sx={{
 				display: { xs: 'none', md: 'block' },
-				width: DRAWER_WIDTH,
+				width: 330,
 				[`& .MuiDrawer-paper`]: {
-					width: DRAWER_WIDTH,
+					width: 330,
 					border: 'none',
 				},
 			}}

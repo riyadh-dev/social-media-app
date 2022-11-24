@@ -14,7 +14,7 @@ import InputBase from '@mui/material/InputBase';
 import Popper from '@mui/material/Popper';
 import { alpha, styled } from '@mui/material/styles';
 import { debounce } from 'lodash';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
 import useSearchUsersByUserName from '../../hooks/useSearchUsersByUserName';
 
@@ -55,9 +55,6 @@ const StyledPopper = styled(Popper)(({ theme }) => ({
 	width: '345px',
 	zIndex: theme.zIndex.modal,
 	backgroundColor: theme.palette.mode === 'light' ? '#fff' : '#272727',
-	transform: 'initial !important',
-	inset: 'initial !important',
-	top: '0 !important',
 }));
 
 const Search = styled('div')(({ theme }) => ({
@@ -90,13 +87,11 @@ const StyledInputBase = styled(InputBase)(({ theme }) => ({
 }));
 
 const UserSearch = () => {
-	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const [open, setOpen] = useState(false);
 
-	const handleClose = () => setAnchorEl(null);
-	const handleClick: React.MouseEventHandler<HTMLElement> = (e) =>
-		setAnchorEl(e.currentTarget);
+	const handleClose = () => setOpen(false);
+	const handleClick = () => setOpen((prev) => !prev);
 
-	const open = Boolean(anchorEl);
 	const id = open ? 'search-users' : undefined;
 
 	const [searchTerm, setSearchTerm] = useState('');
@@ -143,12 +138,7 @@ const UserSearch = () => {
 				</Avatar>
 			</IconButton>
 
-			<StyledPopper
-				id={id}
-				anchorEl={anchorEl}
-				open={open}
-				placement='top-start'
-			>
+			<StyledPopper id={id} open={open} placement='top-start'>
 				<ClickAwayListener onClickAway={handleClose}>
 					<Autocomplete
 						open

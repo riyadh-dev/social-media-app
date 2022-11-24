@@ -3,19 +3,19 @@ import { Suspense } from 'react';
 import FriendsCardList from '../FriendRequests/Friends';
 import ReceivedRequests from '../FriendRequests/ReceivedRequests';
 import SentRequests from '../FriendRequests/SentRequests';
+import LeftSideBar from '../LeftSideBar';
 import Loading from '../Loading';
 
 const Friends = () => (
-	<Stack sx={{ mt: '64px' }}>
-		<Suspense fallback={<Loading />}>
-			<ReceivedRequests />
-		</Suspense>
-		<Suspense fallback={<Loading />}>
-			<SentRequests />
-		</Suspense>
-		<Suspense fallback={<Loading />}>
-			<FriendsCardList />
-		</Suspense>
+	<Stack sx={{ mt: '64px' }} direction='row'>
+		<LeftSideBar />
+		<Stack sx={{ width: '100%' }}>
+			<Suspense fallback={<Loading mt='64' />}>
+				<ReceivedRequests />
+				<SentRequests />
+				<FriendsCardList />
+			</Suspense>
+		</Stack>
 	</Stack>
 );
 

@@ -4,6 +4,7 @@ import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import JumpToTopButton from '../JumpToTopButton';
 import Post from './Post';
 import PostForm from './PostForm';
+import PostsInfiniteListSkeleton from './PostsInfiniteListSkeleton';
 
 //TODO pass down userId to post comp
 const PostsInfiniteList = ({
@@ -13,7 +14,10 @@ const PostsInfiniteList = ({
 	userId?: string;
 	listType: TInfinitePostsQueryType;
 }) => {
-	const { intersectionItemRef, data } = useGetInfinitePosts(listType, userId);
+	const { intersectionItemRef, data, isFetchingNextPage } = useGetInfinitePosts(
+		listType,
+		userId
+	);
 	const posts = data?.pages.flat();
 
 	return (
@@ -27,13 +31,19 @@ const PostsInfiniteList = ({
 			>
 				<PostForm />
 				{posts?.map((post, idx) =>
-					idx + 1 === posts.length ? (
-						<Post key={post.id} lastItemRef={intersectionItemRef} post={post} />
+					idx + 1 === posts.length - 3 ? (
+						<Post
+							key={post.id}
+							observedItemRef={intersectionItemRef}
+							post={post}
+						/>
 					) : (
 						<Post key={post.id} post={post} />
 					)
 				)}
+				{isFetchingNextPage && <PostsInfiniteListSkeleton />}
 			</Stack>
+
 			<JumpToTopButton />
 		</>
 	);

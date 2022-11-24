@@ -2,9 +2,11 @@ import {
 	IChatMessage,
 	IChatMessageAction,
 	IChatMessageTypingAction,
+	IFriendRequest,
+	IFriendRequestAction,
 	IUserConnectionAction,
 	TWebSocketAction,
-} from '@social-media-app/shared/src';
+} from '@social-media-app/shared';
 import { useEffect } from 'react';
 import {
 	SetterOrUpdater,
@@ -69,6 +71,10 @@ export const useWebSocketInit = () => {
 					handleUserConnectionAction(action);
 					break;
 
+				case 'received-friend-request':
+					handleFriendRequestAction(action);
+					break;
+
 				default:
 					console.log(action);
 					break;
@@ -123,4 +129,12 @@ const handleChatMessageAction = (
 			(old) => (old ? old.concat(action.payload) : [action.payload])
 		);
 	}, 150);
+};
+
+const handleFriendRequestAction = async (action: IFriendRequestAction) => {
+	await queryClient.cancelQueries(queryKeys.receivedFriendRequests);
+	queryClient.setQueryData<IFriendRequest[]>(
+		queryKeys.receivedFriendRequests,
+		(old) => (old ? [action.payload].concat(old) : [action.payload])
+	);
 };

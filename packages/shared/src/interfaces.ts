@@ -71,3 +71,8 @@ export interface IUserConnectionAction {
 	type: 'user-connected' | 'user-disconnected';
 	payload: { userId: string };
 }
+
+export interface IFriendRequestAction {
+	type: 'received-friend-request';
+	payload: IFriendRequest;
+}

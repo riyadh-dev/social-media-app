@@ -3,6 +3,7 @@ import {
 	IChatMessageAction,
 	IChatMessageTypingAction,
 	IFriendRequest,
+	IFriendRequestAction,
 	IPost,
 	IPostComment,
 	IUser,
@@ -14,7 +15,8 @@ export type TFriendRequestStatus = 'pending' | 'accepted' | 'rejected';
 export type TWebSocketAction =
 	| IChatMessageAction
 	| IChatMessageTypingAction
-	| IUserConnectionAction;
+	| IUserConnectionAction
+	| IFriendRequestAction;
 
 export type TUpdateUserInput = Pick<
 	IUser,

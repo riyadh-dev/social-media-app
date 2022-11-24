@@ -1,13 +1,12 @@
 import { CircularProgress } from '@mui/material';
 import { Box } from '@mui/system';
 
-const Loading = () => (
+const Loading = ({ mt }: { mt?: string }) => (
 	<Box
 		display='flex'
 		justifyContent='center'
 		alignItems='center'
-		height='100vh'
-		sx={{ m: '2rem' }}
+		height={`calc(100vh - ${mt ?? 0}px)`}
 	>
 		<CircularProgress size='4rem' />
 	</Box>

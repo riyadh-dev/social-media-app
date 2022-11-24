@@ -4,7 +4,9 @@ import { QueryClient, QueryClientProvider } from 'react-query';
 import { RecoilRoot } from 'recoil';
 import App from './App';
 
-export const queryClient = new QueryClient();
+export const queryClient = new QueryClient({
+	defaultOptions: { queries: { suspense: true, useErrorBoundary: false } },
+});
 
 createRoot(document.getElementById('root') as HTMLElement).render(
 	<React.StrictMode>

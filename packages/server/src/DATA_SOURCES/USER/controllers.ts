@@ -61,7 +61,7 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const currentUserId: string = req.currentUserId;
+	const currentUserId = req.currentUserId as string;
 	const currentUserDoc = await UserModel.findById(currentUserId);
 	if (updatedUserId !== currentUserId && !currentUserDoc?.isAdmin) {
 		res.status(400).json({ error: 'you can only update your account' });
@@ -89,7 +89,7 @@ const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUserId: string = req.currentUserId;
+	const currentUserId = req.currentUserId as string;
 	const deletedUserId = req.params.id;
 
 	if (!isValidObjectId(deletedUserId)) {

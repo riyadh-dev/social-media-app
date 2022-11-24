@@ -1,14 +1,13 @@
 import { Stack } from '@mui/material';
-import { lazy, Suspense } from 'react';
+import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Friends from './components/Pages/Friends';
-import Home from './components/Pages/Home';
-import LikedPosts from './components/Pages/LikedPosts';
 import Main from './components/Pages/Main';
-import Profile from './components/Pages/Profile';
 import RequireAuth from './components/RequireAuth';
+import Friends from './components/Pages/Friends';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
+const Home = lazy(() => import('./components/Pages/Home'));
+const Profile = lazy(() => import('./components/Pages/Profile'));
 
 const PlaceHolderComp = ({ compName }: { compName: string }) => (
 	<Stack justifyContent='center' alignItems='center' height='100vh'>
@@ -26,24 +25,20 @@ const router = createBrowserRouter([
 		),
 		children: [
 			{ path: '/', element: <Home /> },
-			{ path: 'favorites', element: <LikedPosts /> },
+			{ path: 'favorites', element: <Home /> },
 			{ path: 'friends', element: <Friends /> },
-			{ path: '/profile/:userId', element: <Profile /> },
+			{ path: 'profile/:userId', element: <Profile /> },
 		],
 	},
 	{
 		path: '/login',
-		element: (
-			<Suspense fallback={<h1>loading...</h1>}>
-				<LoginSignUp />
-			</Suspense>
-		),
+		element: <LoginSignUp />,
 	},
 	{
 		path: '*',
 		element: (
 			<RequireAuth>
-				<h1>No Match</h1>
+				<PlaceHolderComp compName='No Match' />
 			</RequireAuth>
 		),
 	},

@@ -1,6 +1,8 @@
 import { Box, Stack } from '@mui/material';
+import { Suspense } from 'react';
 import { useParams } from 'react-router-dom';
 import PostsInfiniteList from '../Posts/PostsInfiniteList';
+import PostsInfiniteListSkeleton from '../Posts/PostsInfiniteListSkeleton';
 import LeftSection from '../Profile/LeftSection';
 import UpperSection from '../Profile/UpperSection';
 
@@ -17,7 +19,9 @@ const Profile = () => {
 				direction={{ xs: 'column', md: 'row' }}
 			>
 				<LeftSection />
-				<PostsInfiniteList listType='timeline-posts' userId={userId} />
+				<Suspense fallback={<PostsInfiniteListSkeleton />}>
+					<PostsInfiniteList listType='timeline-posts' userId={userId} />
+				</Suspense>
 			</Stack>
 		</Box>
 	);

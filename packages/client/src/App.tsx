@@ -6,11 +6,12 @@ import {
 	Theme,
 	useMediaQuery,
 } from '@mui/material';
-import { useEffect, useMemo } from 'react';
+import { Suspense, useEffect, useMemo } from 'react';
 import { ReactQueryDevtools } from 'react-query/devtools';
-import { RouterProvider, useParams } from 'react-router-dom';
+import { RouterProvider } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import RecoilDebugButton from './components/Debug/RecoilDebugButton';
+import Loading from './components/Loading';
 import { useWebSocketInit } from './hooks/useWebSocketInit';
 import { themeState } from './recoil/atoms';
 import router from './Router';
@@ -61,12 +62,13 @@ function App() {
 	}, [prefThemeMode, setTheme, theme.isUserPicked]);
 
 	useWebSocketInit();
-	const params = useParams();
-	console.log(params.userId);
+
 	return (
 		<ThemeProvider theme={muiTheme}>
 			<CssBaseline />
-			<RouterProvider router={router} />
+			<Suspense fallback={<Loading />}>
+				<RouterProvider router={router} />
+			</Suspense>
 			{IS_DEV && (
 				<>
 					<ReactQueryDevtools initialIsOpen={false} />

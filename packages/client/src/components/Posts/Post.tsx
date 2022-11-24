@@ -45,10 +45,10 @@ const CommentText = styled(Paper)(({ theme }) => ({
 
 const Post = ({
 	post,
-	lastItemRef,
+	observedItemRef: lastItemRef,
 }: {
 	post: IPost;
-	lastItemRef?: (node: HTMLDivElement) => void;
+	observedItemRef?: (node: HTMLDivElement) => void;
 }) => {
 	const [expanded, setExpanded] = useState(false);
 	const handleExpandClick = () => setExpanded(!expanded);

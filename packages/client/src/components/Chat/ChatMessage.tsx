@@ -36,7 +36,7 @@ const ChatMessage = ({ chatMessage }: { chatMessage: IChatMessage }) => {
 
 	if (isSenderCurrentUser)
 		return (
-			<Stack direction='row' spacing={1} sx={{ mb: 4 }}>
+			<Stack direction='row' spacing={1}>
 				<Avatar
 					src={sender?.avatar}
 					sx={{ alignSelf: 'flex-end', width: '28px', height: '28px' }}
@@ -48,7 +48,7 @@ const ChatMessage = ({ chatMessage }: { chatMessage: IChatMessage }) => {
 		);
 
 	return (
-		<Stack direction='row' spacing={1} sx={{ mb: 4 }} alignSelf='flex-end'>
+		<Stack direction='row' spacing={1} alignSelf='flex-end'>
 			<OwmChatMsgPaper sx={{ px: '12px', py: '8px' }} elevation={0}>
 				<Typography variant='body2'>{chatMessage.text}</Typography>
 			</OwmChatMsgPaper>

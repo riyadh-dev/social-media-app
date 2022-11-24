@@ -1,9 +1,13 @@
-import { dbDocIdValidationSchema } from '../../common/validation';
+import {
+	IFriendRequestAction,
+	TFriendRequestInput,
+} from '@social-media-app/shared';
 import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import { dbDocIdValidationSchema } from '../../common/validation';
+import { socketConnections } from '../../config/app';
 import userModel from '../USER/model';
 import friendRequestModel from './model';
-import { TFriendRequestInput } from '@social-media-app/shared';
 
 const sendFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.currentUserId as string;
@@ -41,11 +45,22 @@ const sendFriendRequestUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	await friendRequestModel.create<TFriendRequestInput>({
-		recipient: friendId,
-		requester: userId,
-		status: 'pending',
-	});
+	const newFriendRequest = await friendRequestModel.create<TFriendRequestInput>(
+		{
+			recipient: friendId,
+			requester: userId,
+			status: 'pending',
+		}
+	);
+
+	const friendRequestAction: IFriendRequestAction = {
+		type: 'received-friend-request',
+		payload: newFriendRequest,
+	};
+
+	socketConnections
+		.get(newFriendRequest.recipient)
+		?.send(JSON.stringify(friendRequestAction));
 
 	res.status(200).json({ succuss: 'friend request sent' });
 };

@@ -15,7 +15,6 @@ const useIntersectionObserver = <T extends Element>({
 
 			observer.current = new IntersectionObserver((entries) => {
 				if (!entries[0].isIntersecting) return;
-				console.log(entries[0].isIntersecting);
 				onIntersection();
 			});
 

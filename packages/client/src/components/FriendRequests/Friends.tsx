@@ -1,4 +1,4 @@
-import { Grid } from '@mui/material';
+import { Grid, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import useGetCurrentUserFriends from '../../hooks/useGetFriends';
 import UserCard from './UserCard';
@@ -12,19 +12,19 @@ const FriendsCardList = () => {
 			<Typography variant='h6' sx={{ mx: '18px', mt: '18px' }}>
 				Friends
 			</Typography>
-			<Grid
-				container
+			<Stack
 				direction='row'
-				spacing={2}
+				gap={2}
 				sx={{ p: '16px' }}
 				justifyContent='flex-start'
+				flexWrap='wrap'
 			>
 				{friends?.map((friend) => (
 					<Grid item key={friend.id}>
 						<UserCard cardType='friend' user={friend} />
 					</Grid>
 				))}
-			</Grid>
+			</Stack>
 		</>
 	);
 };

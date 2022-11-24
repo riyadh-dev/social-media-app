@@ -6,11 +6,9 @@ import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import { leftSideBarOpenState } from '../recoil/atoms';
-
-const DRAWER_WIDTH = 300;
 
 const LeftSideBar = () => {
 	const [sideBarOpen, setSideBarOpen] = useRecoilState(leftSideBarOpenState);
@@ -19,21 +17,38 @@ const LeftSideBar = () => {
 		setSideBarOpen(!sideBarOpen);
 	};
 
+	const { pathname } = useLocation();
+	//TODO change ListItem button to ListItemButton
 	const drawer = (
 		<List sx={{ mx: '8px', mt: '76px' }}>
-			<ListItem button component={RouterLink} to='/'>
+			<ListItem
+				button
+				component={RouterLink}
+				to='/'
+				selected={pathname === '/'}
+			>
 				<ListItemIcon>
 					<HomeIcon />
 				</ListItemIcon>
 				<ListItemText>Home</ListItemText>
 			</ListItem>
-			<ListItem button component={RouterLink} to='/favorites'>
+			<ListItem
+				button
+				component={RouterLink}
+				to='/favorites'
+				selected={pathname === '/favorites'}
+			>
 				<ListItemIcon>
 					<FavoriteIcon />
 				</ListItemIcon>
 				<ListItemText>Favorites</ListItemText>
 			</ListItem>
-			<ListItem button component={RouterLink} to='/friends'>
+			<ListItem
+				button
+				component={RouterLink}
+				to='/friends'
+				selected={pathname === '/friends'}
+			>
 				<ListItemIcon>
 					<PeopleIcon />
 				</ListItemIcon>
@@ -55,7 +70,7 @@ const LeftSideBar = () => {
 					display: { xs: 'block', lg: 'none' },
 					'& .MuiDrawer-paper': {
 						boxSizing: 'border-box',
-						width: DRAWER_WIDTH,
+						width: 300,
 					},
 				}}
 			>
@@ -66,10 +81,10 @@ const LeftSideBar = () => {
 				variant='permanent'
 				sx={{
 					display: { xs: 'none', lg: 'block' },
-					width: DRAWER_WIDTH,
+					width: 330,
 					flexShrink: 0,
 					[`& .MuiDrawer-paper`]: {
-						width: DRAWER_WIDTH,
+						width: 330,
 						boxSizing: 'border-box',
 						borderRight: 'none',
 					},

@@ -26,7 +26,6 @@ export const getTimelinePostsQuery = async (
 	userId?: string,
 	date: number = Date.now()
 ): Promise<IPost[]> => {
-	console.log(userId, date);
 	if (!userId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(
 		`/posts/timeline/${userId}/${date}`,
@@ -39,7 +38,6 @@ export const getLikedPostsQuery = async (
 	userId?: string,
 	date: number = Date.now()
 ): Promise<IPost[]> => {
-	console.log(userId, date);
 	if (!userId) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(`/posts/liked/${userId}/${date}`, {
 		withCredentials: true,
