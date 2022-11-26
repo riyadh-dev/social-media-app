@@ -1,4 +1,5 @@
 import { Stack } from '@mui/material';
+import { useLocation } from 'react-router-dom';
 import { TInfinitePostsQueryType } from '../../common/types';
 import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import JumpToTopButton from '../JumpToTopButton';
@@ -19,6 +20,9 @@ const PostsInfiniteList = ({
 		userId
 	);
 	const posts = data?.pages.flat();
+	const { pathname } = useLocation();
+
+	if (!data) return <></>;
 
 	return (
 		<>
@@ -29,7 +33,7 @@ const PostsInfiniteList = ({
 					width: { xs: '95%', md: '600px' },
 				}}
 			>
-				<PostForm />
+				{pathname === '/' && <PostForm />}
 				{posts?.map((post, idx) =>
 					idx + 1 === posts.length - 3 ? (
 						<Post

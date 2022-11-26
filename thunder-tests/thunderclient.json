@@ -329,5 +329,126 @@
         "value": "200"
       }
     ]
+  },
+  {
+    "_id": "0f939ad6-2757-41bd-a887-c997202414b9",
+    "colId": "2be91779-a32c-4c51-a227-92352ca11be8",
+    "containerId": "",
+    "name": "login",
+    "url": "http://localhost:4000/api/users/login",
+    "method": "POST",
+    "sortNum": 10000,
+    "created": "2022-11-24T20:44:22.034Z",
+    "modified": "2022-11-24T20:45:16.293Z",
+    "headers": [],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "{\n    \"email\": \"test1@gmail.com\",\n    \"password\": \"password\"\n}",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "set-env-var",
+        "custom": "json._id",
+        "action": "setto",
+        "value": "{{USER_ID}}"
+      },
+      {
+        "type": "set-env-var",
+        "custom": "json.csrfToken",
+        "action": "setto",
+        "value": "{{CSRF_TOKEN}}"
+      },
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "e94bfac6-6cca-4ce2-84e3-10aa848ca910",
+    "colId": "2be91779-a32c-4c51-a227-92352ca11be8",
+    "containerId": "",
+    "name": "unread",
+    "url": "http://localhost:4000/api/messages/unread",
+    "method": "GET",
+    "sortNum": 20000,
+    "created": "2022-11-24T20:44:57.226Z",
+    "modified": "2022-11-24T20:48:19.682Z",
+    "headers": [],
+    "params": [],
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "25669140-66ab-4289-abe5-36fcdf33948e",
+    "colId": "2be91779-a32c-4c51-a227-92352ca11be8",
+    "containerId": "",
+    "name": "viewd",
+    "url": "http://localhost:4000/api/messages/viewed",
+    "method": "POST",
+    "sortNum": 30000,
+    "created": "2022-11-24T20:45:56.825Z",
+    "modified": "2022-11-24T21:05:14.235Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "[\"635d9af089d60fd4394f7ccc\"]",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
+  },
+  {
+    "_id": "fb506037-c311-44b3-92ef-f8ab11dbcd2a",
+    "colId": "2be91779-a32c-4c51-a227-92352ca11be8",
+    "containerId": "",
+    "name": "received",
+    "url": "http://localhost:4000/api/messages/received/",
+    "method": "POST",
+    "sortNum": 40000,
+    "created": "2022-11-24T21:01:45.136Z",
+    "modified": "2022-11-24T21:06:14.207Z",
+    "headers": [
+      {
+        "name": "csrf-token",
+        "value": "{{CSRF_TOKEN}}"
+      }
+    ],
+    "params": [],
+    "body": {
+      "type": "json",
+      "raw": "[\"635d9af089d60fd4394f7ccc\"]",
+      "form": []
+    },
+    "tests": [
+      {
+        "type": "res-code",
+        "custom": "",
+        "action": "equal",
+        "value": "200"
+      }
+    ]
   }
 ]

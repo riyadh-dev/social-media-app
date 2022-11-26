@@ -13,7 +13,6 @@ const MiddleSection = () => {
 			sx={{
 				flexGrow: 1,
 				visibility: { xs: 'hidden', md: 'visible' },
-				width: { xs: 0, md: 'auto' },
 			}}
 			justifyContent='center'
 			spacing={4}

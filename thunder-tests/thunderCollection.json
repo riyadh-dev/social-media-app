@@ -12,5 +12,12 @@
     "created": "2021-12-28T09:02:29.794Z",
     "sortNum": 20000,
     "folders": []
+  },
+  {
+    "_id": "2be91779-a32c-4c51-a227-92352ca11be8",
+    "colName": "Messages",
+    "created": "2022-11-24T20:45:13.482Z",
+    "sortNum": 30000,
+    "folders": []
   }
 ]

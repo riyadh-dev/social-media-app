@@ -1,6 +1,5 @@
 import { PersonRemove as PersonRemoveIcon } from '@mui/icons-material';
 import ChatIcon from '@mui/icons-material/Chat';
-import PersonIcon from '@mui/icons-material/Person';
 import PersonAddIcon from '@mui/icons-material/PersonAdd';
 import { Avatar, Box, Button, Stack, Typography } from '@mui/material';
 import { styled } from '@mui/material/styles';
@@ -36,6 +35,8 @@ const UpperSection = () => {
 	const { data: user } = useGetUserById(userId);
 	const currentUser = useRecoilValue(currentUserState);
 	const isCurrentUser = user?.id === currentUser?.id;
+
+	if (!user) return <h1>User Not Found</h1>;
 
 	return (
 		<StyledBox

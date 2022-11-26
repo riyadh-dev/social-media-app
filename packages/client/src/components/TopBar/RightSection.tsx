@@ -1,35 +1,60 @@
-import AppsIcon from '@mui/icons-material/AppsRounded';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightModeRounded';
 import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
-import NotificationsIcon from '@mui/icons-material/NotificationsRounded';
 import SettingsIcon from '@mui/icons-material/SettingsRounded';
-import { Button, ListItemIcon, ListItemText } from '@mui/material';
+import {
+	Badge,
+	Button,
+	ClickAwayListener,
+	List,
+	ListItemAvatar,
+	ListItemButton,
+	ListItemIcon,
+	ListItemText,
+	Paper,
+	Popper,
+	Skeleton,
+	Stack,
+	Typography,
+} from '@mui/material';
 import Avatar from '@mui/material/Avatar';
-import Box from '@mui/material/Box';
 import IconButton from '@mui/material/IconButton';
 import Menu from '@mui/material/Menu';
 import MenuItem from '@mui/material/MenuItem';
 import Tooltip from '@mui/material/Tooltip';
-import React from 'react';
+import React, { Suspense } from 'react';
 import { Link as RouterLink, useNavigate } from 'react-router-dom';
 import { useRecoilState, useRecoilValue } from 'recoil';
+import { TUiUser } from '../../common/types';
+import useChatBox from '../../hooks/useChatBox';
+import useGetConversation from '../../hooks/useGetConversation';
+import useGetCurrentUserFriends from '../../hooks/useGetFriends';
 import useLogout from '../../hooks/useLogout';
 import { currentUserState, themeState } from '../../recoil/atoms';
 
 const RightSection = () => {
-	const [anchorElUser, setAnchorElUser] = React.useState<null | HTMLElement>(
-		null
-	);
+	const [settingsAnchorEl, setSettingsAnchorElUser] =
+		React.useState<null | HTMLElement>(null);
 
-	const handleOpenUserMenu = (event: React.MouseEvent<HTMLElement>) => {
-		setAnchorElUser(event.currentTarget);
+	const handleOpenSettingsMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setSettingsAnchorElUser(event.currentTarget);
 	};
 
-	const handleCloseUserMenu = () => {
-		setAnchorElUser(null);
+	const handleCloseSettingsMenu = () => {
+		setSettingsAnchorElUser(null);
+	};
+
+	const [messengerAnchorEl, setMessengerAnchorElUser] =
+		React.useState<null | HTMLElement>(null);
+
+	const handleOpenMessengerMenu = (event: React.MouseEvent<HTMLElement>) => {
+		setMessengerAnchorElUser(event.currentTarget);
+	};
+
+	const handleCloseMessengerMenu = () => {
+		setMessengerAnchorElUser(null);
 	};
 
 	const [theme, setTheme] = useRecoilState(themeState);
@@ -44,16 +69,22 @@ const RightSection = () => {
 
 	const logout = useLogout();
 	const handleLogout = () => logout();
-
 	const navigate = useNavigate();
 
+	const { data: friends } = useGetCurrentUserFriends();
+
 	return (
-		<Box>
+		<Stack
+			direction='row'
+			spacing={1}
+			width='300px'
+			justifyContent='flex-end'
+			alignItems='center'
+		>
 			<Button
 				component={RouterLink}
 				to={'/profile/' + currentUser?.id}
 				sx={{
-					mx: '5px',
 					borderRadius: '24px',
 					display: { xs: 'none', md: 'inline-flex' },
 					textTransform: 'none',
@@ -63,50 +94,41 @@ const RightSection = () => {
 			>
 				{currentUser?.userName}
 			</Button>
-			<IconButton
-				sx={{
-					p: 0,
-					mx: '5px',
-					display: { xs: 'none', md: 'inline' },
-				}}
+
+			<Badge
+				color='primary'
+				overlap='circular'
+				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
+				badgeContent={25}
 			>
-				<Avatar>
-					<AppsIcon />
-				</Avatar>
-			</IconButton>
+				<IconButton sx={{ p: 0 }} onClick={handleOpenMessengerMenu}>
+					<Avatar>
+						<MessageIcon />
+					</Avatar>
+				</IconButton>
+			</Badge>
+
 			<IconButton
-				sx={{
-					p: 0,
-					mx: '5px',
-					display: { xs: 'initial', md: 'none' },
-				}}
+				sx={{ p: 0, display: { xs: 'initial', md: 'none' } }}
 				onClick={() => navigate('/messenger')}
 			>
 				<Avatar>
 					<MessageIcon />
 				</Avatar>
 			</IconButton>
-			<IconButton
-				sx={{
-					p: 0,
-					mx: '5px',
-				}}
-			>
-				<Avatar>
-					<NotificationsIcon />
-				</Avatar>
-			</IconButton>
+
 			<Tooltip title='Open settings'>
-				<IconButton onClick={handleOpenUserMenu} sx={{ p: 0, ml: '5px' }}>
+				<IconButton onClick={handleOpenSettingsMenu} sx={{ p: 0 }}>
 					<Avatar>
 						<ArrowDropDownIcon />
 					</Avatar>
 				</IconButton>
 			</Tooltip>
+
 			<Menu
 				sx={{ mt: '50px' }}
 				id='menu-appBar'
-				anchorEl={anchorElUser}
+				anchorEl={settingsAnchorEl}
 				anchorOrigin={{
 					vertical: 'top',
 					horizontal: 'right',
@@ -116,10 +138,10 @@ const RightSection = () => {
 					vertical: 'top',
 					horizontal: 'right',
 				}}
-				open={Boolean(anchorElUser)}
-				onClose={handleCloseUserMenu}
+				open={Boolean(settingsAnchorEl)}
+				onClose={handleCloseSettingsMenu}
 			>
-				<MenuItem onClick={handleCloseUserMenu}>
+				<MenuItem onClick={handleCloseSettingsMenu}>
 					<ListItemIcon>
 						<SettingsIcon fontSize='small' />
 					</ListItemIcon>
@@ -144,7 +166,79 @@ const RightSection = () => {
 					<ListItemText>Log Out</ListItemText>
 				</MenuItem>
 			</Menu>
-		</Box>
+
+			<Popper
+				id='chat-popper'
+				anchorEl={messengerAnchorEl}
+				open={Boolean(messengerAnchorEl)}
+				placement='bottom'
+				sx={{ zIndex: 1201 }}
+			>
+				<ClickAwayListener onClickAway={handleCloseMessengerMenu}>
+					<Paper
+						elevation={1}
+						sx={{
+							width: '350px',
+							height: '80vh',
+							overflowY: 'scroll',
+							borderRadius: '5px',
+							p: '12px',
+							mt: '18px',
+							mr: '12px',
+						}}
+					>
+						<Typography variant='h5' sx={{ fontWeight: 700 }}>
+							Chats
+						</Typography>
+						<List>
+							{friends?.map((friend) => (
+								<Suspense fallback={<ChatsListItemSkeleton />}>
+									<ChatsListItem key={friend.id} friend={friend} />
+								</Suspense>
+							))}
+						</List>
+					</Paper>
+				</ClickAwayListener>
+			</Popper>
+		</Stack>
 	);
 };
+
+const ChatsListItemSkeleton = () => (
+	<ListItemButton>
+		<ListItemAvatar>
+			<Skeleton variant='circular' width={40} height={40} />
+		</ListItemAvatar>
+		<ListItemText
+			primary={<Skeleton variant='text' height={24} width={180} />}
+			secondary={<Skeleton variant='text' height={24} width={220} />}
+		/>
+	</ListItemButton>
+);
+
+const ChatsListItem = ({ friend }: { friend: TUiUser }) => {
+	const { data: conversation } = useGetConversation(friend.id);
+	const { onOpen } = useChatBox(friend);
+	const lastMessage = conversation
+		? conversation[conversation.length - 1]
+		: undefined;
+
+	return (
+		<ListItemButton onClick={onOpen}>
+			<ListItemAvatar>
+				<Avatar src={friend.avatar} />
+			</ListItemAvatar>
+			<ListItemText
+				primary={friend.userName}
+				secondary={
+					<Stack direction='row' justifyContent='space-between'>
+						<Typography>{lastMessage?.text}</Typography>
+						{/* <DoneIcon /> */}
+					</Stack>
+				}
+			/>
+		</ListItemButton>
+	);
+};
+
 export default RightSection;

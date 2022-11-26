@@ -16,7 +16,7 @@ import { IPost } from '@social-media-app/shared/src';
 import { debounce } from 'lodash';
 import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Link, Link as RouterLink, useParams } from 'react-router-dom';
 import { queryClient } from '../..';
 import queryKeys from '../../constants/reactQueryKeys';
 import useGetUserById from '../../hooks/useGetUserById';
@@ -58,6 +58,8 @@ const LeftSection = () => {
 		};
 	}, [])();
 
+	if (!user) return <></>;
+
 	return (
 		<Stack
 			ref={containerRef}
@@ -97,7 +99,7 @@ const LeftSection = () => {
 					<Stack direction='row' spacing={1} alignItems='center'>
 						<WatchLaterIcon />
 						<Typography variant='body1'>
-							Join Date: {new Date(user?.createdAt ?? '').toLocaleString()}
+							Join Date: {new Date(user.createdAt).toLocaleString()}
 						</Typography>
 					</Stack>
 				</Stack>
@@ -131,7 +133,12 @@ const LeftSection = () => {
 					<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 						Friends
 					</Typography>
-					<Button color='primary' variant='text'>
+					<Button
+						component={Link}
+						to={`/friends/${user.id}`}
+						color='primary'
+						variant='text'
+					>
 						See All Friends
 					</Button>
 				</Stack>

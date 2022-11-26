@@ -51,7 +51,7 @@ const LeftSection = () => {
 	const handleOpenSideBar = () => setLeftSideBarOpen((prev) => !prev);
 
 	return (
-		<Stack direction='row' alignItems='center' spacing={1}>
+		<Stack direction='row' alignItems='center' spacing={1} width='300px'>
 			<Link style={{ marginBottom: '-6.4px' }} to='/'>
 				<img
 					src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
@@ -62,13 +62,7 @@ const LeftSection = () => {
 
 			<UserSearch />
 
-			<IconButton
-				sx={{
-					display: { lg: 'none' },
-					p: 0,
-				}}
-				onClick={handleOpenSideBar}
-			>
+			<IconButton sx={{ display: { lg: 'none' } }} onClick={handleOpenSideBar}>
 				<Avatar>
 					<MenuIcon />
 				</Avatar>
