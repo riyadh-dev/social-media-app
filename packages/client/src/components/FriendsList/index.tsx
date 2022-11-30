@@ -5,8 +5,10 @@ import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { TUiUser } from '../../common/types';
 import useChatBox from '../../hooks/useChatBox';
-import useGetCurrentUserFriends from '../../hooks/useGetFriends';
-import useGetOnlineUsersIds from '../../hooks/useGetOnlineUsers';
+import {
+	useGetCurrentUserFriends,
+	useGetOnlineUsersIds,
+} from '../../hooks/usersHooks';
 import ConditionalWrapper from '../ConditionalWrapper';
 
 const OnlineBadge = styled(Badge)(({ theme }) => ({

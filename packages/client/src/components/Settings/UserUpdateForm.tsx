@@ -1,5 +1,6 @@
 import { Visibility, VisibilityOff } from '@mui/icons-material';
 import {
+	Box,
 	Button,
 	ButtonTypeMap,
 	Divider,
@@ -8,23 +9,14 @@ import {
 	IconButton,
 	InputAdornment,
 	InputLabel,
-	Modal,
 	OutlinedInput,
-	Paper,
 	Stack,
 	Typography,
 } from '@mui/material';
 import { useState } from 'react';
-import { useSignUp } from '../../hooks/usersHooks';
-interface ISignUpFormProps {
-	openSignUpForm: boolean;
-	handleCloseSignUpForm: () => void;
-}
+import { useUpdateUserProfile } from '../../hooks/usersHooks';
 
-const SignUpForm = ({
-	handleCloseSignUpForm,
-	openSignUpForm,
-}: ISignUpFormProps) => {
+const UserUpdateForm = () => {
 	const {
 		useFormReturn: {
 			register,
@@ -32,24 +24,24 @@ const SignUpForm = ({
 		},
 		useMutationReturn: { status, isLoading, error },
 		onSubmit,
-	} = useSignUp();
+	} = useUpdateUserProfile();
 
 	const [showPassword, setShowPassword] = useState(false);
 	const handleToggleShowPassword = () => setShowPassword((prev) => !prev);
 
-	let singUpBtnText = 'sign up';
+	let singUpBtnText = 'Update Profile';
 	let singUpBtnColor: ButtonTypeMap['props']['color'] = 'primary';
 
 	switch (status) {
 		case 'idle':
 			singUpBtnColor = 'primary';
-			singUpBtnText = 'sign up';
+			singUpBtnText = 'Update Profile';
 			break;
 		case 'loading':
-			singUpBtnText = 'signing up...';
+			singUpBtnText = 'Updating...';
 			break;
 		case 'success':
-			singUpBtnText = 'try logging in';
+			singUpBtnText = 'Profile Updated';
 			singUpBtnColor = 'success';
 			break;
 		case 'error':
@@ -63,53 +55,57 @@ const SignUpForm = ({
 	const serverResErr = error?.response?.data;
 
 	return (
-		<Modal
-			open={openSignUpForm}
-			onClose={handleCloseSignUpForm}
-			aria-labelledby='sign-up-form'
-			sx={{
-				display: 'flex',
-				justifyContent: 'center',
-				alignItems: 'center',
-			}}
-		>
-			<Paper sx={{ width: '350px', p: '20px' }}>
-				<Typography variant='h4' fontWeight={600}>
-					Sign Up
-				</Typography>
-				<Typography variant='subtitle1'>It's quick and easy.</Typography>
-				<Divider sx={{ my: '1rem', mx: '-20px' }} />
-				<Stack spacing={2} component='form' onSubmit={onSubmit}>
-					<FormControl
-						variant='outlined'
-						error={Boolean(errors.userName || serverResErr?.userName)}
-					>
-						<InputLabel htmlFor='userName'>User Name</InputLabel>
-						<OutlinedInput
-							id='userName'
-							label='userName'
-							{...register('userName')}
-							disabled={isLoading}
-						/>
-						<FormHelperText id='userName'>
-							{errors.userName?.message || serverResErr?.userName}
-						</FormHelperText>
-					</FormControl>
+		<Box sx={{ maxWidth: '600px', p: '20px' }}>
+			<Typography variant='h4' fontWeight={600}>
+				Edit Your Profile
+			</Typography>
+			<Divider sx={{ my: '1rem', mx: '-20px' }} />
+			<Stack spacing={2} component='form' onSubmit={onSubmit}>
+				<FormControl
+					variant='outlined'
+					error={Boolean(errors.userName || serverResErr?.userName)}
+				>
+					<InputLabel htmlFor='userName'>User Name</InputLabel>
+					<OutlinedInput
+						id='userName'
+						label='userName'
+						{...register('userName')}
+						disabled={isLoading}
+					/>
+					<FormHelperText id='userName'>
+						{errors.userName?.message || serverResErr?.userName}
+					</FormHelperText>
+				</FormControl>
 
-					<FormControl variant='outlined' error={Boolean(errors.avatar)}>
-						<InputLabel htmlFor='avatar'>Avatar</InputLabel>
-						<OutlinedInput
-							id='avatar'
-							label='avatar'
-							{...register('avatar')}
-							disabled={isLoading}
-						/>
-						<FormHelperText id='avatar'>
-							{errors.avatar?.message || 'Image Link (Optional)'}
-						</FormHelperText>
-					</FormControl>
+				<FormControl variant='outlined' error={Boolean(errors.avatar)}>
+					<InputLabel htmlFor='avatar'>Avatar</InputLabel>
+					<OutlinedInput
+						id='avatar'
+						label='avatar'
+						{...register('avatar')}
+						disabled={isLoading}
+					/>
+					<FormHelperText id='avatar'>
+						{errors.avatar?.message || 'Image Link (Optional)'}
+					</FormHelperText>
+				</FormControl>
 
+				<FormControl variant='outlined' error={Boolean(errors.cover)}>
+					<InputLabel htmlFor='cover'>Cover</InputLabel>
+					<OutlinedInput
+						id='cover'
+						label='cover'
+						{...register('cover')}
+						disabled={isLoading}
+					/>
+					<FormHelperText id='cover'>
+						{errors.cover?.message || 'Image Link (Optional)'}
+					</FormHelperText>
+				</FormControl>
+
+				<Stack direction='row' spacing={2}>
 					<FormControl
+						fullWidth
 						variant='outlined'
 						error={Boolean(errors.email || serverResErr?.email)}
 					>
@@ -125,7 +121,11 @@ const SignUpForm = ({
 						</FormHelperText>
 					</FormControl>
 
-					<FormControl variant='outlined' error={Boolean(errors.confirmEmail)}>
+					<FormControl
+						fullWidth
+						variant='outlined'
+						error={Boolean(errors.confirmEmail)}
+					>
 						<InputLabel htmlFor='confirmEmail'>Confirm Email</InputLabel>
 						<OutlinedInput
 							id='confirmEmail'
@@ -137,8 +137,14 @@ const SignUpForm = ({
 							{errors.confirmEmail?.message}
 						</FormHelperText>
 					</FormControl>
+				</Stack>
 
-					<FormControl variant='outlined' error={Boolean(errors.password)}>
+				<Stack direction='row' spacing={2}>
+					<FormControl
+						fullWidth
+						variant='outlined'
+						error={Boolean(errors.password)}
+					>
 						<InputLabel htmlFor='password'>password</InputLabel>
 						<OutlinedInput
 							id='password'
@@ -153,6 +159,7 @@ const SignUpForm = ({
 					</FormControl>
 
 					<FormControl
+						fullWidth
 						variant='outlined'
 						error={Boolean(errors.confirmPassword)}
 					>
@@ -179,20 +186,20 @@ const SignUpForm = ({
 							{errors.confirmPassword?.message}
 						</FormHelperText>
 					</FormControl>
-
-					<Button
-						variant='contained'
-						size='large'
-						type='submit'
-						disabled={isLoading}
-						color={singUpBtnColor}
-					>
-						{singUpBtnText}
-					</Button>
 				</Stack>
-			</Paper>
-		</Modal>
+
+				<Button
+					variant='contained'
+					size='large'
+					type='submit'
+					disabled={isLoading}
+					color={singUpBtnColor}
+				>
+					{singUpBtnText}
+				</Button>
+			</Stack>
+		</Box>
 	);
 };
 
-export default SignUpForm;
+export default UserUpdateForm;

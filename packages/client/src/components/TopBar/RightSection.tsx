@@ -1,9 +1,9 @@
+import { Settings as SettingsIcon } from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightModeRounded';
 import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
-import SettingsIcon from '@mui/icons-material/SettingsRounded';
 import {
 	Badge,
 	Button,
@@ -30,8 +30,7 @@ import { useRecoilState, useRecoilValue } from 'recoil';
 import { TUiUser } from '../../common/types';
 import useChatBox from '../../hooks/useChatBox';
 import useGetConversation from '../../hooks/useGetConversation';
-import useGetCurrentUserFriends from '../../hooks/useGetFriends';
-import useLogout from '../../hooks/useLogout';
+import { useGetCurrentUserFriends, useLogout } from '../../hooks/usersHooks';
 import { currentUserState, themeState } from '../../recoil/atoms';
 
 const RightSection = () => {
@@ -141,7 +140,11 @@ const RightSection = () => {
 				open={Boolean(settingsAnchorEl)}
 				onClose={handleCloseSettingsMenu}
 			>
-				<MenuItem onClick={handleCloseSettingsMenu}>
+				<MenuItem
+					component={RouterLink}
+					to='/setting/account'
+					onClick={handleCloseSettingsMenu}
+				>
 					<ListItemIcon>
 						<SettingsIcon fontSize='small' />
 					</ListItemIcon>
@@ -192,8 +195,8 @@ const RightSection = () => {
 						</Typography>
 						<List>
 							{friends?.map((friend) => (
-								<Suspense fallback={<ChatsListItemSkeleton />}>
-									<ChatsListItem key={friend.id} friend={friend} />
+								<Suspense key={friend.id} fallback={<ChatsListItemSkeleton />}>
+									<ChatsListItem friend={friend} />
 								</Suspense>
 							))}
 						</List>

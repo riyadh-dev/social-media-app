@@ -5,10 +5,26 @@ export interface IUser {
 	avatar?: string;
 	userName: string;
 	email: string;
+	cover?: string;
+	intro?: {
+		bio?: string;
+		address?: string;
+		from?: string;
+		work?: string;
+		studiesAt?: string;
+		studiedAt?: string;
+		relationshipStatus?:
+			| 'Single'
+			| 'Married'
+			| 'Engaged'
+			| 'In A Relationship'
+			| 'Its Complicated';
+	};
 	password: string;
 	friends: string[];
 	likedPosts: string[];
 	dislikedPosts: string[];
+	//TODO remove
 	isAdmin: boolean;
 	createdAt: Date;
 	updatedAt: Date;

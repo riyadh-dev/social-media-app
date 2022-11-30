@@ -15,7 +15,7 @@ import {
 	useRejectFriendRequest,
 	useSendFriendRequest,
 } from '../../hooks/friendRequestsHooks';
-import useUnfriend from '../../hooks/useUnfriend';
+import { useUnfriend } from '../../hooks/usersHooks';
 
 interface IReceivedRequestCardProps {
 	cardType: 'received-request';

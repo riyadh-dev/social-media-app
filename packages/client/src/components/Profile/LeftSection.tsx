@@ -1,6 +1,10 @@
+import {
+	Favorite as FavoriteIcon,
+	House as HouseIcon,
+	LocationOn as LocationOnIcon,
+	Person as PersonIcon,
+} from '@mui/icons-material';
 import BusinessCenterIcon from '@mui/icons-material/BusinessCenter';
-import FavoriteIcon from '@mui/icons-material/Favorite';
-import LocationOnIcon from '@mui/icons-material/LocationOn';
 import SchoolIcon from '@mui/icons-material/School';
 import WatchLaterIcon from '@mui/icons-material/WatchLater';
 import {
@@ -17,13 +21,15 @@ import { debounce } from 'lodash';
 import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
 import { Link, Link as RouterLink, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
 import { queryClient } from '../..';
 import queryKeys from '../../constants/reactQueryKeys';
-import useGetUserById from '../../hooks/useGetUserById';
-import useGetUsersById from '../../hooks/useGetUsersById';
+import { useGetUserById, useGetUsersById } from '../../hooks/usersHooks';
+import { currentUserState } from '../../recoil/atoms';
 
 const LeftSection = () => {
 	const { userId } = useParams();
+	const currentUser = useRecoilValue(currentUserState);
 	const { data: user } = useGetUserById(userId);
 	const { data: friends } = useGetUsersById(
 		user?.friends,
@@ -77,25 +83,73 @@ const LeftSection = () => {
 				}}
 			>
 				<Stack spacing={2.5}>
-					<Typography sx={{ fontWeight: 'bold' }} variant='h5'>
-						Intro
-					</Typography>
-					<Stack direction='row' spacing={1} alignItems='center'>
-						<BusinessCenterIcon />
-						<Typography variant='body1'>Work</Typography>
+					<Stack direction='row' spacing={1} justifyContent='space-between'>
+						<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
+							Intro
+						</Typography>
+						{userId === currentUser?.id && (
+							<Button
+								component={Link}
+								to='/setting/intro'
+								color='primary'
+								variant='text'
+							>
+								Edit
+							</Button>
+						)}
 					</Stack>
-					<Stack direction='row' spacing={1} alignItems='center'>
-						<SchoolIcon />
-						<Typography variant='body1'>Study</Typography>
-					</Stack>
-					<Stack direction='row' spacing={1} alignItems='center'>
-						<LocationOnIcon />
-						<Typography variant='body1'>Live</Typography>
-					</Stack>
-					<Stack direction='row' spacing={1} alignItems='center'>
-						<FavoriteIcon />
-						<Typography variant='body1'>Relationship</Typography>
-					</Stack>
+					{user.intro?.bio && (
+						<Stack direction='row' spacing={1}>
+							<PersonIcon />
+							<Typography variant='body1'>Bio: {user.intro?.bio}</Typography>
+						</Stack>
+					)}
+					{user.intro?.work && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<BusinessCenterIcon />
+							<Typography variant='body1'>
+								Works at {user.intro?.work}
+							</Typography>
+						</Stack>
+					)}
+					{user.intro?.studiedAt && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<SchoolIcon />
+							<Typography variant='body1'>
+								Studied at {user.intro?.studiedAt}
+							</Typography>
+						</Stack>
+					)}
+					{user.intro?.studiesAt && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<SchoolIcon />
+							<Typography variant='body1'>
+								Studies at {user.intro?.studiesAt}
+							</Typography>
+						</Stack>
+					)}
+					{user.intro?.from && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<LocationOnIcon />
+							<Typography variant='body1'>From {user.intro?.from}</Typography>
+						</Stack>
+					)}
+					{user.intro?.address && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<HouseIcon />
+							<Typography variant='body1'>
+								Lives in {user.intro?.address}
+							</Typography>
+						</Stack>
+					)}
+					{user.intro?.relationshipStatus && (
+						<Stack direction='row' spacing={1} alignItems='center'>
+							<FavoriteIcon />
+							<Typography variant='body1'>
+								{user.intro?.relationshipStatus}
+							</Typography>
+						</Stack>
+					)}
 					<Stack direction='row' spacing={1} alignItems='center'>
 						<WatchLaterIcon />
 						<Typography variant='body1'>

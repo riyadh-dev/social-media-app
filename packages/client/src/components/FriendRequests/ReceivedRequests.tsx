@@ -2,7 +2,7 @@ import { Grid } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import queryKeys from '../../constants/reactQueryKeys';
 import { useGetReceivedFriendRequests } from '../../hooks/friendRequestsHooks';
-import useGetUsersById from '../../hooks/useGetUsersById';
+import { useGetUsersById } from '../../hooks/usersHooks';
 import UserCard from './UserCard';
 
 const ReceivedRequests = () => {

@@ -18,10 +18,6 @@ export type TWebSocketAction =
 	| IUserConnectionAction
 	| IFriendRequestAction;
 
-export type TUpdateUserInput = Pick<
-	IUser,
-	'userName' | 'avatar' | 'email' | 'password'
->;
 export type TLoginInput = Pick<IUser, 'password' | 'email'>;
 export type TSignUpInput = Pick<
 	IUser,
@@ -41,3 +37,8 @@ export type TChatMessageInput = Pick<
 export type TPostInput = Pick<IPost, 'img' | 'description'>;
 
 export type TPostCommentInput = Pick<IPostComment, 'text'>;
+
+export type TUpdateUserInput = Pick<
+	Partial<IUser>,
+	'avatar' | 'cover' | 'email' | 'password' | 'userName' | 'intro'
+>;

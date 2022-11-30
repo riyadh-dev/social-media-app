@@ -1,11 +1,11 @@
-import { object, ref, string } from 'yup';
+import { isEmpty } from 'lodash';
+import { mixed, object, ref, string } from 'yup';
+
+const transformFunction = (val: unknown) => (val ? val : undefined);
 
 export const signUpValidationSchema = object({
 	userName: string().required('Username is a required field'),
-	avatar: string()
-		.url()
-		.optional()
-		.transform((val) => (val ? val : undefined)),
+	avatar: string().url().transform(transformFunction),
 	email: string().email().required('Email is a required field'),
 	confirmEmail: string()
 		.email()
@@ -29,3 +29,44 @@ export const chatMessageSchema = object({
 export const searchUserInputSchema = object({
 	text: string().min(3).required('cant search an empty string'),
 }).required();
+
+export const updateUserProfileValidationSchema = object({
+	userName: string().transform(transformFunction),
+	avatar: string().url().transform(transformFunction),
+	cover: string().url().transform(transformFunction),
+	email: string().email().transform(transformFunction),
+	confirmEmail: string()
+		.email()
+		.transform(transformFunction)
+		.oneOf([ref('email'), null], 'Emails do not match'),
+	password: string().min(8).transform(transformFunction),
+	confirmPassword: string()
+		.transform(transformFunction)
+		.oneOf([ref('password'), null], 'Passwords do not match'),
+}).test('notEmpty', function (value) {
+	return isEmpty(value)
+		? this.createError({
+				path: this.path,
+				message: 'fill at least on filled',
+		  })
+		: true;
+});
+
+export const updateUserIntroValidationSchema = object({
+	bio: string().transform(transformFunction),
+	address: string().transform(transformFunction),
+	from: string().transform(transformFunction),
+	work: string().transform(transformFunction),
+	studiesAt: string().transform(transformFunction),
+	studiedAt: string().transform(transformFunction),
+	relationshipStatus: mixed<
+		'Single' | 'Married' | 'Engaged' | 'In A Relationship' | 'Its Complicated'
+	>().transform((val: unknown) => (val || val === '' ? val : undefined)),
+}).test('notEmpty', function (value) {
+	return isEmpty(value)
+		? this.createError({
+				path: this.path,
+				message: 'fill at least on filled',
+		  })
+		: true;
+});

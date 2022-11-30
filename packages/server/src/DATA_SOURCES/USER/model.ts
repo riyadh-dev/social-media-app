@@ -11,6 +11,16 @@ const UserSchema = new Schema<IUser>({
 	likedPosts: [String],
 	dislikedPosts: [String],
 	isAdmin: { type: Boolean, default: false },
+
+	intro: {
+		bio: String,
+		address: String,
+		from: String,
+		work: String,
+		studiesAt: String,
+		studiedAt: String,
+		relationshipStatus: String,
+	},
 });
 
 UserSchema.pre('save', function (next) {

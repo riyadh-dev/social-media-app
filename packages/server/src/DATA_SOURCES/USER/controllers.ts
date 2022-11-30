@@ -1,3 +1,4 @@
+import { TLoginInput } from '@social-media-app/shared/src';
 import bcrypt from 'bcryptjs';
 import { RequestHandler } from 'express';
 import Joi from 'joi';
@@ -20,7 +21,7 @@ const signupUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const loginUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const loginInput = req.loginInput;
+	const loginInput = req.loginInput as TLoginInput;
 	const userDoc = await UserModel.findOne({ email: loginInput.email });
 	if (!userDoc) {
 		res.status(400).json({ error: 'wrong password or email' });
@@ -55,37 +56,19 @@ export const logout: RequestHandler = (req, res) => {
 };
 
 const updateUserUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const updatedUserId = req.params.id;
-	if (!isValidObjectId(updatedUserId)) {
-		res.status(400).json({ error: 'invalid user id' });
-		return;
-	}
-
 	const currentUserId = req.currentUserId as string;
-	const currentUserDoc = await UserModel.findById(currentUserId);
-	if (updatedUserId !== currentUserId && !currentUserDoc?.isAdmin) {
-		res.status(400).json({ error: 'you can only update your account' });
-		return;
-	}
-
-	const updateInput = res.locals.validatedBody;
-	if (updateInput.password) {
-		const salt = bcrypt.genSaltSync(10);
-		updateInput.password = bcrypt.hashSync(updateInput.password, salt);
-	}
 
 	const updateUser = await UserModel.findByIdAndUpdate(
-		updatedUserId,
-		updateInput,
-		{ new: true }
-	).select('-password');
+		currentUserId,
+		req.updateUserInput
+	);
 
 	if (!updateUser) {
 		res.status(400).json({ error: 'no such user' });
 		return;
 	}
 
-	res.status(200).json(updateUser.toObject({ versionKey: false }));
+	res.status(200).end();
 };
 
 const deleteUserUnsafe: IAsyncRequestHandler = async (req, res) => {

@@ -16,7 +16,7 @@ import { alpha, styled } from '@mui/material/styles';
 import { debounce } from 'lodash';
 import { useEffect, useRef, useState } from 'react';
 import { Link } from 'react-router-dom';
-import useSearchUsersByUserName from '../../hooks/useSearchUsersByUserName';
+import { useSearchUsersByUserName } from '../../hooks/usersHooks';
 
 interface PopperComponentProps {
 	anchorEl?: unknown;

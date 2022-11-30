@@ -13,13 +13,12 @@ import {
 	useSendFriendRequest,
 } from '../../hooks/friendRequestsHooks';
 import useChatBox from '../../hooks/useChatBox';
-import { useGetCurrentUserFriendsIds } from '../../hooks/useGetFriends';
-import useGetUserById from '../../hooks/useGetUserById';
-import useUnfriend from '../../hooks/useUnfriend';
+import {
+	useGetCurrentUserFriendsIds,
+	useGetUserById,
+	useUnfriend,
+} from '../../hooks/usersHooks';
 import { currentUserState } from '../../recoil/atoms';
-
-const COVER_IMG =
-	'https://images.pexels.com/photos/2002719/pexels-photo-2002719.jpeg?cs=srgb&dl=pexels-timothy-paule-ii-2002719.jpg&fm=jpg';
 
 const StyledBox = styled(Box)(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
@@ -28,6 +27,21 @@ const StyledBox = styled(Box)(({ theme }) => ({
 const AvatarBox = styled(Box)(({ theme }) => ({
 	backgroundColor: theme.palette.background.paper,
 	border: `4px solid ${theme.palette.background.paper}`,
+}));
+
+const coverStyle: React.CSSProperties = {
+	width: '100%',
+	overflow: 'hidden',
+	display: 'flex',
+	justifyContent: 'center',
+	objectFit: 'cover',
+	height: '350px',
+	borderRadius: '0 0 8px 8px',
+};
+
+const CoverDiv = styled('div')(({ theme }) => ({
+	...coverStyle,
+	backgroundColor: theme.palette.background.default,
 }));
 
 const UpperSection = () => {
@@ -39,11 +53,7 @@ const UpperSection = () => {
 	if (!user) return <h1>User Not Found</h1>;
 
 	return (
-		<StyledBox
-			sx={{
-				width: '100%',
-			}}
-		>
+		<StyledBox sx={{ width: '100%' }}>
 			<Box
 				sx={{
 					px: { xs: 0, md: '20px' },
@@ -52,19 +62,11 @@ const UpperSection = () => {
 					mx: 'auto',
 				}}
 			>
-				<img
-					src={COVER_IMG}
-					alt='cover'
-					style={{
-						width: '100%',
-						overflow: 'hidden',
-						display: 'flex',
-						justifyContent: 'center',
-						objectFit: 'cover',
-						height: '350px',
-						borderRadius: '0 0 8px 8px',
-					}}
-				/>
+				{user.cover ? (
+					<img src={user.cover} alt='cover' style={coverStyle} />
+				) : (
+					<CoverDiv />
+				)}
 				<Stack
 					direction={{ xs: 'column', md: 'row' }}
 					justifyContent={{ xs: 'center', md: 'space-between' }}

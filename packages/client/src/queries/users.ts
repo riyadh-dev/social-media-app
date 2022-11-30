@@ -1,12 +1,15 @@
-import { TLoginInput } from '@social-media-app/shared/';
-import { TCurrentUser, TUiSignUpInput, TUiUser } from '../common/types';
+import {
+	TLoginInput,
+	TSignUpInput,
+	TUpdateUserInput,
+} from '@social-media-app/shared/';
+import { TCurrentUser, TUiUser } from '../common/types';
 import { axiosInstance } from '../services/axios';
 
 export const signUpQuery = async (
-	signUpInput: TUiSignUpInput
+	signUpInput: TSignUpInput
 ): Promise<unknown> => {
-	const { confirmEmail, confirmPassword, ...payload } = signUpInput;
-	const { data } = await axiosInstance.post('/users/signup', payload, {
+	const { data } = await axiosInstance.post('/users/signup', signUpInput, {
 		withCredentials: true,
 	});
 	return data;
@@ -61,6 +64,16 @@ export const searchUsersByUserNameQuery = async (
 ): Promise<TUiUser[]> => {
 	if (!userName) Promise.reject(new Error('Invalid id'));
 	const { data } = await axiosInstance.get(`/users/search/${userName}`, {
+		withCredentials: true,
+	});
+	return data;
+};
+
+export const updateUserQuery = async (
+	updateUserInput?: TUpdateUserInput
+): Promise<unknown> => {
+	if (!updateUserInput) Promise.reject(new Error('Invalid input'));
+	const { data } = await axiosInstance.put('/users/update/', updateUserInput, {
 		withCredentials: true,
 	});
 	return data;

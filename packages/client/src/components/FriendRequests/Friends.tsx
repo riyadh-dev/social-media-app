@@ -1,6 +1,6 @@
 import { Grid, Stack } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import useGetCurrentUserFriends from '../../hooks/useGetFriends';
+import { useGetCurrentUserFriends } from '../../hooks/usersHooks';
 import UserCard from './UserCard';
 
 const FriendsCardList = () => {

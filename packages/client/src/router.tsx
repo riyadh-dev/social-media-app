@@ -1,9 +1,12 @@
 import { Stack } from '@mui/material';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Main from './components/Pages/Main';
-import RequireAuth from './components/RequireAuth';
 import Friends from './components/Pages/Friends';
+import Main from './components/Pages/Main';
+import Settings from './components/Pages/Settings';
+import RequireAuth from './components/RequireAuth';
+import IntroUpdateForm from './components/Settings/IntroUpdateForm';
+import UserUpdateForm from './components/Settings/UserUpdateForm';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
 const Home = lazy(() => import('./components/Pages/Home'));
@@ -28,8 +31,17 @@ const router = createBrowserRouter([
 			{ path: 'favorites', element: <Home /> },
 			{ path: 'friends', element: <Friends /> },
 			{ path: 'profile/:userId', element: <Profile /> },
+			{
+				path: 'setting',
+				element: <Settings />,
+				children: [
+					{ path: 'account', element: <UserUpdateForm /> },
+					{ path: 'intro', element: <IntroUpdateForm /> },
+				],
+			},
 		],
 	},
+
 	{
 		path: '/login',
 		element: <LoginSignUp />,
