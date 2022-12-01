@@ -12,7 +12,7 @@ const addFriendsAndGenMsgs = async (
 
 	const randIdx = () => Math.round(Math.random() * (users.length - 1));
 
-	const messages: Omit<IChatMessage, 'id' | 'updatedAt' | 'createdAt'>[] = [];
+	const messages: Omit<IChatMessage, 'id'>[] = [];
 	const promises: Promise<unknown>[] = [];
 	const usersMap = new Map<string, TUserDocument>();
 
@@ -36,6 +36,8 @@ const addFriendsAndGenMsgs = async (
 					senderId: isEven ? friendId : userId,
 					text: faker.lorem.sentence(3),
 					status: 'sent',
+					createdAt: faker.date.between('2015', '2022'),
+					updatedAt: faker.date.between('2015', '2022'),
 				});
 			}
 		}

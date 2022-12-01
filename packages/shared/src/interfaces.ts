@@ -92,3 +92,9 @@ export interface IFriendRequestAction {
 	type: 'received-friend-request';
 	payload: IFriendRequest;
 }
+
+export interface IGetPostsWithImagesInput {
+	postId?: string;
+	authorId?: string;
+	date?: number | 'first';
+}

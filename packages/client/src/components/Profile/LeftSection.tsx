@@ -174,7 +174,7 @@ const LeftSection = () => {
 						<ImageListItem
 							component={RouterLink}
 							key={'post-image-' + image.id}
-							to={image.img}
+							to={`/posts/${userId}/${image.id}`}
 						>
 							<img src={image.img} alt='post' loading='lazy' />
 						</ImageListItem>

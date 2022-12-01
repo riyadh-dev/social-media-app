@@ -1,4 +1,4 @@
-import { TLoginInput } from '@social-media-app/shared/src';
+import { TLoginInput } from '@social-media-app/shared';
 import bcrypt from 'bcryptjs';
 import { RequestHandler } from 'express';
 import Joi from 'joi';

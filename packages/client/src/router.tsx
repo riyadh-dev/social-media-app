@@ -3,6 +3,7 @@ import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Friends from './components/Pages/Friends';
 import Main from './components/Pages/Main';
+import PostsWithImageViewer from './components/Pages/PostsWithImageViewer';
 import Settings from './components/Pages/Settings';
 import RequireAuth from './components/RequireAuth';
 import IntroUpdateForm from './components/Settings/IntroUpdateForm';
@@ -41,7 +42,10 @@ const router = createBrowserRouter([
 			},
 		],
 	},
-
+	{
+		path: '/posts/:authorId/:postId/',
+		element: <PostsWithImageViewer />,
+	},
 	{
 		path: '/login',
 		element: <LoginSignUp />,

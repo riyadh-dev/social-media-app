@@ -7,6 +7,7 @@ const UserSchema = new Schema<IUser>({
 	userName: { type: String, unique: true },
 	password: String,
 	avatar: String,
+	cover: String,
 	friends: [String],
 	likedPosts: [String],
 	dislikedPosts: [String],

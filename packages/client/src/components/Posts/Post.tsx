@@ -63,9 +63,10 @@ const Post = ({
 
 	const { data: comments, isLoading: areCommentsLoading } = useGetPostComments(
 		post.comments,
-		post.id,
-		showComments
+		showComments,
+		post.id
 	);
+
 	const { mutate: likeMutation } = useLikePost(post.id);
 	const { mutate: dislikeMutation } = useDislikePost(post.id);
 

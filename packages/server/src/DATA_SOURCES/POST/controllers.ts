@@ -1,3 +1,4 @@
+import { IGetPostsWithImagesInput } from '@social-media-app/shared';
 import { isValidObjectId } from 'mongoose';
 import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
@@ -174,7 +175,8 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.params.userId;
 	const date = req.params.date;
-
+	const filter =
+		date === 'first' ? {} : { createdAt: { $lt: new Date(parseInt(date)) } };
 	const userDoc = await UserModel.findById(userId);
 	if (!userDoc) {
 		res.status(404).json({ error: 'no such user' });
@@ -188,7 +190,7 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	const posts = await PostModel.find({
 		'author.id': { $in: [...userDoc.friends, userDoc.id] },
-		createdAt: { $lt: new Date(parseInt(date)) },
+		...filter,
 	})
 		.sort({ createdAt: -1 })
 		.limit(15);
@@ -199,6 +201,9 @@ const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 const getLikedPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const userId = req.params.userId;
 	const date = req.params.date;
+
+	const filter =
+		date === 'first' ? {} : { createdAt: { $lt: new Date(parseInt(date)) } };
 
 	const userDoc = await UserModel.findById(userId);
 	if (!userDoc) {
@@ -213,12 +218,65 @@ const getLikedPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 	const posts = await PostModel.find({
 		likes: userDoc.id,
-		createdAt: { $lt: new Date(parseInt(date)) },
+		...filter,
 	})
 		.sort({ createdAt: -1 })
 		.limit(15);
 
 	res.status(200).json(posts);
+};
+
+const getImageViewersPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const { authorId, date, postId } =
+		req.postWithImagesInput as IGetPostsWithImagesInput;
+
+	const postsAcc = [];
+
+	if (postId) {
+		const post = await PostModel.findById(postId);
+		if (!post || !post.img) {
+			res
+				.status(404)
+				.json({ error: 'post not found or does not have an image' });
+			return;
+		}
+
+		const author = await UserModel.findById(post.author.id);
+		if (!author) {
+			res.status(404).json({ error: 'no such user' });
+			return;
+		}
+
+		console.log(post.updatedAt);
+		console.log(post.createdAt);
+
+		const posts = await PostModel.find({
+			'author.id': { $in: [...author.friends, author.id] },
+			img: { $exists: true },
+			createdAt: { $lt: post.createdAt },
+		})
+			.sort({ createdAt: -1 })
+			.limit(2);
+		if (posts) postsAcc.push(...posts, post);
+	} else {
+		const author = await UserModel.findById(authorId);
+		if (!author) {
+			res.status(404).json({ error: 'no such user' });
+			return;
+		}
+
+		const posts = await PostModel.find({
+			'author.id': { $in: [...author.friends, author.id] },
+			img: { $exists: true },
+			createdAt: { $lt: new Date(date as number) },
+		})
+			.sort({ createdAt: -1 })
+			.limit(3);
+
+		if (posts) postsAcc.push(...posts);
+	}
+
+	res.status(200).json(postsAcc);
 };
 
 export const createPost = catchAsyncReqHandlerErr(createPostUnsafe);
@@ -229,3 +287,6 @@ export const likePost = catchAsyncReqHandlerErr(likePostUnsafe);
 export const dislikePost = catchAsyncReqHandlerErr(dislikePostUnsafe);
 export const getTimelinePosts = catchAsyncReqHandlerErr(getTimelinePostsUnsafe);
 export const getLikedPosts = catchAsyncReqHandlerErr(getLikedPostsUnsafe);
+export const getImageViewersPosts = catchAsyncReqHandlerErr(
+	getImageViewersPostsUnsafe
+);

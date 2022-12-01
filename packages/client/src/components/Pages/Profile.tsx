@@ -5,7 +5,6 @@ import PostsInfiniteList from '../Posts/PostsInfiniteList';
 import PostsInfiniteListSkeleton from '../Posts/PostsInfiniteListSkeleton';
 import LeftSection from '../Profile/LeftSection';
 import UpperSection from '../Profile/UpperSection';
-
 const Profile = () => {
 	const { userId } = useParams();
 	return (

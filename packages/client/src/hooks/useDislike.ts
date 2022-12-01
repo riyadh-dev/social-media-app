@@ -7,10 +7,11 @@ import { dislikePostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
 //TODO optimistic update is a bit slow find a better implementation: maybe tag each post with its page index or use a map
-const useDislikePost = (postId: string) => {
+const useDislikePost = (postId?: string) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
-	return useMutation([queryKeys.post, postId], () => dislikePostQuery(postId), {
+
+	return useMutation(() => dislikePostQuery(postId), {
 		// When mutate is called:
 		onMutate: async () => {
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)

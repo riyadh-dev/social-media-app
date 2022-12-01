@@ -7,7 +7,7 @@ import { likePostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
 //optimistic updates
-const useLikePost = (postId: string) => {
+const useLikePost = (postId?: string) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 

@@ -4,8 +4,8 @@ import { getPostCommentQuery } from '../queries/postComments';
 
 const useGetPostComments = (
 	commentIds: string[] = [],
-	postId: string,
-	enabled: boolean
+	enabled: boolean,
+	postId?: string
 ) => {
 	return useQuery(
 		queryKeys.postComments(postId),

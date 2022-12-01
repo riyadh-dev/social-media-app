@@ -1,5 +1,7 @@
+import { clearDB, connectDB, setMongoosePlugin } from '../config/db';
+setMongoosePlugin();
+
 import chalk from 'chalk';
-import { clearDB, connectDB } from '../config/db';
 import addFriendsAndGenMsgs from './addFriendsAndGenMsgs';
 import genPosts from './genPosts';
 import genUsers from './genUsers';

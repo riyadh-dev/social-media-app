@@ -1,39 +1,60 @@
 import { faker } from '@faker-js/faker';
-import { IPost } from '@social-media-app/shared';
+import { IPost, IPostComment } from '@social-media-app/shared';
 import chalk from 'chalk';
 import { TUserDocument } from '../common/types';
 import PostModel from '../DATA_SOURCES/POST/model';
+import PostCommentModel from '../DATA_SOURCES/POST_COMMENT/model';
 
-//TODO add comments likes and dislikes
+const COMMENTS_PER_POST = 15;
+
 const genPosts = async (usersDocs: TUserDocument[], postsNumber: number) => {
-	console.log(chalk.yellow('Creating Posts...'));
-
-	const promises: Promise<unknown>[] = [];
-
-	usersDocs.forEach((userDoc) => {
-		for (let index = 0; index < postsNumber; index++) {
-			const post: Omit<IPost, 'id' | 'updatedAt'> = {
+	console.log(chalk.yellow('Creating Comments...'));
+	const commentBodies: Omit<IPostComment, 'id'>[] = [];
+	usersDocs.forEach((author) => {
+		for (let index = 0; index < COMMENTS_PER_POST; index++) {
+			commentBodies.push({
 				author: {
-					id: userDoc.id,
-					avatar: userDoc.avatar,
-					userName: userDoc.userName,
+					id: author.id,
+					userName: author.userName,
+					avatar: author.avatar,
 				},
-				description: faker.commerce.productDescription(),
-				img:
-					faker.image.nature() +
-					'?random=' +
-					Math.floor(Math.random() * 100000),
 				dislikes: [],
 				likes: [],
-				comments: [],
-				createdAt: faker.date.recent(365 * 3),
-			};
-
-			promises.push(PostModel.create(post));
+				text: faker.lorem.sentence(),
+				createdAt: faker.date.between('2015', '2022'),
+				updatedAt: faker.date.between('2015', '2022'),
+			});
 		}
 	});
 
-	await Promise.all(promises);
+	const postCommentIds = (await PostCommentModel.create(commentBodies)).map(
+		(comment) => comment.id
+	);
+
+	console.log(chalk.yellow('Creating Posts...'));
+	const postBodies: Omit<IPost, 'id'>[] = [];
+	usersDocs.forEach((author) => {
+		let cursor = 0;
+		for (let index = 0; index < postsNumber; index++) {
+			postBodies.push({
+				author: {
+					id: author.id,
+					avatar: author.avatar,
+					userName: author.userName,
+				},
+				description: faker.commerce.productDescription(),
+				img: faker.image.business(640, 480, true),
+				dislikes: [],
+				likes: [],
+				comments: postCommentIds.slice(cursor, cursor + COMMENTS_PER_POST),
+				createdAt: faker.date.between('2015', '2022'),
+				updatedAt: faker.date.between('2015', '2022'),
+			});
+			cursor += COMMENTS_PER_POST + 1;
+		}
+	});
+
+	await PostModel.create(postBodies);
 };
 
 export default genPosts;
