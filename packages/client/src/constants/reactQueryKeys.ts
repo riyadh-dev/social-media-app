@@ -1,3 +1,5 @@
+import { TPaginatedPostsType } from '../common/types';
+
 const queryKeys = {
 	friends: (friendsOfId?: string) => ['users', 'friends', friendsOfId],
 	friendsIds: 'friends-Ids',
@@ -8,8 +10,11 @@ const queryKeys = {
 	unreadMessages: ['messages', 'unread'],
 	post: (postId?: string) => ['post', postId],
 	user: (userId?: string) => ['user', userId],
-	timeline: (userId?: string) => ['posts', 'timeline', userId],
-	likedPosts: (userId?: string) => ['posts', 'liked', userId],
+	posts: (type: TPaginatedPostsType, userId?: string) => [
+		'posts',
+		type,
+		userId,
+	],
 	postComments: (postId?: string) => ['post-comments', postId],
 	friendRequestReceivers: ['users', 'friend-request-receiver'],
 	friendRequesters: ['users', 'friend-requesters'],

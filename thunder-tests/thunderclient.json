@@ -304,18 +304,24 @@
     "colId": "faa53c50-82ba-4351-bb01-db5ee094536b",
     "containerId": "",
     "name": "Timeline",
-    "url": "http://localhost:4000/api/posts/timeline",
+    "url": "http://localhost:4000/api/posts/timeline/638918c75e097383413dec38?page=1",
     "method": "GET",
     "sortNum": 40000,
     "created": "2021-12-29T09:22:45.623Z",
-    "modified": "2021-12-29T13:50:13.552Z",
+    "modified": "2022-12-03T15:31:49.032Z",
     "headers": [
       {
         "name": "csrf-token",
         "value": "{{CSRF_TOKEN}}"
       }
     ],
-    "params": [],
+    "params": [
+      {
+        "name": "page",
+        "value": "1",
+        "isPath": false
+      }
+    ],
     "body": {
       "type": "json",
       "raw": "{\n    \"username\": \"user\",\n    \"password\": \"password\"\n}",

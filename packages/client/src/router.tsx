@@ -1,7 +1,9 @@
 import { Stack } from '@mui/material';
-import { lazy } from 'react';
+import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
 import Main from './components/Pages/Main';
+import PostsWithImageViewer from './components/Pages/PostsWithImageViewer';
+import PostsWithImageViewerSkeleton from './components/Posts/PostsWithImageViewerSkeleton';
 import RequireAuth from './components/RequireAuth';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
@@ -17,9 +19,9 @@ const UserUpdateForm = lazy(
 	() => import('./components/Settings/UserUpdateForm')
 );
 
-const PostsWithImageViewer = lazy(
+/* const PostsWithImageViewer = lazy(
 	() => import('./components/Pages/PostsWithImageViewer')
-);
+); */
 
 const PlaceHolderComp = ({ compName }: { compName: string }) => (
 	<Stack justifyContent='center' alignItems='center' height='100vh'>
@@ -52,8 +54,12 @@ const router = createBrowserRouter([
 		],
 	},
 	{
-		path: '/posts/:authorId/:postId/',
-		element: <PostsWithImageViewer />,
+		path: '/posts/:type/:authorId',
+		element: (
+			<Suspense fallback={<PostsWithImageViewerSkeleton />}>
+				<PostsWithImageViewer />
+			</Suspense>
+		),
 	},
 	{
 		path: '/login',

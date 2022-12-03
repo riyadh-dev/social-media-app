@@ -66,7 +66,7 @@ const useAddPostComment = (postId?: string) => {
 		//add the comment id to the post
 		onSuccess: ({ id: postCommentId }) => {
 			queryClient.setQueryData<InfiniteData<IPost[]> | undefined>(
-				queryKeys.timeline(timelineOwnerId),
+				queryKeys.posts('timeline', timelineOwnerId),
 				(old) => {
 					old?.pages.every((page) =>
 						page.every((post) =>

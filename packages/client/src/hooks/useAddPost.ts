@@ -6,12 +6,11 @@ import queryKeys from '../constants/reactQueryKeys';
 import { addPostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
-//TODO optimistic update
 const useAddPost = () => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('current user not found');
 
-	const queryKey = queryKeys.timeline(currentUser.id);
+	const queryKey = queryKeys.posts('timeline', currentUser.id);
 	return useMutation(addPostQuery, {
 		// When mutate is called:
 		onMutate: async (newPostInput) => {

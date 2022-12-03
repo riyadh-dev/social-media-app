@@ -28,8 +28,8 @@ router.post(
 );
 
 //get timeline post
-router.get('/timeline/:userId/:date', getTimelinePosts);
-router.get('/liked/:userId/:date', getLikedPosts);
+router.get('/timeline/:userId', getTimelinePosts);
+router.get('/liked/:userId', getLikedPosts);
 router.post(
 	'/images',
 	validateInput(getPostsWithImagesValidationSchema, 'postWithImagesInput'),

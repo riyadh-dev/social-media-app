@@ -16,9 +16,9 @@ export type TUiUpdateUserProfileInput = InferType<
 export type TUiUpdateUserIntroInput = InferType<
 	typeof updateUserIntroValidationSchema
 >;
-export type TInfinitePostsQueryType = 'liked-posts' | 'timeline-posts';
+export type TPaginatedPostsType = 'liked' | 'timeline';
 
-export type TInfiniteQueryPost = IPost & {
-	pageNumber: number;
-	postIndex: number;
+export type TPaginatedPost = IPost & {
+	page: number;
+	index: number;
 };

@@ -39,7 +39,7 @@ const PostCommentForm = ({ postId }: { postId: string }) => {
 				size='small'
 				fullWidth
 				helperText='Press Enter to post.'
-				disabled={isLoading}
+				disabled={isLoading || !postId}
 				{...register('text')}
 			/>
 		</Stack>

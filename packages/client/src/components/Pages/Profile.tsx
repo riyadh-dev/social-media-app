@@ -19,7 +19,7 @@ const Profile = () => {
 			>
 				<LeftSection />
 				<Suspense fallback={<PostsInfiniteListSkeleton />}>
-					<PostsInfiniteList listType='timeline-posts' userId={userId} />
+					<PostsInfiniteList listType='timeline' userId={userId} />
 				</Suspense>
 			</Stack>
 		</Box>

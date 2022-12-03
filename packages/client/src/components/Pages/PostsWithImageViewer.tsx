@@ -19,51 +19,72 @@ import {
 	styled,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
-import { useInfiniteQuery } from 'react-query';
-import { Link as RouterLink, useParams } from 'react-router-dom';
+import { Suspense, useEffect, useMemo, useState } from 'react';
+import { Link as RouterLink, useLocation, useParams } from 'react-router-dom';
+import { useRecoilValue } from 'recoil';
+import { TPaginatedPost, TPaginatedPostsType } from '../../common/types';
 import useDislikePost from '../../hooks/useDislike';
+import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import useLikePost from '../../hooks/useLike';
-import useGetPostComments from '../../hooks/usePostComments';
-import { getPostsWithImagesQuery } from '../../queries/posts';
+import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from '../Posts/PostCommentForm';
+import PostComments from '../Posts/PostComments';
+import PostCommentsSkeleton from '../Posts/PostCommentsSkeleton';
 
+//TODO move to shared nodule with the server
+const PAGE_SIZE = 10;
 const CommentText = styled(Paper)(({ theme }) => ({
 	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
 	borderRadius: '16px',
 }));
 
-const PostsWithImageViewer = () => {
-	const { postId, authorId } = useParams();
+//TODO refactor
+const useRouteQuery = () => {
+	const { search } = useLocation();
+	return useMemo(() => new URLSearchParams(search), [search]);
+};
 
-	const { data, fetchNextPage } = useInfiniteQuery(
-		['posts', 'posts-viewer'],
-		({ pageParam = 'first' }) =>
-			getPostsWithImagesQuery({ authorId, postId, date: pageParam }),
-		{ getNextPageParam: (lastPage) => lastPage[lastPage.length - 1]?.createdAt }
+const PostsWithImageViewer = () => {
+	const { type, authorId } = useParams();
+	const routeQuery = useRouteQuery();
+	const page = parseInt(routeQuery.get('page') ?? '0');
+	const index = parseInt(routeQuery.get('index') ?? '0');
+
+	const { data, fetchNextPage } = useGetInfinitePosts(
+		type as TPaginatedPostsType,
+		authorId
 	);
 
-	const posts = data?.pages.flat();
-	const [postIndex, setPostIndex] = useState(0);
+	useEffect(() => {
+		fetchNextPage({ pageParam: 5 });
+	}, [fetchNextPage]);
+	const posts: TPaginatedPost[] = [];
+	data?.pages
+		.flat()
+		.every((post, idx) => (post.img ? posts.push(post) : false));
+
+	const [postIndex, setPostIndex] = useState(page * PAGE_SIZE + index);
 	const canNext = postIndex + 1 < (posts?.length ?? 0);
 	const canBack = postIndex > 0;
 
-	const handleNext = () => {
-		setPostIndex(postIndex + 1);
-		if (postIndex % 2 === 0) fetchNextPage();
-	};
+	const handleNext = () => setPostIndex(postIndex + 1);
 	const handleBack = () => setPostIndex(postIndex - 1);
 
-	const { mutate: likeMutation } = useLikePost(posts?.[postIndex].id);
-	const { mutate: dislikeMutation } = useDislikePost(posts?.[postIndex].id);
+	const { mutate: likeMutation } = useLikePost(posts?.[postIndex]);
+	const { mutate: dislikeMutation } = useDislikePost(posts?.[postIndex]);
 
-	const { data: comments } = useGetPostComments(
-		posts?.[postIndex].comments,
-		Boolean(posts?.[postIndex].id),
-		posts?.[postIndex].id
-	);
+	useEffect(() => {
+		if (postIndex > posts.length - 3) fetchNextPage();
+	}, [fetchNextPage, postIndex, posts.length]);
 
-	if (!posts) return null;
+	const currentUser = useRecoilValue(currentUserState);
+
+	console.log(postIndex, posts);
+
+	if (!posts[postIndex]) return null;
+
+	const isLiked = posts[postIndex].likes.includes(currentUser?.id ?? '');
+	const isDisliked = posts[postIndex].dislikes.includes(currentUser?.id ?? '');
 
 	return (
 		<Stack width='100vw' height='100vh' direction='row'>
@@ -122,7 +143,7 @@ const PostsWithImageViewer = () => {
 						<ArrowForward />
 					</Avatar>
 				</IconButton>
-				<Box component='img' height='100%' src={posts[postIndex].img} />
+				<Box component='img' height='100%' src={posts?.[postIndex].img} />
 			</Box>
 
 			<Paper
@@ -138,10 +159,10 @@ const PostsWithImageViewer = () => {
 					<CardHeader
 						avatar={
 							<Avatar
-								src={posts[postIndex].author.avatar}
+								src={posts?.[postIndex].author.avatar}
 								aria-label='avatar'
 								component={RouterLink}
-								to={'/profile/' + posts[postIndex].author.id}
+								to={'/profile/' + posts?.[postIndex].author.id}
 							/>
 						}
 						action={
@@ -149,18 +170,22 @@ const PostsWithImageViewer = () => {
 								<MoreVertIcon />
 							</IconButton>
 						}
-						title={posts[postIndex].author.userName}
+						title={posts?.[postIndex].author.userName}
 						subheader={new Date(
-							posts[postIndex].createdAt
+							posts?.[postIndex].createdAt ?? '2020'
 						).toLocaleDateString()}
 					/>
 					<Typography px='16px' paragraph>
-						{posts[postIndex].description}
+						{posts?.[postIndex].description}
 					</Typography>
 					<Divider variant='middle' />
 					<Stack direction='row' justifyContent='space-around' py='12px'>
 						<span>
-							<IconButton aria-label='like' onClick={() => likeMutation()}>
+							<IconButton
+								disabled={isLiked}
+								aria-label='like'
+								onClick={() => likeMutation()}
+							>
 								<Badge
 									badgeContent={posts?.[postIndex].likes.length}
 									color='primary'
@@ -169,11 +194,12 @@ const PostsWithImageViewer = () => {
 										horizontal: 'left',
 									}}
 								>
-									<ThumbUpIcon /* color={thumbUpColor} */ />
+									<ThumbUpIcon color={isLiked ? 'primary' : 'inherit'} />
 								</Badge>
 							</IconButton>
 							<IconButton
 								aria-label='dislike'
+								disabled={isDisliked}
 								onClick={() => dislikeMutation()}
 							>
 								<Badge
@@ -184,7 +210,7 @@ const PostsWithImageViewer = () => {
 										horizontal: 'right',
 									}}
 								>
-									<ThumbDownIcon /* color={thumbDownColor} */ />
+									<ThumbDownIcon color={isDisliked ? 'error' : 'inherit'} />
 								</Badge>
 							</IconButton>
 						</span>
@@ -202,16 +228,11 @@ const PostsWithImageViewer = () => {
 					flexGrow={1}
 					overflow='auto'
 				>
-					{comments?.map((comment) => (
-						<Stack key={comment.id} direction='row' spacing={2}>
-							<Avatar src={comment.author.avatar} />
-							<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
-								<Typography>{comment.text}</Typography>
-							</CommentText>
-						</Stack>
-					))}
+					<Suspense fallback={<PostCommentsSkeleton commentsNumber={6} />}>
+						<PostComments post={posts?.[postIndex]} />
+					</Suspense>
 				</Stack>
-				<PostCommentForm postId={posts[postIndex].id} />
+				<PostCommentForm postId={posts?.[postIndex].id as string} />
 			</Paper>
 		</Stack>
 	);

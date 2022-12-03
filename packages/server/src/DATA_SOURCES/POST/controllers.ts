@@ -1,5 +1,6 @@
-import { IGetPostsWithImagesInput } from '@social-media-app/shared';
-import { isValidObjectId } from 'mongoose';
+import { IGetPostsWithImagesInput, IPost } from '@social-media-app/shared';
+import Joi from 'joi';
+import { FilterQuery, isValidObjectId } from 'mongoose';
 import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
 import UserModel from '../USER/model';
@@ -172,60 +173,43 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(postDoc);
 };
 
-const getTimelinePostsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const userId = req.params.userId;
-	const date = req.params.date;
-	const filter =
-		date === 'first' ? {} : { createdAt: { $lt: new Date(parseInt(date)) } };
-	const userDoc = await UserModel.findById(userId);
-	if (!userDoc) {
-		res.status(404).json({ error: 'no such user' });
-		return;
-	}
+const getPaginatedPostsUnsafe =
+	(queryType: 'timeline' | 'liked'): IAsyncRequestHandler =>
+	async (req, res) => {
+		const PAGE_SIZE = 10;
+		const userId = req.params.userId;
 
-	if (!userDoc.friends.length) {
-		res.status(200).json([]);
-		return;
-	}
+		const user = await UserModel.findById(userId);
+		if (!user) {
+			res.status(404).json({ error: 'no such user' });
+			return;
+		}
 
-	const posts = await PostModel.find({
-		'author.id': { $in: [...userDoc.friends, userDoc.id] },
-		...filter,
-	})
-		.sort({ createdAt: -1 })
-		.limit(15);
+		if (!user.friends.length) {
+			res.status(200).json([]);
+			return;
+		}
 
-	res.status(200).json(posts);
-};
+		const filter: FilterQuery<IPost> = {};
+		switch (queryType) {
+			case 'timeline':
+				filter['author.id'] = { $in: [...user.friends, user.id] };
+				break;
+			case 'liked':
+				filter.likes = user.id;
+				break;
+		}
 
-const getLikedPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const userId = req.params.userId;
-	const date = req.params.date;
+		const page = Joi.attempt(req.query.page, Joi.number());
+		const posts = await PostModel.find(filter)
+			.sort({ createdAt: -1 })
+			.skip(page * PAGE_SIZE)
+			.limit(PAGE_SIZE);
 
-	const filter =
-		date === 'first' ? {} : { createdAt: { $lt: new Date(parseInt(date)) } };
+		res.status(200).json(posts);
+	};
 
-	const userDoc = await UserModel.findById(userId);
-	if (!userDoc) {
-		res.status(404).json({ error: 'no such user' });
-		return;
-	}
-
-	if (!userDoc.friends.length) {
-		res.status(200).json([]);
-		return;
-	}
-
-	const posts = await PostModel.find({
-		likes: userDoc.id,
-		...filter,
-	})
-		.sort({ createdAt: -1 })
-		.limit(15);
-
-	res.status(200).json(posts);
-};
-
+//TODO remove
 const getImageViewersPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { authorId, date, postId } =
 		req.postWithImagesInput as IGetPostsWithImagesInput;
@@ -285,8 +269,12 @@ export const updatePost = catchAsyncReqHandlerErr(updatePostUnsafe);
 export const deletePost = catchAsyncReqHandlerErr(deletePostUnsafe);
 export const likePost = catchAsyncReqHandlerErr(likePostUnsafe);
 export const dislikePost = catchAsyncReqHandlerErr(dislikePostUnsafe);
-export const getTimelinePosts = catchAsyncReqHandlerErr(getTimelinePostsUnsafe);
-export const getLikedPosts = catchAsyncReqHandlerErr(getLikedPostsUnsafe);
+export const getTimelinePosts = catchAsyncReqHandlerErr(
+	getPaginatedPostsUnsafe('timeline')
+);
+export const getLikedPosts = catchAsyncReqHandlerErr(
+	getPaginatedPostsUnsafe('liked')
+);
 export const getImageViewersPosts = catchAsyncReqHandlerErr(
 	getImageViewersPostsUnsafe
 );

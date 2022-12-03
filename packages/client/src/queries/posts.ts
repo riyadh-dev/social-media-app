@@ -3,6 +3,7 @@ import {
 	IPost,
 	TPostInput,
 } from '@social-media-app/shared';
+import { TPaginatedPost, TPaginatedPostsType } from '../common/types';
 import { axiosInstance } from '../services/axios';
 
 export const addPostQuery = async (postInput: TPostInput): Promise<IPost> => {
@@ -28,27 +29,17 @@ export const dislikePostQuery = async (postId?: string): Promise<unknown> => {
 	return data;
 };
 
-export const getTimelinePostsQuery = async (
+export const getPaginatedPostsQuery = async (
+	type: TPaginatedPostsType,
 	userId?: string,
-	date: number | 'first' = 'first'
-): Promise<IPost[]> => {
+	page = 0
+): Promise<TPaginatedPost[]> => {
 	if (!userId) Promise.reject(new Error('Invalid id'));
-	const { data } = await axiosInstance.get(
-		`/posts/timeline/${userId}/${date}`,
+	const { data } = await axiosInstance.get<IPost[]>(
+		`/posts/${type}/${userId}?page=${page.toString()}`,
 		{ withCredentials: true }
 	);
-	return data;
-};
-
-export const getLikedPostsQuery = async (
-	userId?: string,
-	date: number | 'first' = 'first'
-): Promise<IPost[]> => {
-	if (!userId) Promise.reject(new Error('Invalid id'));
-	const { data } = await axiosInstance.get(`/posts/liked/${userId}/${date}`, {
-		withCredentials: true,
-	});
-	return data;
+	return data.map((post, index) => ({ ...post, page, index }));
 };
 
 export const getPostsWithImagesQuery = async (

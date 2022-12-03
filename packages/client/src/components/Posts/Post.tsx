@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import { Badge, Button, Divider, Paper, Skeleton, Stack } from '@mui/material';
+import { Badge, Button, Divider, Stack } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,15 +13,16 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { IPost } from '@social-media-app/shared/src';
 import { Suspense, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
+import { TPaginatedPost } from '../../common/types';
 import useDislikePost from '../../hooks/useDislike';
 import useLikePost from '../../hooks/useLike';
-import useGetPostComments from '../../hooks/usePostComments';
 import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from './PostCommentForm';
+import PostComments from './PostComments';
+import PostCommentsSkeleton from './PostCommentsSkeleton';
 
 interface ExpandMoreProps extends IconButtonProps {
 	expand: boolean;
@@ -38,49 +39,11 @@ const ExpandMore = styled((props: ExpandMoreProps) => {
 	}),
 }));
 
-const CommentText = styled(Paper)(({ theme }) => ({
-	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
-	borderRadius: '16px',
-}));
-
-const PostCommentsSkeleton = () => (
-	<Stack direction='column' spacing={3} sx={{ m: 3 }}>
-		{[...Array(8)].map((_, idx) => (
-			<Stack key={idx} direction='row' spacing={2}>
-				<Skeleton variant='circular' height={40} width={40} />
-				<Skeleton
-					variant='rectangular'
-					height={40}
-					width={280}
-					sx={{ borderRadius: '16px' }}
-				/>
-			</Stack>
-		))}
-	</Stack>
-);
-
-const PostComments = ({ post }: { post: IPost }) => {
-	const { data: comments } = useGetPostComments(post.comments, true, post.id);
-
-	return (
-		<Stack direction='column' spacing={3} sx={{ m: 3 }}>
-			{comments?.map((comment) => (
-				<Stack key={comment.id} direction='row' spacing={2}>
-					<Avatar src={comment.author.avatar} />
-					<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
-						<Typography>{comment.text}</Typography>
-					</CommentText>
-				</Stack>
-			))}
-		</Stack>
-	);
-};
-
 const Post = ({
 	post,
 	observedItemRef: lastItemRef,
 }: {
-	post: IPost;
+	post: TPaginatedPost;
 	observedItemRef?: (node: HTMLDivElement) => void;
 }) => {
 	const [expanded, setExpanded] = useState(false);
@@ -94,16 +57,13 @@ const Post = ({
 			? post.description.substring(0, 160) + ' ...'
 			: post.description;
 
-	const { mutate: likeMutation } = useLikePost(post.id);
-	const { mutate: dislikeMutation } = useDislikePost(post.id);
+	const { mutate: likeMutation } = useLikePost(post);
+	const { mutate: dislikeMutation } = useDislikePost(post);
 
 	const currentUser = useRecoilValue(currentUserState);
-	const thumbUpColor = post.likes.includes(currentUser?.id ?? '')
-		? 'primary'
-		: 'inherit';
-	const thumbDownColor = post.dislikes.includes(currentUser?.id ?? '')
-		? 'error'
-		: 'inherit';
+
+	const isLiked = post.likes.includes(currentUser?.id ?? '');
+	const isDisliked = post.dislikes.includes(currentUser?.id ?? '');
 
 	const postDate = new Date(post.createdAt).toLocaleDateString();
 	return (
@@ -132,7 +92,11 @@ const Post = ({
 				<Typography paragraph>{description}</Typography>
 			</CardContent>
 			<CardActions disableSpacing>
-				<IconButton aria-label='like' onClick={() => likeMutation()}>
+				<IconButton
+					disabled={isLiked}
+					aria-label='like'
+					onClick={() => likeMutation()}
+				>
 					<Badge
 						badgeContent={post.likes.length}
 						color='primary'
@@ -141,10 +105,14 @@ const Post = ({
 							horizontal: 'left',
 						}}
 					>
-						<ThumbUpIcon color={thumbUpColor} />
+						<ThumbUpIcon color={isLiked ? 'primary' : 'inherit'} />
 					</Badge>
 				</IconButton>
-				<IconButton aria-label='dislike' onClick={() => dislikeMutation()}>
+				<IconButton
+					disabled={isDisliked}
+					aria-label='dislike'
+					onClick={() => dislikeMutation()}
+				>
 					<Badge
 						badgeContent={post.dislikes.length}
 						color='error'
@@ -153,7 +121,7 @@ const Post = ({
 							horizontal: 'right',
 						}}
 					>
-						<ThumbDownIcon color={thumbDownColor} />
+						<ThumbDownIcon color={isDisliked ? 'error' : 'inherit'} />
 					</Badge>
 				</IconButton>
 				<IconButton aria-label='share'>
@@ -182,9 +150,11 @@ const Post = ({
 			<PostCommentForm postId={post.id} />
 
 			{showComments && (
-				<Suspense fallback={<PostCommentsSkeleton />}>
-					<PostComments post={post} />
-				</Suspense>
+				<Stack direction='column' spacing={3} sx={{ m: 3 }}>
+					<Suspense fallback={<PostCommentsSkeleton commentsNumber={8} />}>
+						<PostComments post={post} />
+					</Suspense>
+				</Stack>
 			)}
 		</Card>
 	);

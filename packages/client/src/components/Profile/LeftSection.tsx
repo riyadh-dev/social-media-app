@@ -16,13 +16,13 @@ import {
 	Stack,
 	Typography,
 } from '@mui/material';
-import { IPost } from '@social-media-app/shared/src';
 import { debounce } from 'lodash';
 import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
 import { Link, Link as RouterLink, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '../..';
+import { TPaginatedPost } from '../../common/types';
 import queryKeys from '../../constants/reactQueryKeys';
 import { useGetUserById, useGetUsersById } from '../../hooks/usersHooks';
 import { currentUserState } from '../../recoil/atoms';
@@ -36,14 +36,15 @@ const LeftSection = () => {
 		queryKeys.friends(userId)
 	);
 
-	const images = queryClient
-		.getQueryData<InfiniteData<IPost>>(queryKeys.timeline(userId))
+	const postsWithImages: TPaginatedPost[] = [];
+	queryClient
+		.getQueryData<InfiniteData<TPaginatedPost>>(
+			queryKeys.posts('timeline', userId)
+		)
 		?.pages.flat()
-		.reduce<{ id: string; img: string }[]>((prev, { id, img }, idx, arr) => {
-			if (!img) return prev;
-			if (prev.length === 8) arr.splice(1);
-			return prev.concat({ id, img });
-		}, []);
+		.every((post, idx) =>
+			post.img && idx < 9 ? postsWithImages.push(post) : false
+		);
 
 	const [top, setTop] = useState(0);
 	const containerRef = useRef<HTMLDivElement>(null);
@@ -164,17 +165,21 @@ const LeftSection = () => {
 					<Typography variant='h5' sx={{ fontWeight: 'bold' }}>
 						Photos
 					</Typography>
-					<Button color='primary' variant='text'>
+					<Button
+						component={RouterLink}
+						to={`/posts/timeline/${userId}?page=0&index=0`}
+						color='primary'
+						variant='text'
+					>
 						See All Photos
 					</Button>
 				</Stack>
-				{/* TODO implement an image view */}
 				<ImageList cols={3} sx={{ borderRadius: '8px' }}>
-					{images?.map((image) => (
+					{postsWithImages?.map((image) => (
 						<ImageListItem
 							component={RouterLink}
 							key={'post-image-' + image.id}
-							to={`/posts/${userId}/${image.id}`}
+							to={`/posts/timeline/${userId}?page=${image.page}&index=${image.index}`}
 						>
 							<img src={image.img} alt='post' loading='lazy' />
 						</ImageListItem>

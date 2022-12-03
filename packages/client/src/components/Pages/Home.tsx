@@ -2,7 +2,7 @@ import { Stack } from '@mui/material';
 import { Suspense, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { TInfinitePostsQueryType } from '../../common/types';
+import { TPaginatedPostsType } from '../../common/types';
 import { currentUserState } from '../../recoil/atoms';
 import FriendsList from '../FriendsList';
 import FriendsListSkeleton from '../FriendsList/Skeleton';
@@ -13,13 +13,13 @@ import PostsInfiniteListSkeleton from '../Posts/PostsInfiniteListSkeleton';
 const Home = () => {
 	const currentUserId = useRecoilValue(currentUserState)?.id;
 	const { pathname } = useLocation();
-	const listType: TInfinitePostsQueryType =
-		pathname === '/favorites' ? 'liked-posts' : 'timeline-posts';
+	const listType: TPaginatedPostsType =
+		pathname === '/favorites' ? 'liked' : 'timeline';
 
 	useEffect(() => {
 		window.scrollTo({
 			top: 0,
-			behavior: 'smooth',
+			behavior: 'auto',
 		});
 	}, [listType]);
 

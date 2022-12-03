@@ -1,6 +1,6 @@
 import { Stack } from '@mui/material';
 import { useLocation } from 'react-router-dom';
-import { TInfinitePostsQueryType } from '../../common/types';
+import { TPaginatedPostsType } from '../../common/types';
 import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import JumpToTopButton from '../JumpToTopButton';
 import Post from './Post';
@@ -13,7 +13,7 @@ const PostsInfiniteList = ({
 	userId,
 }: {
 	userId?: string;
-	listType: TInfinitePostsQueryType;
+	listType: TPaginatedPostsType;
 }) => {
 	const { intersectionItemRef, data, isFetchingNextPage } = useGetInfinitePosts(
 		listType,
@@ -21,8 +21,6 @@ const PostsInfiniteList = ({
 	);
 	const posts = data?.pages.flat();
 	const { pathname } = useLocation();
-
-	if (!data) return <></>;
 
 	return (
 		<>
