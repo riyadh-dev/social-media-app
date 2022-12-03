@@ -3,7 +3,7 @@ import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
 import ThumbUpIcon from '@mui/icons-material/ThumbUp';
-import { Badge, Button, Divider, Paper, Stack } from '@mui/material';
+import { Badge, Button, Divider, Paper, Skeleton, Stack } from '@mui/material';
 import Avatar from '@mui/material/Avatar';
 import Card from '@mui/material/Card';
 import CardActions from '@mui/material/CardActions';
@@ -13,8 +13,8 @@ import CardMedia from '@mui/material/CardMedia';
 import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
-import { IPost } from '@social-media-app/shared';
-import { useState } from 'react';
+import { IPost } from '@social-media-app/shared/src';
+import { Suspense, useState } from 'react';
 import { Link as RouterLink } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import useDislikePost from '../../hooks/useDislike';
@@ -43,6 +43,39 @@ const CommentText = styled(Paper)(({ theme }) => ({
 	borderRadius: '16px',
 }));
 
+const PostCommentsSkeleton = () => (
+	<Stack direction='column' spacing={3} sx={{ m: 3 }}>
+		{[...Array(8)].map((_, idx) => (
+			<Stack key={idx} direction='row' spacing={2}>
+				<Skeleton variant='circular' height={40} width={40} />
+				<Skeleton
+					variant='rectangular'
+					height={40}
+					width={280}
+					sx={{ borderRadius: '16px' }}
+				/>
+			</Stack>
+		))}
+	</Stack>
+);
+
+const PostComments = ({ post }: { post: IPost }) => {
+	const { data: comments } = useGetPostComments(post.comments, true, post.id);
+
+	return (
+		<Stack direction='column' spacing={3} sx={{ m: 3 }}>
+			{comments?.map((comment) => (
+				<Stack key={comment.id} direction='row' spacing={2}>
+					<Avatar src={comment.author.avatar} />
+					<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
+						<Typography>{comment.text}</Typography>
+					</CommentText>
+				</Stack>
+			))}
+		</Stack>
+	);
+};
+
 const Post = ({
 	post,
 	observedItemRef: lastItemRef,
@@ -60,12 +93,6 @@ const Post = ({
 		canExpand === true && expanded === false
 			? post.description.substring(0, 160) + ' ...'
 			: post.description;
-
-	const { data: comments, isLoading: areCommentsLoading } = useGetPostComments(
-		post.comments,
-		showComments,
-		post.id
-	);
 
 	const { mutate: likeMutation } = useLikePost(post.id);
 	const { mutate: dislikeMutation } = useDislikePost(post.id);
@@ -136,7 +163,7 @@ const Post = ({
 					onClick={handleShowComments}
 					variant='text'
 					sx={{ ml: 'auto' }}
-					disabled={!post.comments.length || areCommentsLoading}
+					disabled={!post.comments.length}
 				>
 					{post.comments.length} Comments
 				</Button>
@@ -155,16 +182,9 @@ const Post = ({
 			<PostCommentForm postId={post.id} />
 
 			{showComments && (
-				<Stack direction='column' spacing={3} sx={{ m: 3 }}>
-					{comments?.map((comment) => (
-						<Stack key={comment.id} direction='row' spacing={2}>
-							<Avatar src={comment.author.avatar} />
-							<CommentText sx={{ px: '12px', py: '8px' }} elevation={0}>
-								<Typography>{comment.text}</Typography>
-							</CommentText>
-						</Stack>
-					))}
-				</Stack>
+				<Suspense fallback={<PostCommentsSkeleton />}>
+					<PostComments post={post} />
+				</Suspense>
 			)}
 		</Card>
 	);

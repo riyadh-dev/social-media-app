@@ -1,17 +1,25 @@
 import { Stack } from '@mui/material';
 import { lazy } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Friends from './components/Pages/Friends';
 import Main from './components/Pages/Main';
-import PostsWithImageViewer from './components/Pages/PostsWithImageViewer';
-import Settings from './components/Pages/Settings';
 import RequireAuth from './components/RequireAuth';
-import IntroUpdateForm from './components/Settings/IntroUpdateForm';
-import UserUpdateForm from './components/Settings/UserUpdateForm';
 
 const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
 const Home = lazy(() => import('./components/Pages/Home'));
+const Friends = lazy(() => import('./components/Pages/Friends'));
 const Profile = lazy(() => import('./components/Pages/Profile'));
+const Messenger = lazy(() => import('./components/Pages/Messenger'));
+const Settings = lazy(() => import('./components/Pages/Settings'));
+const IntroUpdateForm = lazy(
+	() => import('./components/Settings/IntroUpdateForm')
+);
+const UserUpdateForm = lazy(
+	() => import('./components/Settings/UserUpdateForm')
+);
+
+const PostsWithImageViewer = lazy(
+	() => import('./components/Pages/PostsWithImageViewer')
+);
 
 const PlaceHolderComp = ({ compName }: { compName: string }) => (
 	<Stack justifyContent='center' alignItems='center' height='100vh'>
@@ -32,6 +40,7 @@ const router = createBrowserRouter([
 			{ path: 'favorites', element: <Home /> },
 			{ path: 'friends', element: <Friends /> },
 			{ path: 'profile/:userId', element: <Profile /> },
+			{ path: '/messenger', element: <Messenger /> },
 			{
 				path: 'setting',
 				element: <Settings />,
@@ -50,13 +59,10 @@ const router = createBrowserRouter([
 		path: '/login',
 		element: <LoginSignUp />,
 	},
+
 	{
 		path: '*',
-		element: (
-			<RequireAuth>
-				<PlaceHolderComp compName='No Match' />
-			</RequireAuth>
-		),
+		element: <PlaceHolderComp compName='No Match' />,
 	},
 ]);
 

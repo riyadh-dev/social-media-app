@@ -1,4 +1,4 @@
-import { IUser } from '@social-media-app/shared';
+import { IPost, IUser } from '@social-media-app/shared';
 import { InferType } from 'yup';
 import { MapDatesToString } from './utils';
 import {
@@ -17,3 +17,8 @@ export type TUiUpdateUserIntroInput = InferType<
 	typeof updateUserIntroValidationSchema
 >;
 export type TInfinitePostsQueryType = 'liked-posts' | 'timeline-posts';
+
+export type TInfiniteQueryPost = IPost & {
+	pageNumber: number;
+	postIndex: number;
+};

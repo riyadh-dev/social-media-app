@@ -1,13 +1,17 @@
-import { Settings as SettingsIcon } from '@mui/icons-material';
+import {
+	AllOut as AllOutIcon,
+	Settings as SettingsIcon,
+} from '@mui/icons-material';
 import ArrowDropDownIcon from '@mui/icons-material/ArrowDropDownRounded';
 import DarkModeIcon from '@mui/icons-material/DarkMode';
 import LightModeIcon from '@mui/icons-material/LightModeRounded';
 import LogoutIcon from '@mui/icons-material/LogoutRounded';
 import MessageIcon from '@mui/icons-material/MessageRounded';
 import {
-	Badge,
+	Box,
 	Button,
 	ClickAwayListener,
+	Divider,
 	List,
 	ListItemAvatar,
 	ListItemButton,
@@ -94,18 +98,14 @@ const RightSection = () => {
 				{currentUser?.userName}
 			</Button>
 
-			<Badge
-				color='primary'
-				overlap='circular'
-				anchorOrigin={{ vertical: 'top', horizontal: 'right' }}
-				badgeContent={25}
+			<IconButton
+				sx={{ p: 0, display: { xs: 'none', md: 'initial' } }}
+				onClick={handleOpenMessengerMenu}
 			>
-				<IconButton sx={{ p: 0 }} onClick={handleOpenMessengerMenu}>
-					<Avatar>
-						<MessageIcon />
-					</Avatar>
-				</IconButton>
-			</Badge>
+				<Avatar>
+					<MessageIcon />
+				</Avatar>
+			</IconButton>
 
 			<IconButton
 				sx={{ p: 0, display: { xs: 'initial', md: 'none' } }}
@@ -183,23 +183,54 @@ const RightSection = () => {
 						sx={{
 							width: '350px',
 							height: '80vh',
-							overflowY: 'scroll',
 							borderRadius: '5px',
+							display: 'flex',
+							flexDirection: 'column',
 							p: '12px',
+							pr: 0,
 							mt: '18px',
 							mr: '12px',
 						}}
 					>
-						<Typography variant='h5' sx={{ fontWeight: 700 }}>
-							Chats
-						</Typography>
-						<List>
-							{friends?.map((friend) => (
-								<Suspense key={friend.id} fallback={<ChatsListItemSkeleton />}>
-									<ChatsListItem friend={friend} />
-								</Suspense>
-							))}
-						</List>
+						<Box overflow='auto'>
+							<Stack
+								direction='row'
+								justifyContent='space-between'
+								alignItems='center'
+							>
+								<Typography variant='h5' sx={{ fontWeight: 700 }}>
+									Chats
+								</Typography>
+								<IconButton
+									onClick={handleCloseMessengerMenu}
+									component={RouterLink}
+									to='/messenger'
+									sx={{ height: 26, width: 26 }}
+								>
+									<AllOutIcon />
+								</IconButton>
+							</Stack>
+
+							<List>
+								{friends?.map((friend) => (
+									<Suspense
+										key={friend.id}
+										fallback={<ChatsListItemSkeleton />}
+									>
+										<ChatsListItem friend={friend} />
+									</Suspense>
+								))}
+							</List>
+						</Box>
+						<Divider />
+						<Button
+							onClick={handleCloseMessengerMenu}
+							component={RouterLink}
+							to='/messenger'
+							sx={{ textTransform: 'none', mt: '8px' }}
+						>
+							See All in Messenger
+						</Button>
 					</Paper>
 				</ClickAwayListener>
 			</Popper>

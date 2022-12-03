@@ -29,7 +29,9 @@ const useGetInfinitePosts = (
 	const postInfiniteQuery = useInfiniteQuery(
 		queryKey(queryType)(userId),
 		({ pageParam }) => getPostsQuery(queryType)(userId, pageParam),
-		{ getNextPageParam: (lastPage) => lastPage[lastPage.length - 1]?.createdAt }
+		{
+			getNextPageParam: (lastPage) => lastPage[lastPage.length - 1]?.createdAt,
+		}
 	);
 
 	const intersectionItemRef = useIntersectionObserver({

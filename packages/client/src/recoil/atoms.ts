@@ -23,8 +23,8 @@ export const leftSideBarOpenState = atom({
 	default: false,
 });
 
-export const rightSideBarOpenState = atom({
-	key: 'rightSideBarOpenState',
+export const friendDetailsOpenState = atom({
+	key: 'friendDetailsOpenStateState',
 	default: false,
 });
 
@@ -44,4 +44,9 @@ export const chatBoxesState = atom({
 		minimized: new Map<string, TUiUser>(),
 		open: new Map<string, TUiUser>(),
 	},
+});
+
+export const selectedFriendState = atom<TUiUser | null>({
+	key: 'selectedFriendState',
+	default: null,
 });

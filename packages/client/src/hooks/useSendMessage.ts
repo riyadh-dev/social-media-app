@@ -9,7 +9,7 @@ import queryKeys from '../constants/reactQueryKeys';
 import { sendChatMessagesQuery } from '../queries/messages';
 import { currentUserState } from '../recoil/atoms';
 
-const useSendMessage = (targetId: string) => {
+const useSendMessage = (targetId?: string) => {
 	const queryKey = queryKeys.conversation(targetId);
 
 	const useMutationResult = useMutation(sendChatMessagesQuery, {
@@ -65,7 +65,7 @@ const useSendMessage = (targetId: string) => {
 	const onSubmit = handleSubmit(({ text }) => {
 		useMutationResult.mutate({
 			senderId: sender?.id ?? '',
-			targetId: targetId,
+			targetId: targetId ?? '',
 			text,
 		});
 		reset();
