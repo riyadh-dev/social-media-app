@@ -55,7 +55,6 @@ export const useUpdateUserProfile = () => {
 		},
 	});
 
-	//TODO optimistic update
 	const useMutationReturn = useMutation<
 		unknown,
 		//TODO move type def elsewhere
@@ -92,7 +91,6 @@ export const useUpdateUserIntro = () => {
 		},
 	});
 
-	//TODO optimistic update
 	const useMutationReturn = useMutation<
 		unknown,
 		//TODO move type def elsewhere

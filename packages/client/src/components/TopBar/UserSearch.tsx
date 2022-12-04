@@ -3,8 +3,8 @@ import SearchIcon from '@mui/icons-material/Search';
 import {
 	Avatar,
 	IconButton,
-	ListItem,
 	ListItemAvatar,
+	ListItemButton,
 	ListItemText,
 	Stack,
 } from '@mui/material';
@@ -14,7 +14,7 @@ import InputBase from '@mui/material/InputBase';
 import Popper from '@mui/material/Popper';
 import { alpha, styled } from '@mui/material/styles';
 import { debounce } from 'lodash';
-import { useEffect, useRef, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import { useSearchUsersByUserName } from '../../hooks/usersHooks';
 
@@ -182,9 +182,8 @@ const UserSearch = () => {
 							</Stack>
 						)}
 						renderOption={(params, user) => (
-							<ListItem
+							<ListItemButton
 								key={user.id}
-								button
 								component={Link}
 								to={`/profile/${user.id}`}
 								onClick={() => setSearchTerm('')}
@@ -193,7 +192,7 @@ const UserSearch = () => {
 									<Avatar src={user.avatar} alt='Avatar' />
 								</ListItemAvatar>
 								<ListItemText primary={user.userName} />
-							</ListItem>
+							</ListItemButton>
 						)}
 					/>
 				</ClickAwayListener>

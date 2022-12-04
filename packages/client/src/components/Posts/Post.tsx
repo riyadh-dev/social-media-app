@@ -14,7 +14,7 @@ import IconButton, { IconButtonProps } from '@mui/material/IconButton';
 import { styled } from '@mui/material/styles';
 import Typography from '@mui/material/Typography';
 import { Suspense, useState } from 'react';
-import { Link as RouterLink } from 'react-router-dom';
+import { Link, Link as RouterLink, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { TPaginatedPost } from '../../common/types';
 import useDislikePost from '../../hooks/useDislike';
@@ -65,7 +65,8 @@ const Post = ({
 	const isLiked = post.likes.includes(currentUser?.id ?? '');
 	const isDisliked = post.dislikes.includes(currentUser?.id ?? '');
 
-	const postDate = new Date(post.createdAt).toLocaleDateString();
+	const { pathname } = useLocation();
+	const postsType = pathname === '/favorites' ? 'liked' : 'timeline';
 	return (
 		<Card ref={lastItemRef}>
 			<CardHeader
@@ -83,10 +84,18 @@ const Post = ({
 					</IconButton>
 				}
 				title={post.author.userName}
-				subheader={postDate}
+				subheader={new Date(post.createdAt).toLocaleDateString('en-gb', {
+					year: 'numeric',
+					month: 'long',
+					day: 'numeric',
+				})}
 			/>
 			{post.img && (
-				<CardMedia component='img' image={post.img} alt='post img' />
+				<Link
+					to={`/posts/${postsType}/${currentUser?.id}?page=${post.page}&index=${post.index}`}
+				>
+					<CardMedia component='img' image={post.img} alt='post img' />
+				</Link>
 			)}
 			<CardContent>
 				<Typography paragraph>{description}</Typography>

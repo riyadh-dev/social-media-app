@@ -75,9 +75,7 @@ const deletePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const currentUserId = req.currentUserId;
-	const currentUserDoc = await UserModel.findById(currentUserId);
-
-	if (postCommentDoc.author.id !== currentUserId && !currentUserDoc?.isAdmin) {
+	if (postCommentDoc.author.id !== currentUserId) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}

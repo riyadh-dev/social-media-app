@@ -131,7 +131,6 @@ const UpperSectionActions = ({ user }: { user: TUiUser }) => {
 
 	const handleLeftButtonClick = () => {
 		if (isFriend) return useUnfriendResults.mutate(user.id);
-		//TODO redundant parameter id is passed to the hook no need to pass it again to the mutate func
 		else if (receivedFriendRequest)
 			return useAcceptFriendRequestResults.mutate(receivedFriendRequest.id);
 		else return useSendFriendRequestResults.mutate();

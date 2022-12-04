@@ -7,7 +7,6 @@ import queryKeys from '../constants/reactQueryKeys';
 import { dislikePostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
-//TODO optimistic update is a bit slow find a better implementation: maybe tag each post with its page index or use a map
 const useDislikePost = (dislikedPost?: TPaginatedPost) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');

@@ -154,7 +154,11 @@ const LeftSection = () => {
 					<Stack direction='row' spacing={1} alignItems='center'>
 						<WatchLaterIcon />
 						<Typography variant='body1'>
-							Join Date: {new Date(user.createdAt).toLocaleString()}
+							Joined{' '}
+							{new Date(user.createdAt).toLocaleDateString('en-gb', {
+								year: 'numeric',
+								month: 'long',
+							})}
 						</Typography>
 					</Stack>
 				</Stack>

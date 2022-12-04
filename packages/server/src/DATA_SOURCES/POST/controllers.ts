@@ -63,6 +63,7 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(post);
 };
 
+//TODO Add Post delete to client
 const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const postId = req.params.id;
 	if (!isValidObjectId(postId)) {
@@ -77,9 +78,7 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	}
 
 	const currentUserId = req.currentUserId;
-	const currentUserDoc = await UserModel.findById(currentUserId);
-
-	if (postDoc.author.id !== currentUserId && !currentUserDoc?.isAdmin) {
+	if (postDoc.author.id !== currentUserId) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
@@ -209,60 +208,6 @@ const getPaginatedPostsUnsafe =
 		res.status(200).json(posts);
 	};
 
-//TODO remove
-const getImageViewersPostsUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const { authorId, date, postId } =
-		req.postWithImagesInput as IGetPostsWithImagesInput;
-
-	const postsAcc = [];
-
-	if (postId) {
-		const post = await PostModel.findById(postId);
-		if (!post || !post.img) {
-			res
-				.status(404)
-				.json({ error: 'post not found or does not have an image' });
-			return;
-		}
-
-		const author = await UserModel.findById(post.author.id);
-		if (!author) {
-			res.status(404).json({ error: 'no such user' });
-			return;
-		}
-
-		console.log(post.updatedAt);
-		console.log(post.createdAt);
-
-		const posts = await PostModel.find({
-			'author.id': { $in: [...author.friends, author.id] },
-			img: { $exists: true },
-			createdAt: { $lt: post.createdAt },
-		})
-			.sort({ createdAt: -1 })
-			.limit(2);
-		if (posts) postsAcc.push(...posts, post);
-	} else {
-		const author = await UserModel.findById(authorId);
-		if (!author) {
-			res.status(404).json({ error: 'no such user' });
-			return;
-		}
-
-		const posts = await PostModel.find({
-			'author.id': { $in: [...author.friends, author.id] },
-			img: { $exists: true },
-			createdAt: { $lt: new Date(date as number) },
-		})
-			.sort({ createdAt: -1 })
-			.limit(3);
-
-		if (posts) postsAcc.push(...posts);
-	}
-
-	res.status(200).json(postsAcc);
-};
-
 export const createPost = catchAsyncReqHandlerErr(createPostUnsafe);
 export const getPost = catchAsyncReqHandlerErr(getPostUnsafe);
 export const updatePost = catchAsyncReqHandlerErr(updatePostUnsafe);
@@ -274,7 +219,4 @@ export const getTimelinePosts = catchAsyncReqHandlerErr(
 );
 export const getLikedPosts = catchAsyncReqHandlerErr(
 	getPaginatedPostsUnsafe('liked')
-);
-export const getImageViewersPosts = catchAsyncReqHandlerErr(
-	getImageViewersPostsUnsafe
 );

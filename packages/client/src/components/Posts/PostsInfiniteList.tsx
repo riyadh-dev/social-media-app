@@ -7,7 +7,6 @@ import Post from './Post';
 import PostForm from './PostForm';
 import PostsInfiniteListSkeleton from './PostsInfiniteListSkeleton';
 
-//TODO pass down userId to post comp
 const PostsInfiniteList = ({
 	listType,
 	userId,

@@ -16,16 +16,10 @@ import {
 	Paper,
 	Skeleton,
 	Stack,
-	styled,
 } from '@mui/material';
 import { Link as RouterLink } from 'react-router-dom';
 import PostCommentForm from './PostCommentForm';
 import PostCommentsSkeleton from './PostCommentsSkeleton';
-
-const CommentText = styled(Paper)(({ theme }) => ({
-	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
-	borderRadius: '16px',
-}));
 
 const PostsWithImageViewerSkeleton = () => (
 	<Stack width='100vw' height='100vh' direction='row'>

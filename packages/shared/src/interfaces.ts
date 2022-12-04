@@ -24,8 +24,6 @@ export interface IUser {
 	friends: string[];
 	likedPosts: string[];
 	dislikedPosts: string[];
-	//TODO remove
-	isAdmin: boolean;
 	createdAt: Date;
 	updatedAt: Date;
 }

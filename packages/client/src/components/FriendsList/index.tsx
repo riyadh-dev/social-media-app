@@ -1,7 +1,12 @@
-import { Avatar, Badge, ListItemAvatar, styled } from '@mui/material';
+import {
+	Avatar,
+	Badge,
+	ListItemAvatar,
+	ListItemButton,
+	styled,
+} from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemText from '@mui/material/ListItemText';
 import { TUiUser } from '../../common/types';
 import useChatBox from '../../hooks/useChatBox';
@@ -60,14 +65,14 @@ const FriendsListItem = ({
 	const { onOpen } = useChatBox(user);
 
 	return (
-		<ListItem button onClick={onOpen}>
+		<ListItemButton onClick={onOpen}>
 			<ListItemAvatar>
 				<ConditionalWrapper condition={isOnline} wrapper={OnlineBadgeWrapper}>
 					<Avatar src={user.avatar} alt='Avatar' />
 				</ConditionalWrapper>
 			</ListItemAvatar>
 			<ListItemText primary={user.userName} />
-		</ListItem>
+		</ListItemButton>
 	);
 };
 

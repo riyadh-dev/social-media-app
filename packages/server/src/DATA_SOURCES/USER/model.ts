@@ -11,7 +11,6 @@ const UserSchema = new Schema<IUser>({
 	friends: [String],
 	likedPosts: [String],
 	dislikedPosts: [String],
-	isAdmin: { type: Boolean, default: false },
 
 	intro: {
 		bio: String,

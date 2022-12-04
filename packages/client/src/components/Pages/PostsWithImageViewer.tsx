@@ -50,6 +50,7 @@ const PostsWithImageViewer = () => {
 	const page = parseInt(routeQuery.get('page') ?? '0');
 	const index = parseInt(routeQuery.get('index') ?? '0');
 
+	const currentUser = useRecoilValue(currentUserState);
 	const { data, fetchNextPage } = useGetInfinitePosts(
 		type as TPaginatedPostsType,
 		authorId
@@ -67,8 +68,24 @@ const PostsWithImageViewer = () => {
 	const canNext = postIndex + 1 < (posts?.length ?? 0);
 	const canBack = postIndex > 0;
 
-	const handleNext = () => setPostIndex(postIndex + 1);
-	const handleBack = () => setPostIndex(postIndex - 1);
+	const handleNext = () => {
+		setPostIndex(postIndex + 1);
+		queryParams.index === 14
+			? setQueryParams({ index: 0, page: queryParams.page + 1 })
+			: setQueryParams({
+					index: queryParams.index + 1,
+					page: queryParams.page,
+			  });
+	};
+	const handleBack = () => {
+		setPostIndex(postIndex - 1);
+		queryParams.index === 0
+			? setQueryParams({ index: 14, page: queryParams.page - 1 })
+			: setQueryParams({
+					index: queryParams.index - 1,
+					page: queryParams.page,
+			  });
+	};
 
 	const { mutate: likeMutation } = useLikePost(posts?.[postIndex]);
 	const { mutate: dislikeMutation } = useDislikePost(posts?.[postIndex]);
@@ -77,9 +94,15 @@ const PostsWithImageViewer = () => {
 		if (postIndex > posts.length - 3) fetchNextPage();
 	}, [fetchNextPage, postIndex, posts.length]);
 
-	const currentUser = useRecoilValue(currentUserState);
-
-	console.log(postIndex, posts);
+	const [queryParams, setQueryParams] = useState({ page, index });
+	useEffect(() => {
+		window.history.replaceState(
+			null,
+			'Posts',
+			`/posts/${type}/${currentUser?.id}?page=${queryParams.page}&index=${queryParams.index}`
+		);
+		// eslint-disable-next-line react-hooks/exhaustive-deps
+	}, [postIndex]);
 
 	if (!posts[postIndex]) return null;
 
@@ -95,6 +118,7 @@ const PostsWithImageViewer = () => {
 				justifyContent='center'
 				alignItems='center'
 			>
+				{/*TODO navigate back to a from location */}
 				<IconButton
 					component={RouterLink}
 					to={'/'}
@@ -172,8 +196,12 @@ const PostsWithImageViewer = () => {
 						}
 						title={posts?.[postIndex].author.userName}
 						subheader={new Date(
-							posts?.[postIndex].createdAt ?? '2020'
-						).toLocaleDateString()}
+							posts?.[postIndex].createdAt
+						).toLocaleDateString('en-gb', {
+							year: 'numeric',
+							day: 'numeric',
+							month: 'long',
+						})}
 					/>
 					<Typography px='16px' paragraph>
 						{posts?.[postIndex].description}

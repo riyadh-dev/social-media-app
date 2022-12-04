@@ -4,7 +4,6 @@ import {
 	createPost,
 	deletePost,
 	dislikePost,
-	getImageViewersPosts,
 	getLikedPosts,
 	getPost,
 	getTimelinePosts,
@@ -13,7 +12,6 @@ import {
 } from './controllers';
 import {
 	createPostValidationSchema,
-	getPostsWithImagesValidationSchema,
 	updatePostValidationSchema,
 } from './validation';
 
@@ -30,11 +28,6 @@ router.post(
 //get timeline post
 router.get('/timeline/:userId', getTimelinePosts);
 router.get('/liked/:userId', getLikedPosts);
-router.post(
-	'/images',
-	validateInput(getPostsWithImagesValidationSchema, 'postWithImagesInput'),
-	getImageViewersPosts
-);
 
 //read post
 router.get('/:id', getPost);

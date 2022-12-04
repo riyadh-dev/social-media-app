@@ -22,7 +22,6 @@ const genUsers = async (usersNumber: number) => {
 			friends: [],
 			dislikedPosts: [],
 			likedPosts: [],
-			isAdmin: false,
 			createdAt: faker.date.between('2015', '2022'),
 			updatedAt: faker.date.between('2015', '2022'),
 			intro: {

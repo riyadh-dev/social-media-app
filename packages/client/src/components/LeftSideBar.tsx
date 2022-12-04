@@ -1,6 +1,7 @@
 import FavoriteIcon from '@mui/icons-material/FavoriteRounded';
 import HomeIcon from '@mui/icons-material/HomeRounded';
 import PeopleIcon from '@mui/icons-material/PeopleRounded';
+import { ListItemButton } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
 import ListItem from '@mui/material/ListItem';
@@ -18,22 +19,16 @@ const LeftSideBar = () => {
 	};
 
 	const { pathname } = useLocation();
-	//TODO change ListItem button to ListItemButton
+
 	const drawer = (
 		<List sx={{ mx: '8px', mt: '76px' }}>
-			<ListItem
-				button
-				component={RouterLink}
-				to='/'
-				selected={pathname === '/'}
-			>
+			<ListItemButton component={RouterLink} to='/' selected={pathname === '/'}>
 				<ListItemIcon>
 					<HomeIcon />
 				</ListItemIcon>
 				<ListItemText>Home</ListItemText>
-			</ListItem>
-			<ListItem
-				button
+			</ListItemButton>
+			<ListItemButton
 				component={RouterLink}
 				to='/favorites'
 				selected={pathname === '/favorites'}
@@ -42,9 +37,8 @@ const LeftSideBar = () => {
 					<FavoriteIcon />
 				</ListItemIcon>
 				<ListItemText>Favorites</ListItemText>
-			</ListItem>
-			<ListItem
-				button
+			</ListItemButton>
+			<ListItemButton
 				component={RouterLink}
 				to='/friends'
 				selected={pathname === '/friends'}
@@ -53,7 +47,7 @@ const LeftSideBar = () => {
 					<PeopleIcon />
 				</ListItemIcon>
 				<ListItemText>Friends</ListItemText>
-			</ListItem>
+			</ListItemButton>
 		</List>
 	);
 

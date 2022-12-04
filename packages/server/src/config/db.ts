@@ -10,8 +10,6 @@ export const setMongoosePlugin = () =>
 			versionKey: false,
 			virtuals: true,
 			transform(doc, ret) {
-				//TODO better solution
-				ret.createdAt = (ret.createdAt as Date).getTime();
 				delete ret._id;
 			},
 		};

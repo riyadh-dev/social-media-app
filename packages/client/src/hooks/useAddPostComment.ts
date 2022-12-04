@@ -11,7 +11,6 @@ import queryKeys from '../constants/reactQueryKeys';
 import { addPostCommentQuery } from '../queries/postComments';
 import { currentUserState } from '../recoil/atoms';
 
-//TODO fix optimistic updates
 const useAddPostComment = (postId?: string) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('current user not found');
@@ -19,7 +18,7 @@ const useAddPostComment = (postId?: string) => {
 	const params = useParams();
 	const timelineOwnerId = params.userId ?? currentUser.id;
 
-	const queryKey = [queryKeys.postComments, postId];
+	const queryKey = queryKeys.postComments(postId);
 
 	const mutate = (commentInput: TPostCommentInput) =>
 		addPostCommentQuery(commentInput, postId);
@@ -49,7 +48,6 @@ const useAddPostComment = (postId?: string) => {
 				updatedAt: date,
 			};
 
-			//TODO account for the case where old is empty
 			queryClient.setQueryData<IPostComment[]>(queryKey, (old) =>
 				old ? [newComment].concat(old) : [newComment]
 			);

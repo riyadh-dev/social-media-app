@@ -4,6 +4,7 @@ import {
 	Drawer,
 	List,
 	ListItemAvatar,
+	ListItemButton,
 	styled,
 } from '@mui/material';
 import ListItem from '@mui/material/ListItem';
@@ -67,7 +68,7 @@ const FriendsListItem = ({
 	const handleSelectFriend = () => setSelectedFriend(friend);
 
 	return (
-		<ListItem button onClick={handleSelectFriend}>
+		<ListItemButton onClick={handleSelectFriend}>
 			<ListItemAvatar>
 				<ConditionalWrapper condition={isOnline} wrapper={OnlineBadgeWrapper}>
 					<Avatar src={friend.avatar} sx={{ width: '55px', height: '55px' }} />
@@ -77,7 +78,7 @@ const FriendsListItem = ({
 				sx={{ display: { xs: 'none', md: 'inherit' }, ml: '12px' }}
 				primary={friend.userName}
 			/>
-		</ListItem>
+		</ListItemButton>
 	);
 };
 
