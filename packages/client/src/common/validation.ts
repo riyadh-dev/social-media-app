@@ -15,20 +15,20 @@ export const signUpValidationSchema = object({
 	confirmPassword: string()
 		.required('Password is a required field')
 		.oneOf([ref('password'), null], 'Passwords do not match'),
-}).required();
+});
 
 export const loginValidationSchema = object({
 	email: string().required('Email is a required field'),
 	password: string().required(),
-}).required();
+});
 
 export const chatMessageSchema = object({
 	text: string().required('cant sent empty chat message'),
-}).required();
+});
 
 export const searchUserInputSchema = object({
 	text: string().min(3).required('cant search an empty string'),
-}).required();
+});
 
 export const updateUserProfileValidationSchema = object({
 	userName: string().transform(transformFunction),
@@ -69,4 +69,9 @@ export const updateUserIntroValidationSchema = object({
 				message: 'fill at least on filled',
 		  })
 		: true;
+});
+
+export const updatePostValidationSchema = object({
+	description: string().required('This field is required'),
+	img: string().transform(transformFunction),
 });

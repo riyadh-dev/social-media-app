@@ -17,6 +17,10 @@ import {
 
 const router = Router();
 
+//get timeline post
+router.get('/timeline/:userId', getTimelinePosts);
+router.get('/liked/:userId', getLikedPosts);
+
 //create post
 router.post(
 	'/',
@@ -25,14 +29,10 @@ router.post(
 	createPost
 );
 
-//get timeline post
-router.get('/timeline/:userId', getTimelinePosts);
-router.get('/liked/:userId', getLikedPosts);
-
 //read post
 router.get('/:id', getPost);
 
-//update posts
+//update post
 router.put(
 	'/:id',
 	authenticate,

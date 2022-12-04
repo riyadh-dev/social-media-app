@@ -53,7 +53,7 @@ export interface IPost {
 	id: string;
 	author: Pick<IUser, 'id' | 'userName' | 'avatar'>;
 	description: string;
-	img: string;
+	img?: string;
 	likes: string[];
 	dislikes: string[];
 	comments: string[];

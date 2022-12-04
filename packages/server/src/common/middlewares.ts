@@ -4,10 +4,7 @@ import Joi from 'joi';
 import jwt from 'jsonwebtoken';
 import { IS_PROD, JWT_SECRET } from '../config/secrets';
 import { MESSAGE_INPUT } from '../DATA_SOURCES/MESSAGES/strings';
-import {
-	POST_INPUT,
-	POST_WITH_IMAGES_INPUT,
-} from '../DATA_SOURCES/POST/strings';
+import { POST_INPUT } from '../DATA_SOURCES/POST/strings';
 import { POST_COMMENT_INPUT } from '../DATA_SOURCES/POST_COMMENT/strings';
 import {
 	COOKIE_NAME,
@@ -30,8 +27,7 @@ type TValidInputKeys =
 	| typeof MESSAGE_INPUT
 	| typeof POST_INPUT
 	| typeof POST_COMMENT_INPUT
-	| typeof DB_DOC_IDS
-	| typeof POST_WITH_IMAGES_INPUT;
+	| typeof DB_DOC_IDS;
 
 export const validateInput =
 	(

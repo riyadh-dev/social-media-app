@@ -32,7 +32,7 @@ const PostsInfiniteList = ({
 			>
 				{pathname === '/' && <PostForm />}
 				{posts?.map((post, idx) =>
-					idx + 1 === posts.length - 3 ? (
+					idx === posts.length - 2 ? (
 						<Post
 							key={post.id}
 							observedItemRef={intersectionItemRef}

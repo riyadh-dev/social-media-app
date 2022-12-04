@@ -11,12 +11,18 @@ const useGetInfinitePosts = (
 	const postInfiniteQuery = useInfiniteQuery(
 		queryKeys.posts(queryType, userId),
 		({ pageParam }) => getPaginatedPostsQuery(queryType, userId, pageParam),
-		{ getNextPageParam: (_, pages) => pages.length }
+		{
+			getNextPageParam: (_, pages) =>
+				pages[pages.length - 1].length ? pages.length : undefined,
+		}
 	);
 
 	const intersectionItemRef = useIntersectionObserver({
 		onIntersection: postInfiniteQuery.fetchNextPage,
-		enable: !postInfiniteQuery.isLoading,
+		enable:
+			!postInfiniteQuery.isLoading &&
+			!postInfiniteQuery.isFetching &&
+			Boolean(postInfiniteQuery.hasNextPage),
 	});
 
 	return {

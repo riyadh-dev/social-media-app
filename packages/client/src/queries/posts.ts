@@ -6,8 +6,28 @@ import {
 import { TPaginatedPost, TPaginatedPostsType } from '../common/types';
 import { axiosInstance } from '../services/axios';
 
-export const addPostQuery = async (postInput: TPostInput): Promise<IPost> => {
+export const addPostQuery = async (postInput: TPostInput): Promise<unknown> => {
 	const { data } = await axiosInstance.post('/posts', postInput, {
+		withCredentials: true,
+	});
+	return data;
+};
+
+export const updatePostQuery = async ({
+	postInput,
+	postId,
+}: {
+	postInput: TPostInput;
+	postId: string;
+}): Promise<unknown> => {
+	const { data } = await axiosInstance.put(`/posts/${postId}`, postInput, {
+		withCredentials: true,
+	});
+	return data;
+};
+
+export const deletePostQuery = async (postId: string): Promise<unknown> => {
+	const { data } = await axiosInstance.delete(`/posts/${postId}`, {
 		withCredentials: true,
 	});
 	return data;

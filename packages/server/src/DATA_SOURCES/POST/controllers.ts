@@ -1,20 +1,22 @@
-import { IGetPostsWithImagesInput, IPost } from '@social-media-app/shared';
+import { IPost } from '@social-media-app/shared';
 import Joi from 'joi';
 import { FilterQuery, isValidObjectId } from 'mongoose';
+import { POSTS_PAGE_SIZE } from '../../common/constants';
 import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import { dbDocIdValidationSchema } from '../../common/validation';
 import UserModel from '../USER/model';
 import PostModel from './model';
 
 const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const currentUserDoc = await UserModel.findById(req.currentUserId);
-	if (!currentUserDoc) {
+	const currentUser = await UserModel.findById(req.currentUserId);
+	if (!currentUser) {
 		res.status(404).json({ error: 'no such user' });
 		return;
 	}
 
-	const { userName, avatar, id } = currentUserDoc;
-	const postDoc = await PostModel.create({
+	const { userName, avatar, id } = currentUser;
+	await PostModel.create({
 		author: {
 			id,
 			userName,
@@ -23,7 +25,7 @@ const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		...req.postInput,
 	});
 
-	res.status(200).json(postDoc);
+	res.status(200).end();
 };
 
 const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
@@ -33,28 +35,7 @@ const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const postDoc = await PostModel.findById(postId);
-	if (!postDoc) {
-		res.status(404).json({ error: 'post not found' });
-		return;
-	}
-
-	res.status(200).json(postDoc);
-};
-
-const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
-	if (!isValidObjectId(postId)) {
-		res.status(400).json({ error: 'invalid post id' });
-		return;
-	}
-
-	const post = await PostModel.findByIdAndUpdate(
-		postId,
-		{ ...req.postInput },
-		{ new: true }
-	);
-
+	const post = await PostModel.findById(postId);
 	if (!post) {
 		res.status(404).json({ error: 'post not found' });
 		return;
@@ -63,33 +44,68 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(post);
 };
 
-//TODO Add Post delete to client
-const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
-	if (!isValidObjectId(postId)) {
+const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const { value: postId, error } = dbDocIdValidationSchema.validate(
+		req.params.id
+	);
+	if (error) {
 		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
-	const postDoc = await PostModel.findById(postId);
-	if (!postDoc) {
+	const post = await PostModel.findById(postId);
+	if (!post) {
+		res.status(404).json({ error: 'post not found' });
+		return;
+	}
+
+	if (post.author.id !== req.currentUserId) {
+		res.status(400).json({ error: 'not authorized' });
+		return;
+	}
+
+	post.img = req.postInput?.img;
+	post.description = req.postInput?.description as string;
+	await post.save();
+
+	res.status(200).end();
+};
+
+//TODO Add Post delete to client
+const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
+	const { value: postId, error } = dbDocIdValidationSchema.validate(
+		req.params.id
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
+		return;
+	}
+
+	const post = await PostModel.findById(postId);
+	if (!post) {
 		res.status(404).json({ error: 'post not found' });
 		return;
 	}
 
 	const currentUserId = req.currentUserId;
-	if (postDoc.author.id !== currentUserId) {
+	if (post.author.id !== currentUserId) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
 
-	await postDoc.delete();
+	await post.delete();
 
-	res.status(200).json({ success: 'post deleted' });
+	res.status(200).end();
 };
 
 const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
+	const { value: postId, error } = dbDocIdValidationSchema.validate(
+		req.params.id
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
+		return;
+	}
 	const currentUserId = req.currentUserId as string;
 
 	if (!isValidObjectId(postId)) {
@@ -97,41 +113,47 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const postDoc = await PostModel.findById(postId);
-	const currentUserDoc = await UserModel.findById(currentUserId);
+	const post = await PostModel.findById(postId);
+	const currentUser = await UserModel.findById(currentUserId);
 
-	if (!postDoc || !currentUserDoc) {
+	if (!post || !currentUser) {
 		res.status(404).send({ error: 'post or current user not found' });
 		return;
 	}
 
-	if (postDoc.likes.includes(currentUserId)) {
+	if (post.likes.includes(currentUserId)) {
 		res.status(400).json({ error: 'post already liked' });
 		return;
 	}
 
-	postDoc.likes.push(currentUserId);
-	currentUserDoc.likedPosts.push(postDoc.id);
+	post.likes.push(currentUserId);
+	currentUser.likedPosts.push(post.id);
 
-	const postDislikeIdx = postDoc.dislikes.indexOf(currentUserId);
-	const userDislikeIdx = currentUserDoc.dislikedPosts.indexOf(currentUserId);
+	const postDislikeIdx = post.dislikes.indexOf(currentUserId);
+	const userDislikeIdx = currentUser.dislikedPosts.indexOf(currentUserId);
 
 	if (postDislikeIdx !== -1) {
-		postDoc.dislikes.splice(postDislikeIdx, 1);
+		post.dislikes.splice(postDislikeIdx, 1);
 	}
 
 	if (userDislikeIdx !== -1) {
-		currentUserDoc.dislikedPosts.splice(postDislikeIdx, 1);
+		currentUser.dislikedPosts.splice(postDislikeIdx, 1);
 	}
 
-	await currentUserDoc.save();
-	await postDoc.save();
+	await currentUser.save();
+	await post.save();
 
-	res.status(200).json(postDoc);
+	res.status(200).json(post);
 };
 
 const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
+	const { value: postId, error } = dbDocIdValidationSchema.validate(
+		req.params.id
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
+		return;
+	}
 	const currentUserId = req.currentUserId as string;
 
 	if (!isValidObjectId(postId)) {
@@ -139,43 +161,42 @@ const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 		return;
 	}
 
-	const postDoc = await PostModel.findById(postId);
-	const currentUserDoc = await UserModel.findById(currentUserId);
+	const post = await PostModel.findById(postId);
+	const currentUser = await UserModel.findById(currentUserId);
 
-	if (!postDoc || !currentUserDoc) {
+	if (!post || !currentUser) {
 		res.status(404).send({ error: 'post or current user not found' });
 		return;
 	}
 
-	if (postDoc.dislikes.includes(currentUserId)) {
+	if (post.dislikes.includes(currentUserId)) {
 		res.status(400).json({ error: 'post already disliked' });
 		return;
 	}
 
-	postDoc.dislikes.push(currentUserId);
-	currentUserDoc.dislikedPosts.push(postDoc.id);
+	post.dislikes.push(currentUserId);
+	currentUser.dislikedPosts.push(post.id);
 
-	const postDislikeIdx = postDoc.likes.indexOf(currentUserId);
-	const userDislikeIdx = currentUserDoc.likedPosts.indexOf(currentUserId);
+	const postDislikeIdx = post.likes.indexOf(currentUserId);
+	const userDislikeIdx = currentUser.likedPosts.indexOf(currentUserId);
 
 	if (postDislikeIdx !== -1) {
-		postDoc.likes.splice(postDislikeIdx, 1);
+		post.likes.splice(postDislikeIdx, 1);
 	}
 
 	if (userDislikeIdx !== -1) {
-		currentUserDoc.likedPosts.splice(postDislikeIdx, 1);
+		currentUser.likedPosts.splice(postDislikeIdx, 1);
 	}
 
-	await currentUserDoc.save();
-	await postDoc.save();
+	await currentUser.save();
+	await post.save();
 
-	res.status(200).json(postDoc);
+	res.status(200).json(post);
 };
 
 const getPaginatedPostsUnsafe =
 	(queryType: 'timeline' | 'liked'): IAsyncRequestHandler =>
 	async (req, res) => {
-		const PAGE_SIZE = 10;
 		const userId = req.params.userId;
 
 		const user = await UserModel.findById(userId);
@@ -202,8 +223,8 @@ const getPaginatedPostsUnsafe =
 		const page = Joi.attempt(req.query.page, Joi.number());
 		const posts = await PostModel.find(filter)
 			.sort({ createdAt: -1 })
-			.skip(page * PAGE_SIZE)
-			.limit(PAGE_SIZE);
+			.skip(page * POSTS_PAGE_SIZE)
+			.limit(POSTS_PAGE_SIZE);
 
 		res.status(200).json(posts);
 	};

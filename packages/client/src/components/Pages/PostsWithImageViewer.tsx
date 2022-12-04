@@ -16,13 +16,13 @@ import {
 	IconButton,
 	Paper,
 	Stack,
-	styled,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
 import { Suspense, useEffect, useMemo, useState } from 'react';
 import { Link as RouterLink, useLocation, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { TPaginatedPost, TPaginatedPostsType } from '../../common/types';
+import { POSTS_PAGE_SIZE } from '../../constants/envVars';
 import useDislikePost from '../../hooks/useDislike';
 import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import useLikePost from '../../hooks/useLike';
@@ -30,13 +30,6 @@ import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from '../Posts/PostCommentForm';
 import PostComments from '../Posts/PostComments';
 import PostCommentsSkeleton from '../Posts/PostCommentsSkeleton';
-
-//TODO move to shared nodule with the server
-const PAGE_SIZE = 10;
-const CommentText = styled(Paper)(({ theme }) => ({
-	backgroundColor: theme.palette.mode === 'dark' ? '#383838' : '#f0f2f5',
-	borderRadius: '16px',
-}));
 
 //TODO refactor
 const useRouteQuery = () => {
@@ -64,7 +57,7 @@ const PostsWithImageViewer = () => {
 		.flat()
 		.every((post, idx) => (post.img ? posts.push(post) : false));
 
-	const [postIndex, setPostIndex] = useState(page * PAGE_SIZE + index);
+	const [postIndex, setPostIndex] = useState(page * POSTS_PAGE_SIZE + index);
 	const canNext = postIndex + 1 < (posts?.length ?? 0);
 	const canBack = postIndex > 0;
 

@@ -3,3 +3,5 @@ export const API_ORIGIN =
 
 export const WS_ORIGIN =
 	process.env.REACT_APP_WS_ORIGIN ?? 'ws://localhost:4000/';
+
+export const POSTS_PAGE_SIZE = 5;
