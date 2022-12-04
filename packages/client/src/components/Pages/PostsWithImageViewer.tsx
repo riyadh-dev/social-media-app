@@ -104,6 +104,8 @@ const PostsWithImageViewer = () => {
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
 
+	const from = useLocation().state?.from?.pathname ?? '/';
+
 	if (!posts[postIndex]) return null;
 
 	const isLiked = posts[postIndex].likes.includes(currentUser?.id ?? '');
@@ -118,10 +120,9 @@ const PostsWithImageViewer = () => {
 				justifyContent='center'
 				alignItems='center'
 			>
-				{/*TODO navigate back to a from location */}
 				<IconButton
 					component={RouterLink}
-					to={'/'}
+					to={from}
 					sx={{
 						top: '8px',
 						left: '8px',

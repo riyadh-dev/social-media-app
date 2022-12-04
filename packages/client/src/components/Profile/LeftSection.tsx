@@ -19,7 +19,12 @@ import {
 import { debounce } from 'lodash';
 import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
-import { Link, Link as RouterLink, useParams } from 'react-router-dom';
+import {
+	Link,
+	Link as RouterLink,
+	useLocation,
+	useParams,
+} from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '../..';
 import { TPaginatedPost } from '../../common/types';
@@ -65,7 +70,9 @@ const LeftSection = () => {
 		};
 	}, [])();
 
-	if (!user) return <></>;
+	const location = useLocation();
+
+	if (!user) return null;
 
 	return (
 		<Stack
@@ -184,6 +191,7 @@ const LeftSection = () => {
 							component={RouterLink}
 							key={'post-image-' + image.id}
 							to={`/posts/timeline/${userId}?page=${image.page}&index=${image.index}`}
+							state={{ from: location }}
 						>
 							<img src={image.img} alt='post' loading='lazy' />
 						</ImageListItem>

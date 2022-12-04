@@ -65,8 +65,8 @@ const Post = ({
 	const isLiked = post.likes.includes(currentUser?.id ?? '');
 	const isDisliked = post.dislikes.includes(currentUser?.id ?? '');
 
-	const { pathname } = useLocation();
-	const postsType = pathname === '/favorites' ? 'liked' : 'timeline';
+	const location = useLocation();
+	const postsType = location.pathname === '/favorites' ? 'liked' : 'timeline';
 	return (
 		<Card ref={lastItemRef}>
 			<CardHeader
@@ -93,6 +93,7 @@ const Post = ({
 			{post.img && (
 				<Link
 					to={`/posts/${postsType}/${currentUser?.id}?page=${post.page}&index=${post.index}`}
+					state={{ from: location }}
 				>
 					<CardMedia component='img' image={post.img} alt='post img' />
 				</Link>
