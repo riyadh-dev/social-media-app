@@ -14,7 +14,7 @@ const Home = () => {
 	const currentUserId = useRecoilValue(currentUserState)?.id;
 	const { pathname } = useLocation();
 	const listType: TPaginatedPostsType =
-		pathname === '/favorites' ? 'liked' : 'timeline';
+		pathname === '/posts/liked' ? 'liked' : 'timeline';
 
 	useEffect(() => {
 		window.scrollTo({

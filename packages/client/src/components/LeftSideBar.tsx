@@ -4,7 +4,6 @@ import PeopleIcon from '@mui/icons-material/PeopleRounded';
 import { ListItemButton } from '@mui/material';
 import Drawer from '@mui/material/Drawer';
 import List from '@mui/material/List';
-import ListItem from '@mui/material/ListItem';
 import ListItemIcon from '@mui/material/ListItemIcon';
 import ListItemText from '@mui/material/ListItemText';
 import { Link as RouterLink, useLocation } from 'react-router-dom';
@@ -30,8 +29,8 @@ const LeftSideBar = () => {
 			</ListItemButton>
 			<ListItemButton
 				component={RouterLink}
-				to='/favorites'
-				selected={pathname === '/favorites'}
+				to='/posts/liked'
+				selected={pathname === '/posts/liked'}
 			>
 				<ListItemIcon>
 					<FavoriteIcon />

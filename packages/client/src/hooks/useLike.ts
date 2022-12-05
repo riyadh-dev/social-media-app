@@ -9,12 +9,12 @@ import { currentUserState } from '../recoil/atoms';
 
 //optimistic updates
 //TODO pass only page and index
-const useLikePost = (likedPost?: TPaginatedPost) => {
+const useLikePost = (postId: string, page: number, index: number) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 
 	const queryKey = queryKeys.posts('timeline', currentUser.id);
-	return useMutation(() => likePostQuery(likedPost?.id), {
+	return useMutation(() => likePostQuery(postId), {
 		// When mutate is called:
 		onMutate: async () => {
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)
@@ -24,17 +24,16 @@ const useLikePost = (likedPost?: TPaginatedPost) => {
 			const prevTimelinePosts =
 				queryClient.getQueryData<InfiniteData<TPaginatedPost[]>>(queryKey);
 
-			const prevPost =
-				likedPost && prevTimelinePosts
-					? cloneDeep(prevTimelinePosts.pages[likedPost.page][likedPost.index])
-					: undefined;
+			const prevPost = prevTimelinePosts
+				? cloneDeep(prevTimelinePosts.pages[page][index])
+				: undefined;
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
 				queryKey,
 				(old) => {
-					if (likedPost && old) {
-						const post = old.pages[likedPost.page][likedPost.index];
+					if (old) {
+						const post = old.pages[page][index];
 						post.likes.push(currentUser.id);
 						pull(post.dislikes, currentUser.id);
 					}

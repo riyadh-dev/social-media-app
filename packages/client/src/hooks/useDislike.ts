@@ -8,17 +8,15 @@ import queryKeys from '../constants/reactQueryKeys';
 import { dislikePostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
-const useDislikePost = (dislikedPost?: TPaginatedPost) => {
+const useDislikePost = (postId: string, page: number, index: number) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 
 	const { pathname } = useLocation();
-	const listType = pathname === '/favorites' ? 'liked' : 'timeline';
+	const listType = pathname.includes('/posts/liked') ? 'liked' : 'timeline';
 	const queryKey = queryKeys.posts(listType, currentUser.id);
 
-	console.log(pathname);
-
-	return useMutation(() => dislikePostQuery(dislikedPost?.id), {
+	return useMutation(() => dislikePostQuery(postId), {
 		// When mutate is called:
 		onMutate: async () => {
 			// Cancel any outgoing refetch (so they don't overwrite our optimistic update)
@@ -28,23 +26,19 @@ const useDislikePost = (dislikedPost?: TPaginatedPost) => {
 			const prevTimelinePosts =
 				queryClient.getQueryData<InfiniteData<TPaginatedPost[]>>(queryKey);
 
-			const prevPost =
-				dislikedPost && prevTimelinePosts
-					? cloneDeep(
-							prevTimelinePosts.pages[dislikedPost.page][dislikedPost.index]
-					  )
-					: undefined;
+			const prevPost = prevTimelinePosts
+				? cloneDeep(prevTimelinePosts.pages[page][index])
+				: undefined;
 
 			// Optimistically update to the new value
 			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
 				queryKey,
 				(old) => {
-					if (dislikedPost && old) {
-						const post = old.pages[dislikedPost.page][dislikedPost.index];
+					if (old) {
+						const post = old.pages[page][index];
 						post.dislikes.push(currentUser.id);
 						pull(post.likes, currentUser.id);
-						if (listType === 'liked')
-							old.pages[dislikedPost.page].splice(dislikedPost.index, 1);
+						if (listType === 'liked') old.pages[page].splice(index, 1);
 					}
 
 					return old;

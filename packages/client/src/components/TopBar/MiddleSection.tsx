@@ -28,8 +28,8 @@ const MiddleSection = () => {
 
 			<IconButton
 				component={Link}
-				to='/favorites'
-				color={pathname === '/favorites' ? 'primary' : 'default'}
+				to='/posts/liked'
+				color={pathname === '/posts/liked' ? 'primary' : 'default'}
 			>
 				<FavoriteIcon />
 			</IconButton>

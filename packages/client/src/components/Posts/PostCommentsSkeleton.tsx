@@ -6,7 +6,7 @@ const PostCommentsSkeleton = ({
 	commentsNumber: number;
 }) => (
 	<>
-		{[...Array(8)].map((_, idx) => (
+		{[...Array(commentsNumber)].map((_, idx) => (
 			<Stack key={idx} direction='row' spacing={2}>
 				<Skeleton variant='circular' height={40} width={40} />
 				<Skeleton

@@ -60,8 +60,12 @@ const Post = ({
 			? post.description.substring(0, 200) + ' ...'
 			: post.description;
 
-	const { mutate: likeMutation } = useLikePost(post);
-	const { mutate: dislikeMutation } = useDislikePost(post);
+	const { mutate: likeMutation } = useLikePost(post.id, post.page, post.index);
+	const { mutate: dislikeMutation } = useDislikePost(
+		post.id,
+		post.page,
+		post.index
+	);
 
 	const currentUser = useRecoilValue(currentUserState);
 
@@ -69,10 +73,10 @@ const Post = ({
 	const isDisliked = post.dislikes.includes(currentUser?.id ?? '');
 
 	const location = useLocation();
-	const postsType = location.pathname === '/favorites' ? 'liked' : 'timeline';
+	const postsType = location.pathname === '/posts/liked' ? 'liked' : 'timeline';
 
 	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-	const open = Boolean(anchorEl);
+	const openSettings = Boolean(anchorEl);
 	const handleSettingsOpen: React.MouseEventHandler<HTMLButtonElement> = (
 		event
 	) => setAnchorEl(event.currentTarget);
@@ -98,7 +102,6 @@ const Post = ({
 	const onSubmit = handleSubmit((postInput) => {
 		updatePost({ postId: post.id, postInput });
 		setEdit(false);
-		reset();
 	});
 
 	const handleDeletePost = () => {
@@ -123,9 +126,9 @@ const Post = ({
 					isCurrentUserAuthor && (
 						<IconButton
 							id='settings-button'
-							aria-controls={open ? 'settings-menu' : undefined}
+							aria-controls={openSettings ? 'settings-menu' : undefined}
 							aria-haspopup='true'
-							aria-expanded={open ? 'true' : undefined}
+							aria-expanded={openSettings ? 'true' : undefined}
 							onClick={handleSettingsOpen}
 						>
 							<MoreVertIcon />
@@ -259,7 +262,7 @@ const Post = ({
 			<Menu
 				id='settings-menu'
 				anchorEl={anchorEl}
-				open={open}
+				open={openSettings}
 				onClose={handleSettingsClose}
 				MenuListProps={{
 					'aria-labelledby': 'settings-button',

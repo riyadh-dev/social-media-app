@@ -1,7 +1,10 @@
+import { yupResolver } from '@hookform/resolvers/yup';
 import {
 	ArrowBack,
 	ArrowForward,
 	Close as CloseIcon,
+	Delete as DeleteIcon,
+	Edit,
 	MoreVert as MoreVertIcon,
 } from '@mui/icons-material';
 import ShareIcon from '@mui/icons-material/Share';
@@ -11,19 +14,37 @@ import {
 	Avatar,
 	Badge,
 	Box,
+	Button,
 	CardHeader,
 	Divider,
+	FormControl,
+	FormHelperText,
 	IconButton,
+	InputLabel,
 	Link,
+	ListItemIcon,
+	ListItemText,
+	Menu,
+	MenuItem,
+	OutlinedInput,
 	Paper,
 	Stack,
 } from '@mui/material';
 import Typography from '@mui/material/Typography';
+import { TPostInput } from '@social-media-app/shared';
 import { Suspense, useEffect, useMemo, useState } from 'react';
-import { Link as RouterLink, useLocation, useParams } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import {
+	Link as RouterLink,
+	Navigate,
+	useLocation,
+	useParams,
+} from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { TPaginatedPost, TPaginatedPostsType } from '../../common/types';
+import { updatePostValidationSchema } from '../../common/validation';
 import { POSTS_PAGE_SIZE } from '../../constants/envVars';
+import { useDeletePost, useUpdatePost } from '../../hooks/postsHooks';
 import useDislikePost from '../../hooks/useDislike';
 import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
 import useLikePost from '../../hooks/useLike';
@@ -50,9 +71,6 @@ const PostsWithImageViewer = () => {
 		authorId
 	);
 
-	useEffect(() => {
-		fetchNextPage({ pageParam: 5 });
-	}, [fetchNextPage]);
 	const posts: TPaginatedPost[] = [];
 	data?.pages
 		.flat()
@@ -81,8 +99,9 @@ const PostsWithImageViewer = () => {
 			  });
 	};
 
-	const { mutate: likeMutation } = useLikePost(posts?.[postIndex]);
-	const { mutate: dislikeMutation } = useDislikePost(posts?.[postIndex]);
+	const postId = posts?.[postIndex]?.id ?? '';
+	const { mutate: likeMutation } = useLikePost(postId, page, index);
+	const { mutate: dislikeMutation } = useDislikePost(postId, page, index);
 
 	useEffect(() => {
 		if (postIndex > posts.length - 3) fetchNextPage();
@@ -95,6 +114,8 @@ const PostsWithImageViewer = () => {
 			'Posts',
 			`/posts/${type}/${currentUser?.id}?page=${queryParams.page}&index=${queryParams.index}`
 		);
+
+		setEdit(false);
 		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, [postIndex]);
 
@@ -102,16 +123,53 @@ const PostsWithImageViewer = () => {
 
 	const [seeMore, setSeeMore] = useState(false);
 	const handleSeeMore = () => setSeeMore(!seeMore);
+
+	const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+	const openSettings = Boolean(anchorEl);
+	const handleSettingsOpen: React.MouseEventHandler<HTMLButtonElement> = (
+		event
+	) => setAnchorEl(event.currentTarget);
+	const handleSettingsClose = () => setAnchorEl(null);
+
+	const [edit, setEdit] = useState(false);
+	const handleEnableEdit = () => {
+		handleSettingsClose();
+		setEdit(true);
+	};
+
+	const { mutate: updatePost } = useUpdatePost(page, index);
+	const { mutate: deletePost } = useDeletePost(page, index);
+
+	const { register, handleSubmit, reset } = useForm<TPostInput>({
+		resolver: yupResolver(updatePostValidationSchema),
+		defaultValues: {
+			description: posts?.[postIndex]?.description ?? '',
+			img: posts?.[postIndex]?.img ?? '',
+		},
+	});
+
+	if (!posts[postIndex]) return <Navigate to={from} replace />;
+
+	const isCurrentUserAuthor = posts[postIndex].author.id === currentUser?.id;
+
 	const canSeeMore = posts[postIndex].description.length > 200;
 	const description =
 		canSeeMore === true && seeMore === false
 			? posts[postIndex].description.substring(0, 200) + ' ...'
 			: posts[postIndex].description;
 
-	if (!posts[postIndex]) return null;
-
 	const isLiked = posts[postIndex].likes.includes(currentUser?.id ?? '');
 	const isDisliked = posts[postIndex].dislikes.includes(currentUser?.id ?? '');
+
+	const onSubmit = handleSubmit((postInput) => {
+		updatePost({ postId: posts[postIndex].id, postInput });
+		setEdit(false);
+	});
+
+	const handleDeletePost = () => {
+		handleSettingsClose();
+		deletePost(posts[postIndex].id);
+	};
 
 	return (
 		<Stack height='100vh' direction='row' justifyContent='space-between'>
@@ -181,7 +239,7 @@ const PostsWithImageViewer = () => {
 					flexDirection: 'column',
 				}}
 			>
-				<Stack overflow='auto'>
+				<Stack flexGrow='1' overflow='auto'>
 					<CardHeader
 						avatar={
 							<Avatar
@@ -192,9 +250,17 @@ const PostsWithImageViewer = () => {
 							/>
 						}
 						action={
-							<IconButton aria-label='settings'>
-								<MoreVertIcon />
-							</IconButton>
+							isCurrentUserAuthor && (
+								<IconButton
+									id='settings-button'
+									aria-controls={openSettings ? 'settings-menu' : undefined}
+									aria-haspopup='true'
+									aria-expanded={openSettings ? 'true' : undefined}
+									onClick={handleSettingsOpen}
+								>
+									<MoreVertIcon />
+								</IconButton>
+							)
 						}
 						title={posts?.[postIndex].author.userName}
 						subheader={new Date(
@@ -205,19 +271,57 @@ const PostsWithImageViewer = () => {
 							month: 'long',
 						})}
 					/>
-					<Typography px='16px' paragraph>
-						{description + ' '}
-						{canSeeMore && (
-							<Link
-								sx={{ cursor: 'pointer' }}
-								component='span'
-								underline='hover'
-								onClick={handleSeeMore}
-							>
-								{seeMore ? 'See less' : 'See more'}
-							</Link>
-						)}
-					</Typography>
+					{edit ? (
+						<Stack px='16px' component='form' spacing={2} onSubmit={onSubmit}>
+							<FormControl fullWidth variant='outlined'>
+								<InputLabel htmlFor='post-image'>Post Image</InputLabel>
+								<OutlinedInput
+									id='post-image'
+									label='post-image'
+									{...register('img')}
+								/>
+								<FormHelperText id='post-image'>{}</FormHelperText>
+							</FormControl>
+
+							<FormControl fullWidth variant='outlined'>
+								<InputLabel htmlFor='post-text'>Post Text</InputLabel>
+								<OutlinedInput
+									id='post-text'
+									label='post-text'
+									multiline
+									rows={3}
+									{...register('description')}
+								/>
+								<FormHelperText id='post-text'></FormHelperText>
+							</FormControl>
+							<Stack direction='row' justifyContent='space-between'>
+								<Button
+									onClick={() => setEdit(false)}
+									color='error'
+									variant='text'
+								>
+									Cancel
+								</Button>
+								<Button type='submit' variant='text'>
+									Update
+								</Button>
+							</Stack>
+						</Stack>
+					) : (
+						<Typography px='16px' paragraph>
+							{description + ' '}
+							{canSeeMore && (
+								<Link
+									sx={{ cursor: 'pointer' }}
+									component='span'
+									underline='hover'
+									onClick={handleSeeMore}
+								>
+									{seeMore ? 'See less' : 'See more'}
+								</Link>
+							)}
+						</Typography>
+					)}
 					<Divider variant='middle' />
 					<Stack direction='row' justifyContent='space-around' py='12px'>
 						<span>
@@ -265,6 +369,31 @@ const PostsWithImageViewer = () => {
 							<PostComments post={posts?.[postIndex]} />
 						</Suspense>
 					</Stack>
+
+					<Menu
+						id='settings-menu'
+						anchorEl={anchorEl}
+						open={openSettings}
+						onClose={handleSettingsClose}
+						MenuListProps={{
+							'aria-labelledby': 'settings-button',
+						}}
+					>
+						<MenuItem onClick={handleEnableEdit}>
+							<ListItemIcon>
+								<Edit />
+							</ListItemIcon>
+							<ListItemText>Edit</ListItemText>
+						</MenuItem>
+						<MenuItem onClick={handleDeletePost}>
+							<ListItemIcon>
+								<DeleteIcon color='error' />
+							</ListItemIcon>
+							<ListItemText primaryTypographyProps={{ color: 'error' }}>
+								Delete
+							</ListItemText>
+						</MenuItem>
+					</Menu>
 				</Stack>
 
 				<PostCommentForm postId={posts?.[postIndex].id as string} />

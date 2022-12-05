@@ -39,7 +39,7 @@ const router = createBrowserRouter([
 		),
 		children: [
 			{ path: '/', element: <Home /> },
-			{ path: 'favorites', element: <Home /> },
+			{ path: '/posts/liked', element: <Home /> },
 			{ path: 'friends', element: <Friends /> },
 			{ path: 'profile/:userId', element: <Profile /> },
 			{ path: '/messenger', element: <Messenger /> },

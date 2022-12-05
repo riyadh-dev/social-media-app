@@ -13,7 +13,7 @@ export const useUpdatePost = (page: number, index: number) => {
 	if (!currentUser) throw new Error('current user not found');
 
 	const { pathname } = useLocation();
-	const listType = pathname === '/favorites' ? 'liked' : 'timeline';
+	const listType = pathname.includes('/posts/liked') ? 'liked' : 'timeline';
 
 	const queryKey = queryKeys.posts(listType, currentUser.id);
 	return useMutation(updatePostQuery, {
@@ -69,7 +69,7 @@ export const useDeletePost = (page: number, index: number) => {
 	if (!currentUser) throw new Error('current user not found');
 
 	const { pathname } = useLocation();
-	const listType = pathname === '/favorites' ? 'liked' : 'timeline';
+	const listType = pathname.includes('/posts/liked') ? 'liked' : 'timeline';
 
 	const queryKey = queryKeys.posts(listType, currentUser.id);
 	return useMutation(deletePostQuery, {

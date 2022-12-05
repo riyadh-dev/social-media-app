@@ -22,13 +22,13 @@ import PostCommentForm from './PostCommentForm';
 import PostCommentsSkeleton from './PostCommentsSkeleton';
 
 const PostsWithImageViewerSkeleton = () => (
-	<Stack direction='row'>
+	<Stack height='100vh' direction='row' justifyContent='space-between'>
 		<Box
-			width='70vw'
 			position='relative'
 			display='flex'
 			justifyContent='center'
 			alignItems='center'
+			flexGrow='1'
 		>
 			<IconButton
 				component={RouterLink}
@@ -82,11 +82,12 @@ const PostsWithImageViewerSkeleton = () => (
 		<Paper
 			sx={{
 				borderRadius: 0,
+				width: '400px',
 				display: 'flex',
 				flexDirection: 'column',
 			}}
 		>
-			<Stack>
+			<Stack flexGrow='1' overflow='auto'>
 				<CardHeader
 					avatar={<Skeleton variant='circular' height='40px' width='40px' />}
 					action={
@@ -97,9 +98,9 @@ const PostsWithImageViewerSkeleton = () => (
 					title={<Skeleton variant='rectangular' height='16px' width='140px' />}
 				/>
 				<Stack spacing={2} p='16px'>
-					<Skeleton variant='rectangular' height='16px' width='460px' />
-					<Skeleton variant='rectangular' height='16px' width='430px' />
-					<Skeleton variant='rectangular' height='16px' width='400px' />
+					<Skeleton variant='rectangular' height='16px' width='360px' />
+					<Skeleton variant='rectangular' height='16px' width='330px' />
+					<Skeleton variant='rectangular' height='16px' width='300px' />
 				</Stack>
 
 				<Divider variant='middle' />
@@ -118,16 +119,11 @@ const PostsWithImageViewerSkeleton = () => (
 					</IconButton>
 				</Stack>
 				<Divider variant='middle' />
+				<Stack p='16px' direction='column' spacing={2}>
+					<PostCommentsSkeleton commentsNumber={8} />
+				</Stack>
 			</Stack>
-			<Stack
-				p='16px'
-				direction='column'
-				spacing={2}
-				flexGrow={1}
-				overflow='auto'
-			>
-				<PostCommentsSkeleton commentsNumber={8} />
-			</Stack>
+
 			<PostCommentForm postId='' />
 		</Paper>
 	</Stack>
