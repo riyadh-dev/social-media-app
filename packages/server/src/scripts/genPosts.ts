@@ -42,7 +42,9 @@ const genPosts = async (usersDocs: TUserDocument[], postsNumber: number) => {
 					avatar: author.avatar,
 					userName: author.userName,
 				},
-				description: faker.commerce.productDescription(),
+				description: faker.lorem.paragraphs(
+					faker.datatype.number({ min: 1, max: 9 })
+				),
 				img: faker.image.business(640, 480, true),
 				dislikes: [],
 				likes: [],

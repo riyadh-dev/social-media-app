@@ -14,6 +14,7 @@ import {
 	CardHeader,
 	Divider,
 	IconButton,
+	Link,
 	Paper,
 	Stack,
 } from '@mui/material';
@@ -99,19 +100,27 @@ const PostsWithImageViewer = () => {
 
 	const from = useLocation().state?.from?.pathname ?? '/';
 
+	const [seeMore, setSeeMore] = useState(false);
+	const handleSeeMore = () => setSeeMore(!seeMore);
+	const canSeeMore = posts[postIndex].description.length > 200;
+	const description =
+		canSeeMore === true && seeMore === false
+			? posts[postIndex].description.substring(0, 200) + ' ...'
+			: posts[postIndex].description;
+
 	if (!posts[postIndex]) return null;
 
 	const isLiked = posts[postIndex].likes.includes(currentUser?.id ?? '');
 	const isDisliked = posts[postIndex].dislikes.includes(currentUser?.id ?? '');
 
 	return (
-		<Stack width='100vw' height='100vh' direction='row'>
+		<Stack height='100vh' direction='row' justifyContent='space-between'>
 			<Box
-				width='70vw'
 				position='relative'
 				display='flex'
 				justifyContent='center'
 				alignItems='center'
+				flexGrow='1'
 			>
 				<IconButton
 					component={RouterLink}
@@ -167,13 +176,12 @@ const PostsWithImageViewer = () => {
 			<Paper
 				sx={{
 					borderRadius: 0,
-					height: '100vh',
-					width: '30vw',
+					width: '400px',
 					display: 'flex',
 					flexDirection: 'column',
 				}}
 			>
-				<Stack>
+				<Stack overflow='auto'>
 					<CardHeader
 						avatar={
 							<Avatar
@@ -198,7 +206,17 @@ const PostsWithImageViewer = () => {
 						})}
 					/>
 					<Typography px='16px' paragraph>
-						{posts?.[postIndex].description}
+						{description + ' '}
+						{canSeeMore && (
+							<Link
+								sx={{ cursor: 'pointer' }}
+								component='span'
+								underline='hover'
+								onClick={handleSeeMore}
+							>
+								{seeMore ? 'See less' : 'See more'}
+							</Link>
+						)}
 					</Typography>
 					<Divider variant='middle' />
 					<Stack direction='row' justifyContent='space-around' py='12px'>
@@ -242,18 +260,13 @@ const PostsWithImageViewer = () => {
 						</IconButton>
 					</Stack>
 					<Divider variant='middle' />
+					<Stack p='16px' direction='column' spacing={2}>
+						<Suspense fallback={<PostCommentsSkeleton commentsNumber={6} />}>
+							<PostComments post={posts?.[postIndex]} />
+						</Suspense>
+					</Stack>
 				</Stack>
-				<Stack
-					p='16px'
-					direction='column'
-					spacing={2}
-					flexGrow={1}
-					overflow='auto'
-				>
-					<Suspense fallback={<PostCommentsSkeleton commentsNumber={6} />}>
-						<PostComments post={posts?.[postIndex]} />
-					</Suspense>
-				</Stack>
+
 				<PostCommentForm postId={posts?.[postIndex].id as string} />
 			</Paper>
 		</Stack>

@@ -1,6 +1,5 @@
 import { yupResolver } from '@hookform/resolvers/yup';
 import { Delete as DeleteIcon, Edit } from '@mui/icons-material';
-import ExpandMoreIcon from '@mui/icons-material/ExpandMore';
 import MoreVertIcon from '@mui/icons-material/MoreVert';
 import ShareIcon from '@mui/icons-material/Share';
 import ThumbDownIcon from '@mui/icons-material/ThumbDown';
@@ -12,6 +11,7 @@ import {
 	FormControl,
 	FormHelperText,
 	InputLabel,
+	Link,
 	ListItemIcon,
 	ListItemText,
 	Menu,
@@ -25,38 +25,22 @@ import CardActions from '@mui/material/CardActions';
 import CardContent from '@mui/material/CardContent';
 import CardHeader from '@mui/material/CardHeader';
 import CardMedia from '@mui/material/CardMedia';
-import IconButton, { IconButtonProps } from '@mui/material/IconButton';
-import { styled } from '@mui/material/styles';
+import IconButton from '@mui/material/IconButton';
 import Typography from '@mui/material/Typography';
 import { TPostInput } from '@social-media-app/shared';
 import { Suspense, useState } from 'react';
 import { useForm } from 'react-hook-form';
-import { Link, Link as RouterLink, useLocation } from 'react-router-dom';
+import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { TPaginatedPost } from '../../common/types';
 import { updatePostValidationSchema } from '../../common/validation';
-import { useUpdatePost } from '../../hooks/postsHooks';
+import { useDeletePost, useUpdatePost } from '../../hooks/postsHooks';
 import useDislikePost from '../../hooks/useDislike';
 import useLikePost from '../../hooks/useLike';
 import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from './PostCommentForm';
 import PostComments from './PostComments';
 import PostCommentsSkeleton from './PostCommentsSkeleton';
-
-interface ExpandMoreProps extends IconButtonProps {
-	expand: boolean;
-}
-
-const ExpandMore = styled((props: ExpandMoreProps) => {
-	const { expand, ...other } = props;
-	return <IconButton {...other} />;
-})(({ theme, expand }) => ({
-	transform: !expand ? 'rotate(0deg)' : 'rotate(180deg)',
-	marginLeft: 'auto',
-	transition: theme.transitions.create('transform', {
-		duration: theme.transitions.duration.shortest,
-	}),
-}));
 
 const Post = ({
 	post,
@@ -65,15 +49,15 @@ const Post = ({
 	post: TPaginatedPost;
 	observedItemRef?: (node: HTMLDivElement) => void;
 }) => {
-	const [expanded, setExpanded] = useState(false);
-	const handleExpandClick = () => setExpanded(!expanded);
-
 	const [showComments, setShowComments] = useState(false);
 	const handleShowComments = () => setShowComments((prev) => !prev);
-	const canExpand = post.description.length > 160;
+
+	const [seeMore, setSeeMore] = useState(false);
+	const handleSeeMore = () => setSeeMore(!seeMore);
+	const canSeeMore = post.description.length > 200;
 	const description =
-		canExpand === true && expanded === false
-			? post.description.substring(0, 160) + ' ...'
+		canSeeMore === true && seeMore === false
+			? post.description.substring(0, 200) + ' ...'
 			: post.description;
 
 	const { mutate: likeMutation } = useLikePost(post);
@@ -100,11 +84,8 @@ const Post = ({
 		setEdit(true);
 	};
 
-	const { mutate: updatePost } = useUpdatePost(
-		post.page,
-		post.index,
-		postsType
-	);
+	const { mutate: updatePost } = useUpdatePost(post.page, post.index);
+	const { mutate: deletePost } = useDeletePost(post.page, post.index);
 
 	const { register, handleSubmit, reset } = useForm<TPostInput>({
 		resolver: yupResolver(updatePostValidationSchema),
@@ -116,9 +97,14 @@ const Post = ({
 
 	const onSubmit = handleSubmit((postInput) => {
 		updatePost({ postId: post.id, postInput });
-		reset();
 		setEdit(false);
+		reset();
 	});
+
+	const handleDeletePost = () => {
+		handleSettingsClose();
+		deletePost(post.id);
+	};
 
 	const isCurrentUserAuthor = post.author.id === currentUser?.id;
 
@@ -154,12 +140,12 @@ const Post = ({
 				})}
 			/>
 			{post.img && !edit && (
-				<Link
+				<RouterLink
 					to={`/posts/${postsType}/${currentUser?.id}?page=${post.page}&index=${post.index}`}
 					state={{ from: location }}
 				>
 					<CardMedia component='img' image={post.img} alt='post img' />
-				</Link>
+				</RouterLink>
 			)}
 			<CardContent>
 				{edit ? (
@@ -183,9 +169,7 @@ const Post = ({
 								rows={3}
 								{...register('description')}
 							/>
-							<FormHelperText id='post-text'>
-								{'Press Enter to update'}
-							</FormHelperText>
+							<FormHelperText id='post-text'></FormHelperText>
 						</FormControl>
 						<Stack direction='row' justifyContent='space-between'>
 							<Button
@@ -201,7 +185,19 @@ const Post = ({
 						</Stack>
 					</Stack>
 				) : (
-					<Typography paragraph>{description}</Typography>
+					<Typography paragraph>
+						{description + ' '}
+						{canSeeMore && (
+							<Link
+								sx={{ cursor: 'pointer' }}
+								component='span'
+								underline='hover'
+								onClick={handleSeeMore}
+							>
+								{seeMore ? 'See less' : 'See more'}
+							</Link>
+						)}
+					</Typography>
 				)}
 			</CardContent>
 			<CardActions disableSpacing>
@@ -248,16 +244,6 @@ const Post = ({
 				>
 					{post.comments.length} Comments
 				</Button>
-				{canExpand && (
-					<ExpandMore
-						expand={expanded}
-						onClick={handleExpandClick}
-						aria-expanded={expanded}
-						aria-label='show more'
-					>
-						<ExpandMoreIcon />
-					</ExpandMore>
-				)}
 			</CardActions>
 			<Divider variant='middle' />
 			<PostCommentForm postId={post.id} />
@@ -285,7 +271,7 @@ const Post = ({
 					</ListItemIcon>
 					<ListItemText>Edit</ListItemText>
 				</MenuItem>
-				<MenuItem onClick={handleSettingsClose}>
+				<MenuItem onClick={handleDeletePost}>
 					<ListItemIcon>
 						<DeleteIcon color='error' />
 					</ListItemIcon>

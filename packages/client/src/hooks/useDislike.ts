@@ -1,5 +1,6 @@
-import { IPost } from '@social-media-app/shared/src';
+import { cloneDeep, pull } from 'lodash';
 import { InfiniteData, useMutation } from 'react-query';
+import { useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '..';
 import { TPaginatedPost } from '../common/types';
@@ -11,6 +12,12 @@ const useDislikePost = (dislikedPost?: TPaginatedPost) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 
+	const { pathname } = useLocation();
+	const listType = pathname === '/favorites' ? 'liked' : 'timeline';
+	const queryKey = queryKeys.posts(listType, currentUser.id);
+
+	console.log(pathname);
+
 	return useMutation(() => dislikePostQuery(dislikedPost?.id), {
 		// When mutate is called:
 		onMutate: async () => {
@@ -18,50 +25,49 @@ const useDislikePost = (dislikedPost?: TPaginatedPost) => {
 			await queryClient.cancelQueries(['posts']);
 
 			// Snapshot the previous value
-			const prevTimelinePosts = queryClient.getQueryData(
-				queryKeys.posts('timeline', currentUser?.id)
-			);
-			const prevLikedPosts = queryClient.getQueryData(
-				queryKeys.posts('liked', currentUser?.id)
-			);
+			const prevTimelinePosts =
+				queryClient.getQueryData<InfiniteData<TPaginatedPost[]>>(queryKey);
+
+			const prevPost =
+				dislikedPost && prevTimelinePosts
+					? cloneDeep(
+							prevTimelinePosts.pages[dislikedPost.page][dislikedPost.index]
+					  )
+					: undefined;
 
 			// Optimistically update to the new value
-			queryClient.setQueryData<InfiniteData<IPost[]> | undefined>(
-				queryKeys.posts('timeline', currentUser?.id),
+			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
+				queryKey,
 				(old) => {
-					if (dislikedPost) {
-						const post = old?.pages[dislikedPost.page][dislikedPost.index];
-						post?.dislikes.push(currentUser.id);
-						const index = post?.likes.indexOf(currentUser.id);
-						if (typeof index === 'number' && index !== -1)
-							post?.likes.splice(index, 1);
+					if (dislikedPost && old) {
+						const post = old.pages[dislikedPost.page][dislikedPost.index];
+						post.dislikes.push(currentUser.id);
+						pull(post.likes, currentUser.id);
+						if (listType === 'liked')
+							old.pages[dislikedPost.page].splice(dislikedPost.index, 1);
 					}
-					return old;
-				}
-			);
 
-			queryClient.setQueryData<InfiniteData<IPost[]> | undefined>(
-				queryKeys.posts('liked', currentUser?.id),
-				(old) => {
-					if (dislikedPost)
-						old?.pages[dislikedPost.page].splice(dislikedPost.index, 1);
 					return old;
 				}
 			);
 
 			// Return a context object with the snapshot value
-			return { prevLikedPosts, prevTimelinePosts };
+			return { prevPost };
 		},
 
 		// If the mutation fails, use the context returned from onMutate to roll back
 		onError: (err, newMessage, context) => {
-			queryClient.setQueryData(
-				queryKeys.posts('timeline', currentUser?.id),
-				context?.prevTimelinePosts
-			);
-			queryClient.setQueryData(
-				queryKeys.posts('timeline', currentUser?.id),
-				context?.prevLikedPosts
+			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
+				queryKey,
+				(old) => {
+					const prevPost = context?.prevPost;
+					if (prevPost && old) {
+						listType === 'timeline'
+							? (old.pages[prevPost.page][prevPost.index] = prevPost)
+							: old.pages[prevPost.page].splice(prevPost.index, 0, prevPost);
+					}
+					return old;
+				}
 			);
 		},
 	});

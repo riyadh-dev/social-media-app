@@ -22,7 +22,7 @@ import PostCommentForm from './PostCommentForm';
 import PostCommentsSkeleton from './PostCommentsSkeleton';
 
 const PostsWithImageViewerSkeleton = () => (
-	<Stack width='100vw' height='100vh' direction='row'>
+	<Stack direction='row'>
 		<Box
 			width='70vw'
 			position='relative'

@@ -1,4 +1,4 @@
-import { IPost } from '@social-media-app/shared/src';
+import { cloneDeep, pull } from 'lodash';
 import { InfiniteData, useMutation } from 'react-query';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '..';
@@ -8,10 +8,12 @@ import { likePostQuery } from '../queries/posts';
 import { currentUserState } from '../recoil/atoms';
 
 //optimistic updates
+//TODO pass only page and index
 const useLikePost = (likedPost?: TPaginatedPost) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
 
+	const queryKey = queryKeys.posts('timeline', currentUser.id);
 	return useMutation(() => likePostQuery(likedPost?.id), {
 		// When mutate is called:
 		onMutate: async () => {
@@ -19,20 +21,22 @@ const useLikePost = (likedPost?: TPaginatedPost) => {
 			await queryClient.cancelQueries(['posts']);
 
 			// Snapshot the previous value
-			const prevTimelinePosts = queryClient.getQueryData(
-				queryKeys.posts('timeline', currentUser?.id)
-			);
+			const prevTimelinePosts =
+				queryClient.getQueryData<InfiniteData<TPaginatedPost[]>>(queryKey);
+
+			const prevPost =
+				likedPost && prevTimelinePosts
+					? cloneDeep(prevTimelinePosts.pages[likedPost.page][likedPost.index])
+					: undefined;
 
 			// Optimistically update to the new value
-			queryClient.setQueryData<InfiniteData<IPost[]> | undefined>(
-				queryKeys.posts('timeline', currentUser.id),
+			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
+				queryKey,
 				(old) => {
-					if (likedPost) {
-						const post = old?.pages[likedPost.page][likedPost.index];
-						post?.likes.push(currentUser.id);
-						const index = post?.dislikes.indexOf(currentUser.id);
-						if (typeof index === 'number' && index !== -1)
-							post?.dislikes.splice(index, 1);
+					if (likedPost && old) {
+						const post = old.pages[likedPost.page][likedPost.index];
+						post.likes.push(currentUser.id);
+						pull(post.dislikes, currentUser.id);
 					}
 
 					return old;
@@ -40,14 +44,20 @@ const useLikePost = (likedPost?: TPaginatedPost) => {
 			);
 
 			// Return a context object with the snapshot value
-			return { prevTimelinePosts };
+			return { prevPost };
 		},
 
 		// If the mutation fails, use the context returned from onMutate to roll back
 		onError: (err, newMessage, context) => {
-			queryClient.setQueryData(
-				queryKeys.posts('timeline', currentUser?.id),
-				context?.prevTimelinePosts
+			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
+				queryKey,
+				(old) => {
+					const prevPost = context?.prevPost;
+					if (prevPost && old) {
+						old.pages[prevPost.page][prevPost.index] = prevPost;
+					}
+					return old;
+				}
 			);
 		},
 	});
