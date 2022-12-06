@@ -140,7 +140,7 @@ const PostsWithImageViewer = () => {
 	const { mutate: updatePost } = useUpdatePost(page, index);
 	const { mutate: deletePost } = useDeletePost(page, index);
 
-	const { register, handleSubmit, reset } = useForm<TPostInput>({
+	const { register, handleSubmit } = useForm<TPostInput>({
 		resolver: yupResolver(updatePostValidationSchema),
 		defaultValues: {
 			description: posts?.[postIndex]?.description ?? '',
@@ -172,7 +172,7 @@ const PostsWithImageViewer = () => {
 	};
 
 	return (
-		<Stack height='100vh' direction='row' justifyContent='space-between'>
+		<Stack height='100vh' direction={{ md: 'row' }}>
 			<Box
 				position='relative'
 				display='flex'
@@ -228,13 +228,19 @@ const PostsWithImageViewer = () => {
 						<ArrowForward />
 					</Avatar>
 				</IconButton>
-				<Box component='img' height='100%' src={posts?.[postIndex].img} />
+				<Box
+					component='img'
+					maxHeight={{ xs: '50vh', md: '100vh' }}
+					maxWidth='100%'
+					sx={{ objectFit: 'contain' }}
+					src={posts?.[postIndex].img}
+				/>
 			</Box>
 
 			<Paper
 				sx={{
 					borderRadius: 0,
-					width: '400px',
+					width: { xs: '100%', md: '400px' },
 					display: 'flex',
 					flexDirection: 'column',
 				}}

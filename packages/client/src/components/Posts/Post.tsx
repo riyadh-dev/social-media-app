@@ -91,7 +91,7 @@ const Post = ({
 	const { mutate: updatePost } = useUpdatePost(post.page, post.index);
 	const { mutate: deletePost } = useDeletePost(post.page, post.index);
 
-	const { register, handleSubmit, reset } = useForm<TPostInput>({
+	const { register, handleSubmit } = useForm<TPostInput>({
 		resolver: yupResolver(updatePostValidationSchema),
 		defaultValues: {
 			description: post.description,

@@ -22,7 +22,7 @@ import PostCommentForm from './PostCommentForm';
 import PostCommentsSkeleton from './PostCommentsSkeleton';
 
 const PostsWithImageViewerSkeleton = () => (
-	<Stack height='100vh' direction='row' justifyContent='space-between'>
+	<Stack height='100vh' direction={{ md: 'row' }}>
 		<Box
 			position='relative'
 			display='flex'
@@ -76,13 +76,19 @@ const PostsWithImageViewerSkeleton = () => (
 					<ArrowForward />
 				</Avatar>
 			</IconButton>
-			<Skeleton variant='rectangular' height='90%' width='85%' />
+			<Skeleton
+				variant='rectangular'
+				sx={{
+					width: { xs: '100vw', md: '85%' },
+					height: { xs: '35vh', sm: '50vh', md: '80vh' },
+				}}
+			/>
 		</Box>
 
 		<Paper
 			sx={{
 				borderRadius: 0,
-				width: '400px',
+				width: { sx: '100%', md: '400px' },
 				display: 'flex',
 				flexDirection: 'column',
 			}}

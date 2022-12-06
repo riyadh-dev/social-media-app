@@ -12,7 +12,7 @@ const MiddleSection = () => {
 		<Stack
 			sx={{
 				flexGrow: 1,
-				visibility: { xs: 'hidden', md: 'visible' },
+				display: { xs: 'none', md: 'flex' },
 			}}
 			justifyContent='center'
 			spacing={4}
