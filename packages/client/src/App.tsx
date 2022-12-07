@@ -1,9 +1,9 @@
-import { ThemeProvider } from '@emotion/react';
 import {
 	createTheme,
 	CssBaseline,
 	PaletteMode,
 	Theme,
+	ThemeProvider,
 	useMediaQuery,
 } from '@mui/material';
 import { Suspense, useEffect, useMemo } from 'react';
