@@ -13,6 +13,7 @@ import { TLoginInput, TMockAccount } from '@social-media-app/shared';
 import { UseFormSetValue } from 'react-hook-form';
 import { useQuery } from 'react-query';
 import { getAccountsQuery } from '../../queries/users';
+import Loading from '../Loading';
 
 interface IMockAccountsListProps {
 	openMockAccountsList: boolean;
@@ -25,7 +26,9 @@ const MockAccountsList = ({
 	openMockAccountsList,
 	setValue,
 }: IMockAccountsListProps) => {
-	const { data: accounts } = useQuery('accounts', getAccountsQuery);
+	const { data: accounts, isLoading } = useQuery('accounts', getAccountsQuery, {
+		suspense: false,
+	});
 	const handleSelectAccount = (account: TMockAccount) => () => {
 		setValue('email', account.email);
 		setValue('password', 'password');
@@ -56,22 +59,26 @@ const MockAccountsList = ({
 					Mock Accounts List
 				</Typography>
 				<Divider sx={{ my: '1rem', mx: '-20px' }} />
-				<List sx={{ overflow: 'auto', mr: '-20px' }}>
-					{accounts?.map((account) => (
-						<ListItemButton
-							key={account.id}
-							onClick={handleSelectAccount(account)}
-						>
-							<ListItemAvatar>
-								<Avatar src={account.avatar} alt={account.userName} />
-							</ListItemAvatar>
-							<ListItemText
-								primary={account.userName}
-								secondary={account.email}
-							/>
-						</ListItemButton>
-					))}
-				</List>
+				{isLoading ? (
+					<Loading />
+				) : (
+					<List sx={{ overflow: 'auto', mr: '-20px' }}>
+						{accounts?.map((account) => (
+							<ListItemButton
+								key={account.id}
+								onClick={handleSelectAccount(account)}
+							>
+								<ListItemAvatar>
+									<Avatar src={account.avatar} alt={account.userName} />
+								</ListItemAvatar>
+								<ListItemText
+									primary={account.userName}
+									secondary={account.email}
+								/>
+							</ListItemButton>
+						))}
+					</List>
+				)}
 			</Paper>
 		</Modal>
 	);
