@@ -70,8 +70,6 @@ const LeftSection = () => {
 		};
 	}, [])();
 
-	const location = useLocation();
-
 	if (!user) return null;
 
 	return (
