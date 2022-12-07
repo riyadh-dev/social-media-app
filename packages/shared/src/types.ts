@@ -42,3 +42,5 @@ export type TUpdateUserInput = Pick<
 	Partial<IUser>,
 	'avatar' | 'cover' | 'email' | 'password' | 'userName' | 'intro'
 >;
+
+export type TMockAccount = Pick<IUser, 'id' | 'avatar' | 'email' | 'userName'>;

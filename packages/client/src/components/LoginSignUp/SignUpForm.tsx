@@ -73,7 +73,7 @@ const SignUpForm = ({
 				alignItems: 'center',
 			}}
 		>
-			<Paper sx={{ width: '350px', p: '20px' }}>
+			<Paper sx={{ width: '450px', p: '20px' }}>
 				<Typography variant='h4' fontWeight={600}>
 					Sign Up
 				</Typography>

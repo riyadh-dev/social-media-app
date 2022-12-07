@@ -8,6 +8,7 @@ import {
 import { dbDocIdsValidationSchema } from '../../common/validation';
 import {
 	deleteUser,
+	getAccounts,
 	getFriendsIds,
 	getOnlineUsersIds,
 	getUserById,
@@ -26,6 +27,8 @@ import {
 } from './validation';
 
 const router = Router();
+
+router.get('/accounts', getAccounts);
 
 router.post(
 	'/signup',

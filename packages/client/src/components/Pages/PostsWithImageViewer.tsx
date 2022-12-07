@@ -4,7 +4,7 @@ import {
 	ArrowForward,
 	Close as CloseIcon,
 	Delete as DeleteIcon,
-	Edit,
+	Edit as EditIcon,
 	MoreVert as MoreVertIcon,
 } from '@mui/icons-material';
 import ShareIcon from '@mui/icons-material/Share';
@@ -38,10 +38,11 @@ import {
 	Link as RouterLink,
 	Navigate,
 	useLocation,
+	useNavigate,
 	useParams,
 } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
-import { TPaginatedPost, TPaginatedPostsType } from '../../common/types';
+import { TPaginatedPostsType } from '../../common/types';
 import { updatePostValidationSchema } from '../../common/validation';
 import { POSTS_PAGE_SIZE } from '../../constants/envVars';
 import {
@@ -65,8 +66,11 @@ const useRouteQuery = () => {
 const PostsWithImageViewer = () => {
 	const { type, authorId } = useParams();
 	const routeQuery = useRouteQuery();
+
 	const page = parseInt(routeQuery.get('page') ?? '0');
 	const index = parseInt(routeQuery.get('index') ?? '0');
+
+	const navigate = useNavigate();
 
 	const currentUser = useRecoilValue(currentUserState);
 	const { data, fetchNextPage } = useGetInfinitePosts(
@@ -74,32 +78,26 @@ const PostsWithImageViewer = () => {
 		authorId
 	);
 
-	const posts: TPaginatedPost[] = [];
-	data?.pages
-		.flat()
-		.every((post, idx) => (post.img ? posts.push(post) : false));
-
-	const [postIndex, setPostIndex] = useState(page * POSTS_PAGE_SIZE + index);
+	const posts = useMemo(() => data?.pages.flat() ?? [], [data?.pages]);
+	const postIndex = page * POSTS_PAGE_SIZE + index;
 	const canNext = postIndex + 1 < (posts?.length ?? 0);
 	const canBack = postIndex > 0;
 
 	const handleNext = () => {
-		setPostIndex(postIndex + 1);
-		queryParams.index === 14
-			? setQueryParams({ index: 0, page: queryParams.page + 1 })
-			: setQueryParams({
-					index: queryParams.index + 1,
-					page: queryParams.page,
-			  });
+		setEdit(false);
+		const nextPage = index === POSTS_PAGE_SIZE - 1 ? page + 1 : page;
+		const nextIndex = index === POSTS_PAGE_SIZE - 1 ? 0 : index + 1;
+		navigate(
+			`/posts/${type}/${currentUser?.id}?page=${nextPage}&index=${nextIndex}`
+		);
 	};
 	const handleBack = () => {
-		setPostIndex(postIndex - 1);
-		queryParams.index === 0
-			? setQueryParams({ index: 14, page: queryParams.page - 1 })
-			: setQueryParams({
-					index: queryParams.index - 1,
-					page: queryParams.page,
-			  });
+		setEdit(false);
+		const nextPage = index === 0 ? page - 1 : page;
+		const nextIndex = index === 0 ? POSTS_PAGE_SIZE - 1 : index - 1;
+		navigate(
+			`/posts/${type}/${currentUser?.id}?page=${nextPage}&index=${nextIndex}`
+		);
 	};
 
 	const postId = posts?.[postIndex]?.id ?? '';
@@ -107,22 +105,8 @@ const PostsWithImageViewer = () => {
 	const { mutate: dislikeMutation } = useDislikePost(postId, page, index);
 
 	useEffect(() => {
-		if (postIndex > posts.length - 3) fetchNextPage();
+		if (postIndex > posts.length - 2) fetchNextPage();
 	}, [fetchNextPage, postIndex, posts.length]);
-
-	const [queryParams, setQueryParams] = useState({ page, index });
-	useEffect(() => {
-		window.history.replaceState(
-			null,
-			'Posts',
-			`/posts/${type}/${currentUser?.id}?page=${queryParams.page}&index=${queryParams.index}`
-		);
-
-		setEdit(false);
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [postIndex]);
-
-	const from = useLocation().state?.from?.pathname ?? '/';
 
 	const [seeMore, setSeeMore] = useState(false);
 	const handleSeeMore = () => setSeeMore(!seeMore);
@@ -151,7 +135,7 @@ const PostsWithImageViewer = () => {
 		},
 	});
 
-	if (!posts[postIndex]) return <Navigate to={from} replace />;
+	if (!posts[postIndex]) return <Navigate to='/' replace />;
 
 	const isCurrentUserAuthor = posts[postIndex].author.id === currentUser?.id;
 
@@ -185,7 +169,7 @@ const PostsWithImageViewer = () => {
 			>
 				<IconButton
 					component={RouterLink}
-					to={from}
+					to='/'
 					sx={{
 						top: '8px',
 						left: '8px',
@@ -390,7 +374,7 @@ const PostsWithImageViewer = () => {
 					>
 						<MenuItem onClick={handleEnableEdit}>
 							<ListItemIcon>
-								<Edit />
+								<EditIcon />
 							</ListItemIcon>
 							<ListItemText>Edit</ListItemText>
 						</MenuItem>

@@ -70,15 +70,16 @@ export const useAddPost = () => {
 	});
 };
 
-//optimistic updates
-//TODO pass only page and index
 export const useLikePost = (postId: string, page: number, index: number) => {
 	const currentUser = useRecoilValue(currentUserState);
 	if (!currentUser) throw new Error('you are not logged in');
+
+	const { pathname } = useLocation();
+	const listType = pathname.includes('/posts/liked') ? 'liked' : 'timeline';
 	const params = useParams();
 	const postsListOwner = params.userId ?? currentUser.id;
 
-	const queryKey = queryKeys.posts('timeline', postsListOwner);
+	const queryKey = queryKeys.posts(listType, postsListOwner);
 	return useMutation(() => likePostQuery(postId), {
 		// When mutate is called:
 		onMutate: async () => {
@@ -156,6 +157,7 @@ export const useDislikePost = (postId: string, page: number, index: number) => {
 				queryKey,
 				(old) => {
 					if (old) {
+						//TODO use every instead of page index in like case
 						const post = old.pages[page][index];
 						post.dislikes.push(currentUser.id);
 						pull(post.likes, currentUser.id);
@@ -184,6 +186,10 @@ export const useDislikePost = (postId: string, page: number, index: number) => {
 					return old;
 				}
 			);
+		},
+
+		onSettled: () => {
+			if (listType === 'liked') queryClient.invalidateQueries(queryKey);
 		},
 	});
 };

@@ -210,6 +210,12 @@ const getFriendsIdsUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).json(currentUser.friends);
 };
 
+const getAccountsSafe: IAsyncRequestHandler = async (req, res) => {
+	const email = await UserModel.find().select('email avatar userName');
+	res.status(200).json(email);
+};
+
+export const getAccounts = catchAsyncReqHandlerErr(getAccountsSafe);
 export const signup = catchAsyncReqHandlerErr(signupUnsafe);
 export const login = catchAsyncReqHandlerErr(loginUnsafe);
 export const updateUser = catchAsyncReqHandlerErr(updateUserUnsafe);
@@ -217,7 +223,6 @@ export const deleteUser = catchAsyncReqHandlerErr(deleteUserUnsafe);
 export const getUserById = catchAsyncReqHandlerErr(getUserByIdUnsafe);
 export const getUsersByIds = catchAsyncReqHandlerErr(getUsersByIdsUnsafe);
 export const getFriendsIds = catchAsyncReqHandlerErr(getFriendsIdsUnsafe);
-
 export const removeFriend = catchAsyncReqHandlerErr(unfriendUnsafe);
 export const getOnlineUsersIds = catchAsyncReqHandlerErr(
 	getOnlineUsersIdsUnsafe

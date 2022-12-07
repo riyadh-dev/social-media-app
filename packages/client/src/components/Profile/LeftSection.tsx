@@ -191,7 +191,6 @@ const LeftSection = () => {
 							component={RouterLink}
 							key={'post-image-' + image.id}
 							to={`/posts/timeline/${userId}?page=${image.page}&index=${image.index}`}
-							state={{ from: location }}
 						>
 							<img src={image.img} alt='post' loading='lazy' />
 						</ImageListItem>

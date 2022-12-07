@@ -148,7 +148,6 @@ const Post = ({
 			{post.img && !edit && (
 				<RouterLink
 					to={`/posts/${postsType}/${currentUser?.id}?page=${post.page}&index=${post.index}`}
-					state={{ from: location }}
 				>
 					<CardMedia component='img' image={post.img} alt='post img' />
 				</RouterLink>

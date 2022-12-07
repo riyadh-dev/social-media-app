@@ -1,5 +1,6 @@
 import {
 	TLoginInput,
+	TMockAccount,
 	TSignUpInput,
 	TUpdateUserInput,
 } from '@social-media-app/shared/';
@@ -74,6 +75,13 @@ export const updateUserQuery = async (
 ): Promise<unknown> => {
 	if (!updateUserInput) Promise.reject(new Error('Invalid input'));
 	const { data } = await axiosInstance.put('/users/update/', updateUserInput, {
+		withCredentials: true,
+	});
+	return data;
+};
+
+export const getAccountsQuery = async (): Promise<TMockAccount[]> => {
+	const { data } = await axiosInstance.get('/users/accounts', {
 		withCredentials: true,
 	});
 	return data;
