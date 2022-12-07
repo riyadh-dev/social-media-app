@@ -10,8 +10,8 @@ const router = Router();
 
 router.use('/users', usersRouter);
 router.use(csrfProtection);
-router.use('/posts', postsRouter);
 router.use('/posts/comments', postsCommentsRouter);
+router.use('/posts', postsRouter);
 router.use('/friend-requests', friendRequestsRouter);
 router.use('/messages', messagesRouter);
 

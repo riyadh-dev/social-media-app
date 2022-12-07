@@ -3,7 +3,7 @@ import Avatar from '@mui/material/Avatar';
 import { useEffect } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import useAddPostComment from '../../hooks/useAddPostComment';
+import { useAddPostComment } from '../../hooks/postCommentsHooks';
 import { currentUserState } from '../../recoil/atoms';
 
 const PostCommentForm = ({ postId }: { postId: string }) => {

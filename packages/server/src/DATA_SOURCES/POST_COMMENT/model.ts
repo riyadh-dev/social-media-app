@@ -2,6 +2,7 @@ import { IPostComment } from '@social-media-app/shared';
 import { model, Schema } from 'mongoose';
 
 const UserSchema = new Schema<IPostComment>({
+	postId: String,
 	author: {
 		id: String,
 		avatar: String,

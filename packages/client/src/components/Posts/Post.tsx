@@ -34,9 +34,12 @@ import { Link as RouterLink, useLocation } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { TPaginatedPost } from '../../common/types';
 import { updatePostValidationSchema } from '../../common/validation';
-import { useDeletePost, useUpdatePost } from '../../hooks/postsHooks';
-import useDislikePost from '../../hooks/useDislike';
-import useLikePost from '../../hooks/useLike';
+import {
+	useDeletePost,
+	useDislikePost,
+	useLikePost,
+	useUpdatePost,
+} from '../../hooks/postsHooks';
 import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from './PostCommentForm';
 import PostComments from './PostComments';

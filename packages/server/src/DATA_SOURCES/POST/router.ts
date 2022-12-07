@@ -30,23 +30,23 @@ router.post(
 );
 
 //read post
-router.get('/:id', getPost);
+router.get('/:postId', getPost);
 
 //update post
 router.put(
-	'/:id',
+	'/:postId',
 	authenticate,
 	validateInput(updatePostValidationSchema, 'postInput'),
 	updatePost
 );
 
 //delete post
-router.delete('/:id', authenticate, deletePost);
+router.delete('/:postId', authenticate, deletePost);
 
 //like post
-router.put('/:id/like', authenticate, likePost);
+router.put('/:postId/like', authenticate, likePost);
 
 //dislike post
-router.put('/:id/dislike', authenticate, dislikePost);
+router.put('/:postId/dislike', authenticate, dislikePost);
 
 export default router;

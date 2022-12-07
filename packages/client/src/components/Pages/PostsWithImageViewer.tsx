@@ -44,10 +44,13 @@ import { useRecoilValue } from 'recoil';
 import { TPaginatedPost, TPaginatedPostsType } from '../../common/types';
 import { updatePostValidationSchema } from '../../common/validation';
 import { POSTS_PAGE_SIZE } from '../../constants/envVars';
-import { useDeletePost, useUpdatePost } from '../../hooks/postsHooks';
-import useDislikePost from '../../hooks/useDislike';
+import {
+	useDeletePost,
+	useDislikePost,
+	useLikePost,
+	useUpdatePost,
+} from '../../hooks/postsHooks';
 import useGetInfinitePosts from '../../hooks/useGetInfinitePosts';
-import useLikePost from '../../hooks/useLike';
 import { currentUserState } from '../../recoil/atoms';
 import PostCommentForm from '../Posts/PostCommentForm';
 import PostComments from '../Posts/PostComments';

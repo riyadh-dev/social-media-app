@@ -1,31 +1,34 @@
-import { isValidObjectId } from 'mongoose';
 import { IAsyncRequestHandler } from '../../common/interfaces';
 import { catchAsyncReqHandlerErr } from '../../common/middlewares';
+import { dbDocIdValidationSchema } from '../../common/validation';
 import PostModel from '../POST/model';
 import UserModel from '../USER/model';
 import PostCommentModel from './model';
 
 const createPostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId: string = req.params.postId;
-	if (!isValidObjectId(postId)) {
-		res.status(400).json({ error: 'invalid Post id' });
+	const { value: postId, error } = dbDocIdValidationSchema.validate(
+		req.params.postId
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
-	const currentUserDoc = await UserModel.findById(req.currentUserId);
-	if (!currentUserDoc) {
+	const currentUser = await UserModel.findById(req.currentUserId);
+	if (!currentUser) {
 		res.status(404).json({ error: 'no such user' });
 		return;
 	}
 
-	const postDoc = await PostModel.findById(postId);
-	if (!postDoc) {
+	const post = await PostModel.findById(postId);
+	if (!post) {
 		res.status(404).json({ error: 'no such post' });
 		return;
 	}
 
-	const { id, userName, avatar } = currentUserDoc;
-	const postCommentDoc = await PostCommentModel.create({
+	const { id, userName, avatar } = currentUser;
+	const postComment = await PostCommentModel.create({
+		postId,
 		author: {
 			id,
 			userName,
@@ -34,108 +37,123 @@ const createPostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
 		...req.postCommentInput,
 	});
 
-	postDoc.comments.push(postCommentDoc.id);
-	await postDoc.save();
+	post.comments.push(postComment.id);
+	await post.save();
 
-	res.status(200).json(postCommentDoc);
+	res.status(200).json(postComment);
 };
 
 const updatePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postCommentId = req.params.id;
-	if (!isValidObjectId(postCommentId)) {
-		res.status(400).json({ error: 'invalid Post Comment id' });
-		return;
-	}
-
-	const postComment = await PostCommentModel.findByIdAndUpdate(
-		postCommentId,
-		{ ...req.postCommentInput },
-		{ new: true }
+	const { value: postCommentId, error } = dbDocIdValidationSchema.validate(
+		req.params.postCommentId
 	);
-
-	if (!postComment) {
-		res.status(404).json({ error: 'Post Comment not found' });
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
+
+	const postComment = await PostCommentModel.findById(postCommentId);
+	if (!postComment) {
+		res.status(404).json({ error: 'post comment not found' });
+		return;
+	}
+
+	if (postComment.author.id !== req.currentUserId) {
+		res.status(400).json({ error: 'not authorized' });
+		return;
+	}
+
+	postComment.text = req.postCommentInput?.text as string;
+	await postComment.save();
 
 	res.status(200).json(postComment);
 };
 
 const deletePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postCommentId = req.params.id;
-	if (!isValidObjectId(postCommentId)) {
-		res.status(400).json({ error: 'invalid PostComment id' });
+	const { value: postCommentId, error } = dbDocIdValidationSchema.validate(
+		req.params.postCommentId
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
-	const postCommentDoc = await PostCommentModel.findById(postCommentId);
-	if (!postCommentDoc) {
-		res.status(404).json({ error: 'PostComment not found' });
+	const postComment = await PostCommentModel.findById(postCommentId);
+	if (!postComment) {
+		res.status(404).json({ error: 'post comment not found' });
 		return;
 	}
 
 	const currentUserId = req.currentUserId;
-	if (postCommentDoc.author.id !== currentUserId) {
+	if (postComment.author.id !== currentUserId) {
 		res.status(400).json({ error: 'not authorized' });
 		return;
 	}
 
-	await postCommentDoc.delete();
+	await PostModel.findByIdAndUpdate(postComment.postId, {
+		$pull: { comments: postCommentId },
+	});
 
-	res.status(200).json({ success: 'Post Comment deleted' });
+	await postComment.delete();
+
+	res.status(200).end();
 };
 
 const likePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postCommentId = req.params.id;
-	if (!isValidObjectId(postCommentId)) {
-		res.status(400).json({ error: 'invalid id' });
+	const { value: postCommentId, error } = dbDocIdValidationSchema.validate(
+		req.params.postCommentId
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
 	const currentUserId = req.currentUserId as string;
-	const currentUserDoc = await UserModel.findById(currentUserId);
-	const postCommentDoc = await PostCommentModel.findById(postCommentId);
-	if (!postCommentDoc || !currentUserDoc) {
+	const currentUser = await UserModel.findById(currentUserId);
+	const postComment = await PostCommentModel.findById(postCommentId);
+	if (!postComment || !currentUser) {
 		res.status(404).send({ error: 'Post Comment or current user not found' });
 		return;
 	}
 
-	if (postCommentDoc.likes.includes(currentUserId)) {
+	if (postComment.likes.includes(currentUserId)) {
 		res.status(400).json({ error: 'Post Comment already liked' });
 		return;
 	}
 
-	postCommentDoc.likes.push(currentUserId);
-	await postCommentDoc.save();
+	postComment.likes.push(currentUserId);
+	await postComment.save();
 
-	res.status(200).json(postCommentDoc);
+	res.status(200).json(postComment);
 };
 
 const dislikePostCommentUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postCommentId = req.params.id;
-	if (!isValidObjectId(postCommentId)) {
-		res.status(400).json({ error: 'invalid user id' });
+	const { value: postCommentId, error } = dbDocIdValidationSchema.validate(
+		req.params.postCommentId
+	);
+	if (error) {
+		res.status(400).json({ error: 'invalid post id' });
 		return;
 	}
 
 	const currentUserId = req.currentUserId as string;
-	const currentUserDoc = await UserModel.findById(currentUserId);
-	const postCommentDoc = await PostCommentModel.findById(postCommentId);
+	const currentUser = await UserModel.findById(currentUserId);
+	const postComment = await PostCommentModel.findById(postCommentId);
 
-	if (!postCommentDoc || !currentUserDoc) {
+	if (!postComment || !currentUser) {
 		res.status(404).send({ error: 'PostComment or current user not found' });
 		return;
 	}
 
-	if (postCommentDoc.dislikes.includes(currentUserId)) {
+	if (postComment.dislikes.includes(currentUserId)) {
 		res.status(400).json({ error: 'PostComment already disliked' });
 		return;
 	}
 
-	postCommentDoc.dislikes.push(currentUserId);
-	await postCommentDoc.save();
+	postComment.dislikes.push(currentUserId);
+	await postComment.save();
 
-	res.status(200).json(postCommentDoc);
+	res.status(200).json(postComment);
 };
 
 const getPostCommentsUnsafe: IAsyncRequestHandler = async (req, res) => {

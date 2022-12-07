@@ -33,19 +33,19 @@ router.post(
 
 //update post
 router.put(
-	'/:id',
+	'/:postCommentId',
 	authenticate,
-	validateInput(updatePostCommentValidationSchema, 'postInput'),
+	validateInput(updatePostCommentValidationSchema, 'postCommentInput'),
 	updatePostComment
 );
 
 //delete post
-router.delete('/:id', authenticate, deletePostComment);
+router.delete('/:postCommentId', authenticate, deletePostComment);
 
 //like post
-router.put('/:id/like', authenticate, likePostComment);
+router.put('/:postCommentId/like', authenticate, likePostComment);
 
 //dislike post
-router.put('/:id/dislike', authenticate, dislikePostComment);
+router.put('/:postCommentId/dislike', authenticate, dislikePostComment);
 
 export default router;

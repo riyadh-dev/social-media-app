@@ -12,7 +12,7 @@ import { TPostInput } from '@social-media-app/shared/src';
 import { useEffect, useState } from 'react';
 import { useForm } from 'react-hook-form';
 import { useRecoilValue } from 'recoil';
-import useAddPost from '../../hooks/useAddPost';
+import { useAddPost } from '../../hooks/postsHooks';
 import { currentUserState } from '../../recoil/atoms';
 
 const PostForm = () => {

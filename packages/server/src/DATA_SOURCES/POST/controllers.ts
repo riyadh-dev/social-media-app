@@ -29,7 +29,7 @@ const createPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 };
 
 const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
-	const postId = req.params.id;
+	const postId = req.params.postId;
 	if (!isValidObjectId(postId)) {
 		res.status(400).json({ error: 'invalid post id' });
 		return;
@@ -46,7 +46,7 @@ const getPostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { value: postId, error } = dbDocIdValidationSchema.validate(
-		req.params.id
+		req.params.postId
 	);
 	if (error) {
 		res.status(400).json({ error: 'invalid post id' });
@@ -71,10 +71,9 @@ const updatePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	res.status(200).end();
 };
 
-//TODO Add Post delete to client
 const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { value: postId, error } = dbDocIdValidationSchema.validate(
-		req.params.id
+		req.params.postId
 	);
 	if (error) {
 		res.status(400).json({ error: 'invalid post id' });
@@ -100,7 +99,7 @@ const deletePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { value: postId, error } = dbDocIdValidationSchema.validate(
-		req.params.id
+		req.params.postId
 	);
 	if (error) {
 		res.status(400).json({ error: 'invalid post id' });
@@ -148,7 +147,7 @@ const likePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 
 const dislikePostUnsafe: IAsyncRequestHandler = async (req, res) => {
 	const { value: postId, error } = dbDocIdValidationSchema.validate(
-		req.params.id
+		req.params.postId
 	);
 	if (error) {
 		res.status(400).json({ error: 'invalid post id' });

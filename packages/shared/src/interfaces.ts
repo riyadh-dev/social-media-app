@@ -63,6 +63,7 @@ export interface IPost {
 
 export interface IPostComment {
 	id: string;
+	postId: string;
 	author: Pick<IUser, 'id' | 'userName' | 'avatar'>;
 	text: string;
 	likes: string[];
