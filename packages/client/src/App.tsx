@@ -12,9 +12,9 @@ import { RouterProvider } from 'react-router-dom';
 import { useRecoilState } from 'recoil';
 import RecoilDebugButton from './components/Debug/RecoilDebugButton';
 import Loading from './components/Loading';
+import router from './components/router';
 import { useWebSocketInit } from './hooks/useWebSocketInit';
 import { themeState } from './recoil/atoms';
-import router from './Router';
 
 const IS_DEV = process.env.NODE_ENV === 'development';
 

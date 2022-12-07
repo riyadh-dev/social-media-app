@@ -1,23 +1,19 @@
 import { Stack } from '@mui/material';
 import { lazy, Suspense } from 'react';
 import { createBrowserRouter } from 'react-router-dom';
-import Main from './components/Pages/Main';
-import PostsWithImageViewer from './components/Pages/PostsWithImageViewer';
-import PostsWithImageViewerSkeleton from './components/Posts/PostsWithImageViewerSkeleton';
-import RequireAuth from './components/RequireAuth';
+import Main from './Pages/Main';
+import PostsWithImageViewer from './Pages/PostsWithImageViewer';
+import PostsWithImageViewerSkeleton from './Posts/PostsWithImageViewerSkeleton';
+import RequireAuth from './RequireAuth';
 
-const LoginSignUp = lazy(() => import('./components/LoginSignUp'));
-const Home = lazy(() => import('./components/Pages/Home'));
-const Friends = lazy(() => import('./components/Pages/Friends'));
-const Profile = lazy(() => import('./components/Pages/Profile'));
-const Messenger = lazy(() => import('./components/Pages/Messenger'));
-const Settings = lazy(() => import('./components/Pages/Settings'));
-const IntroUpdateForm = lazy(
-	() => import('./components/Settings/IntroUpdateForm')
-);
-const UserUpdateForm = lazy(
-	() => import('./components/Settings/UserUpdateForm')
-);
+const LoginSignUp = lazy(() => import('./LoginSignUp'));
+const Home = lazy(() => import('./Pages/Home'));
+const Friends = lazy(() => import('./Pages/Friends'));
+const Profile = lazy(() => import('./Pages/Profile'));
+const Messenger = lazy(() => import('./Pages/Messenger'));
+const Settings = lazy(() => import('./Pages/Settings'));
+const IntroUpdateForm = lazy(() => import('./Settings/IntroUpdateForm'));
+const UserUpdateForm = lazy(() => import('./Settings/UserUpdateForm'));
 
 /* const PostsWithImageViewer = lazy(
 	() => import('./components/Pages/PostsWithImageViewer')
