@@ -19,12 +19,7 @@ import {
 import { debounce } from 'lodash';
 import { useCallback, useRef, useState } from 'react';
 import { InfiniteData } from 'react-query';
-import {
-	Link,
-	Link as RouterLink,
-	useLocation,
-	useParams,
-} from 'react-router-dom';
+import { Link, Link as RouterLink, useParams } from 'react-router-dom';
 import { useRecoilValue } from 'recoil';
 import { queryClient } from '../..';
 import { TPaginatedPost } from '../../common/types';
