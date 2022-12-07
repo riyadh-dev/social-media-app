@@ -40,6 +40,7 @@ const MinimizedChatBox = ({ user }: { user: TUiUser }) => {
 					src={user.avatar}
 					sx={{ height: '48px', width: '48px', cursor: 'pointer' }}
 					onClick={onMaximize}
+					alt={user.userName}
 				/>
 			</ConditionalWrapper>
 		</Badge>

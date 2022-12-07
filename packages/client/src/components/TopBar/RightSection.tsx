@@ -93,7 +93,9 @@ const RightSection = () => {
 					textTransform: 'none',
 				}}
 				variant='text'
-				startIcon={<Avatar alt='Avatar' src={currentUser?.avatar} />}
+				startIcon={
+					<Avatar alt={currentUser?.userName} src={currentUser?.avatar} />
+				}
 			>
 				{currentUser?.userName}
 			</Button>
@@ -260,7 +262,7 @@ const ChatsListItem = ({ friend }: { friend: TUiUser }) => {
 	return (
 		<ListItemButton onClick={onOpen}>
 			<ListItemAvatar>
-				<Avatar src={friend.avatar} />
+				<Avatar src={friend.avatar} alt={friend.userName} />
 			</ListItemAvatar>
 			<ListItemText
 				primary={friend.userName}

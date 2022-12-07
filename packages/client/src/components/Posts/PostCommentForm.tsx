@@ -32,7 +32,7 @@ const PostCommentForm = ({ postId }: { postId: string }) => {
 			component='form'
 			onSubmit={handleSubmit(onSubmit)}
 		>
-			<Avatar src={currentUser?.avatar} />
+			<Avatar src={currentUser?.avatar} alt={currentUser?.userName} />
 			<TextField
 				autoComplete='off'
 				placeholder='Write a comment...'

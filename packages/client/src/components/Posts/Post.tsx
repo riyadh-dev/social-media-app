@@ -120,6 +120,7 @@ const Post = ({
 				avatar={
 					<Avatar
 						src={post.author.avatar}
+						alt={post.author.userName}
 						aria-label='avatar'
 						component={RouterLink}
 						to={'/profile/' + post.author.id}

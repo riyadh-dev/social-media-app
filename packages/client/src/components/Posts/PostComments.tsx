@@ -69,7 +69,10 @@ const PostComment = ({ postComment }: { postComment: IPostComment }) => {
 			width='fit-content'
 		>
 			<Stack direction='row' spacing={2}>
-				<Avatar src={postComment.author.avatar} />
+				<Avatar
+					src={postComment.author.avatar}
+					alt={postComment.author.userName}
+				/>
 				{edit ? (
 					<FormControl fullWidth variant='outlined'>
 						<OutlinedInput

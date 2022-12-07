@@ -91,7 +91,7 @@ const UpperSection = () => {
 							}}
 						>
 							<Avatar
-								alt='Avatar'
+								alt={user?.userName}
 								src={user?.avatar}
 								sx={{
 									width: '100%',

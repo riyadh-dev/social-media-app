@@ -40,6 +40,7 @@ const ChatMessage = ({ chatMessage }: { chatMessage: IChatMessage }) => {
 				<Avatar
 					src={sender?.avatar}
 					sx={{ alignSelf: 'flex-end', width: '28px', height: '28px' }}
+					alt={sender?.userName}
 				/>
 				<ChatMsgPaper sx={{ px: '12px', py: '8px' }} elevation={0}>
 					<Typography variant='body2'>{chatMessage.text}</Typography>
@@ -55,6 +56,7 @@ const ChatMessage = ({ chatMessage }: { chatMessage: IChatMessage }) => {
 			<Avatar
 				src={sender?.avatar}
 				sx={{ alignSelf: 'flex-end', width: '28px', height: '28px' }}
+				alt={sender?.userName}
 			/>
 		</Stack>
 	);

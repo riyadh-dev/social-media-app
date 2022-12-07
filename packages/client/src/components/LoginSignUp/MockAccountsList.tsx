@@ -63,7 +63,7 @@ const MockAccountsList = ({
 							onClick={handleSelectAccount(account)}
 						>
 							<ListItemAvatar>
-								<Avatar src={account.avatar} />
+								<Avatar src={account.avatar} alt={account.userName} />
 							</ListItemAvatar>
 							<ListItemText
 								primary={account.userName}

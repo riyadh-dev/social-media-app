@@ -112,7 +112,7 @@ const ChatBox = () => {
 		<Stack sx={{ flexGrow: 1 }}>
 			<Paper sx={{ p: '12px' }} elevation={0}>
 				<Stack direction='row' alignItems='center' spacing={2}>
-					<Avatar src={selectedFriend?.avatar} />
+					<Avatar src={selectedFriend?.avatar} alt={selectedFriend?.userName} />
 					<Typography sx={{ flexGrow: 1 }} variant='body1'>
 						{selectedFriend?.userName}
 					</Typography>
@@ -132,6 +132,7 @@ const ChatBox = () => {
 					<Stack direction='row' spacing={1} sx={{ maxWidth: '600px' }}>
 						<Avatar
 							src={selectedFriend.avatar}
+							alt={selectedFriend.userName}
 							sx={{ alignSelf: 'flex-end', width: '28px', height: '28px' }}
 						/>
 						<ChatMsgPaper sx={{ px: '24px', py: '14px' }} elevation={0}>

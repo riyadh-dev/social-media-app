@@ -68,7 +68,11 @@ const ChatBox = ({ user }: { user: TUiUser }) => {
 					}}
 					variant='text'
 					startIcon={
-						<Avatar src={user.avatar} sx={{ height: 32, width: 32 }} />
+						<Avatar
+							alt={user.userName}
+							src={user.avatar}
+							sx={{ height: 32, width: 32 }}
+						/>
 					}
 				>
 					{user.userName}

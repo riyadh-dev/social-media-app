@@ -189,7 +189,7 @@ const UserSearch = () => {
 								onClick={() => setSearchTerm('')}
 							>
 								<ListItemAvatar>
-									<Avatar src={user.avatar} alt='Avatar' />
+									<Avatar src={user.avatar} alt={user.userName} />
 								</ListItemAvatar>
 								<ListItemText primary={user.userName} />
 							</ListItemButton>

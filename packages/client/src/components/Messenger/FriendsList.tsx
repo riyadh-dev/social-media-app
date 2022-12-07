@@ -30,7 +30,11 @@ const FriendsListItem = ({
 		<ListItemButton onClick={handleSelectFriend}>
 			<ListItemAvatar>
 				<ConditionalWrapper condition={isOnline} wrapper={OnlineBadgeWrapper}>
-					<Avatar src={friend.avatar} sx={{ width: '55px', height: '55px' }} />
+					<Avatar
+						src={friend.avatar}
+						alt={friend.userName}
+						sx={{ width: '55px', height: '55px' }}
+					/>
 				</ConditionalWrapper>
 			</ListItemAvatar>
 			<ListItemText

@@ -239,6 +239,7 @@ const PostsWithImageViewer = () => {
 						avatar={
 							<Avatar
 								src={posts?.[postIndex].author.avatar}
+								alt={posts?.[postIndex].author.userName}
 								aria-label='avatar'
 								component={RouterLink}
 								to={'/profile/' + posts?.[postIndex].author.id}

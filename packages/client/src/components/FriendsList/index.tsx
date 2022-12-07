@@ -24,7 +24,7 @@ const FriendsListItem = ({
 		<ListItemButton onClick={onOpen}>
 			<ListItemAvatar>
 				<ConditionalWrapper condition={isOnline} wrapper={OnlineBadgeWrapper}>
-					<Avatar src={user.avatar} alt='Avatar' />
+					<Avatar src={user.avatar} alt={user.userName} />
 				</ConditionalWrapper>
 			</ListItemAvatar>
 			<ListItemText primary={user.userName} />
