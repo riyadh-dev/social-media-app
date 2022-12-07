@@ -10,7 +10,7 @@ const Friends = () => (
 	<Stack sx={{ mt: '64px' }} direction='row'>
 		<LeftSideBar />
 		<Stack sx={{ width: '100%' }}>
-			<Suspense fallback={<Loading mt='64' />}>
+			<Suspense fallback={<Loading mt='64px' />}>
 				<ReceivedRequests />
 				<SentRequests />
 				<FriendsCardList />

@@ -161,11 +161,14 @@ export const useLogin = () => {
 
 export const useLogout = () => {
 	const logout = async () => {
-		await logoutQuery();
+		try {
+			await logoutQuery();
+		} catch (error) {
+			console.error(error);
+		}
 		localStorage.clear();
 		window.location.reload();
 	};
-
 	return logout;
 };
 

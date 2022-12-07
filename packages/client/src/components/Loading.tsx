@@ -6,7 +6,7 @@ const Loading = ({ mt }: { mt?: string }) => (
 		display='flex'
 		justifyContent='center'
 		alignItems='center'
-		height={`calc(100vh - ${mt ?? 0}px)`}
+		height={`calc(100vh - ${mt ?? '0px'})`}
 	>
 		<CircularProgress size='4rem' />
 	</Box>
