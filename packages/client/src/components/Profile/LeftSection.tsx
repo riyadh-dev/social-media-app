@@ -185,7 +185,12 @@ const LeftSection = () => {
 							key={'post-image-' + image.id}
 							to={`/posts/timeline/${userId}?page=${image.page}&index=${image.index}`}
 						>
-							<img src={image.img} alt='post' loading='lazy' />
+							<img
+								src={image.img}
+								alt='post'
+								crossOrigin='anonymous'
+								loading='lazy'
+							/>
 						</ImageListItem>
 					)) ?? <></>}
 				</ImageList>
@@ -220,6 +225,7 @@ const LeftSection = () => {
 							<img
 								src={friend.avatar}
 								alt={friend.userName}
+								crossOrigin='anonymous'
 								loading='lazy'
 								style={{ borderRadius: '8px' }}
 							/>

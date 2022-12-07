@@ -63,7 +63,13 @@ const UpperSection = () => {
 				}}
 			>
 				{user.cover ? (
-					<img src={user.cover} alt='cover' style={coverStyle} />
+					<img
+						src={user.cover}
+						alt='cover'
+						style={coverStyle}
+						crossOrigin='anonymous'
+						loading='lazy'
+					/>
 				) : (
 					<CoverDiv />
 				)}

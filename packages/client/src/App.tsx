@@ -27,14 +27,19 @@ const getTheme = (mode: PaletteMode): Theme =>
 			},
 		},
 		components: {
-			MuiListItem: {
+			MuiListItemButton: {
 				styleOverrides: {
-					button: {
+					root: {
 						borderRadius: '8px',
 						':hover': {
 							borderRadius: '8px',
 						},
 					},
+				},
+			},
+			MuiAvatar: {
+				defaultProps: {
+					imgProps: { crossOrigin: 'anonymous', loading: 'lazy' },
 				},
 			},
 		},

@@ -149,7 +149,13 @@ const Post = ({
 				<RouterLink
 					to={`/posts/${postsType}/${currentUser?.id}?page=${post.page}&index=${post.index}`}
 				>
-					<CardMedia component='img' image={post.img} alt='post img' />
+					<CardMedia
+						crossOrigin='anonymous'
+						loading='lazy'
+						component='img'
+						image={post.img}
+						alt='post img'
+					/>
 				</RouterLink>
 			)}
 			<CardContent>

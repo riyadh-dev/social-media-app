@@ -18,6 +18,8 @@ const LeftSection = () => {
 					src='https://cdn-icons-png.flaticon.com/512/4207/4207232.png'
 					alt='Logo'
 					style={{ width: '40px', height: '40px' }}
+					crossOrigin='anonymous'
+					loading='lazy'
 				/>
 			</Link>
 

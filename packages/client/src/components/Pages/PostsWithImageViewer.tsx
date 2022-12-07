@@ -216,6 +216,8 @@ const PostsWithImageViewer = () => {
 					</Avatar>
 				</IconButton>
 				<Box
+					crossOrigin='anonymous'
+					loading='lazy'
 					component='img'
 					maxHeight={{ xs: '50vh', md: '100vh' }}
 					maxWidth='100%'
