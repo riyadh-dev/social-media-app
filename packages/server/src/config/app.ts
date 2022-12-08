@@ -50,6 +50,9 @@ app.use(cookieParser);
 app.use('/api', router);
 
 // Serve static assets in production
+app.use('/static', express.static(path.join(__dirname, '../../static')));
+
+// Serve client build in production
 if (IS_PROD) {
 	app.use(express.static(path.join(__dirname, '../../../client/build')));
 	app.get('*', function (req, res) {

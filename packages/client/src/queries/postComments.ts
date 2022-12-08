@@ -23,9 +23,7 @@ export const updatePostCommentQuery = async (
 	const { data } = await axiosInstance.put(
 		`/posts/comments/${postCommentId}`,
 		postCommentInput,
-		{
-			withCredentials: true,
-		}
+		{ withCredentials: true }
 	);
 	return data;
 };

@@ -43,8 +43,6 @@ export interface IChatMessage {
 	targetId: string;
 	text: string;
 	status: TChatMessageStatus;
-
-	//TODO use mongoose schema transformation to make it all strings
 	createdAt: Date;
 	updatedAt: Date;
 }

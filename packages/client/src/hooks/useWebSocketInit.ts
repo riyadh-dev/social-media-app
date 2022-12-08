@@ -15,7 +15,7 @@ import {
 	useSetRecoilState,
 } from 'recoil';
 import { queryClient } from '..';
-import { WS_ORIGIN } from '../constants/envVars';
+import { STATIC_ORIGIN, WS_ORIGIN } from '../constants/envVars';
 import queryKeys from '../constants/reactQueryKeys';
 import {
 	currentUserState,
@@ -128,6 +128,7 @@ const handleChatMessageAction = (
 			queryKeys.conversation(action.payload.senderId),
 			(old) => (old ? old.concat(action.payload) : [action.payload])
 		);
+		playNotificationSound();
 	}, 150);
 };
 
@@ -137,4 +138,10 @@ const handleFriendRequestAction = async (action: IFriendRequestAction) => {
 		queryKeys.receivedFriendRequests,
 		(old) => (old ? [action.payload].concat(old) : [action.payload])
 	);
+};
+
+const playNotificationSound = () => {
+	const notification = new Audio(`${STATIC_ORIGIN}/audio/notification.mp3`);
+	notification.crossOrigin = 'anonymous';
+	notification.play();
 };

@@ -157,13 +157,11 @@ export const useDislikePost = (postId: string, page: number, index: number) => {
 				queryKey,
 				(old) => {
 					if (old) {
-						//TODO use every instead of page index in like case
 						const post = old.pages[page][index];
 						post.dislikes.push(currentUser.id);
 						pull(post.likes, currentUser.id);
 						if (listType === 'liked') old.pages[page].splice(index, 1);
 					}
-
 					return old;
 				}
 			);
@@ -235,7 +233,6 @@ export const useUpdatePost = (page: number, index: number) => {
 			return { prevPost };
 		},
 
-		//TODO do not work cause am mutating old
 		// If the mutation fails, use the context returned from onMutate to roll back
 		onError: (err, newMessage, context) => {
 			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(
@@ -289,7 +286,6 @@ export const useDeletePost = (page: number, index: number) => {
 			return { prevPost };
 		},
 
-		//TODO do not work cause am mutating old
 		// If the mutation fails, use the context returned from onMutate to roll back
 		onError: (err, newMessage, context) => {
 			queryClient.setQueryData<InfiniteData<TPaginatedPost[]> | undefined>(

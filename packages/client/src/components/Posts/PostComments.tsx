@@ -75,11 +75,7 @@ const PostComment = ({ postComment }: { postComment: IPostComment }) => {
 				/>
 				{edit ? (
 					<FormControl fullWidth variant='outlined'>
-						<OutlinedInput
-							{...register('text')}
-							id='post-comment'
-							//TODO label = input label
-						/>
+						<OutlinedInput {...register('text')} id='post-comment' />
 						<FormHelperText id='post-comment'>
 							{/*TODO add error messages */}
 						</FormHelperText>
