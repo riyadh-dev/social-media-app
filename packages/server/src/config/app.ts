@@ -52,7 +52,7 @@ app.use('/api', router);
 // Serve static assets in production
 if (IS_PROD) {
 	app.use(express.static(path.join(__dirname, '../../../client/build')));
-	app.get('/', function (req, res) {
+	app.get('*', function (req, res) {
 		res.sendFile(path.join(__dirname, '../../../client/build', 'index.html'));
 	});
 }
